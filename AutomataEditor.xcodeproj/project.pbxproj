@@ -13,6 +13,7 @@
 		F85184E825DD1C0C00791701 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E725DD1C0C00791701 /* Preview Assets.xcassets */; };
 		F85184F325DD1C0D00791701 /* AutomataEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184F225DD1C0D00791701 /* AutomataEditorTests.swift */; };
 		F85184FE25DD1C0D00791701 /* AutomataEditorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184FD25DD1C0D00791701 /* AutomataEditorUITests.swift */; };
+		F851851225DD5F8200791701 /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F851851125DD5F8000791701 /* AutomataClassifier.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		F85184F925DD1C0D00791701 /* AutomataEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutomataEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85184FD25DD1C0D00791701 /* AutomataEditorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataEditorUITests.swift; sourceTree = "<group>"; };
 		F85184FF25DD1C0D00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F851851125DD5F8000791701 /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = coreml/AutomataClassifier.mlmodel; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 		F85184DF25DD1C0700791701 /* AutomataEditor */ = {
 			isa = PBXGroup;
 			children = (
+				F851851125DD5F8000791701 /* AutomataClassifier.mlmodel */,
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
 				F85184E225DD1C0800791701 /* ContentView.swift */,
 				F85184E425DD1C0C00791701 /* Assets.xcassets */,
@@ -261,6 +264,7 @@
 			files = (
 				F85184E325DD1C0800791701 /* ContentView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
+				F851851225DD5F8200791701 /* AutomataClassifier.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
