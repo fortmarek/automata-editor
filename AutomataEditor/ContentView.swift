@@ -10,54 +10,32 @@ import Vision
 import PencilKit
 
 struct ContentView: View {
-    @State var drawing: PKDrawing = .init()
+    @State var canvasView: PKCanvasView = .init()
     
     var body: some View {
         VStack {
-            CanvasView(drawing: $drawing)
-            Button("Detect") {
-                let image = drawing.image(
-                    from: drawing.bounds,
-                    scale: 1.0
-                )
-                .resize(
-                    newSize: CGSize(
-                        width: 28,
-                        height: 28
+            CanvasView(canvasView: $canvasView)
+            HStack {
+                Button("Detect") {
+                    let image = canvasView.drawing.image(
+                        from: canvasView.drawing.bounds,
+                        scale: 1.0
                     )
-                )!
+                    .resize(
+                        newSize: CGSize(
+                            width: 28,
+                            height: 28
+                        )
+                    )!
 
-                let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
-                let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
-                let prediction = try! classifier.prediction(input: input)
-                print(prediction.labelProbability)
-//                let model = try! VNCoreMLModel(
-//                    for: AutomataClassifier(configuration: MLModelConfiguration()).model
-//                )
-//                let request = VNCoreMLRequest(
-//                    model: model
-//                ) { request, error in
-//                    if let _ = error {
-//                        return
-//                    } else {
-//                        print(request.results)
-//                    }
-//                }
-//                guard let ciImage = CIImage(image: image.resize(newSize: CGSize(width: 28, height: 28))!) else {
-//                  print("Unable to create CIImage")
-//                  return
-//                }
-//                DispatchQueue.global(qos: .userInitiated).async {
-//                  let handler = VNImageRequestHandler(
-//                    ciImage: ciImage,
-//                    orientation: .up
-//                  )
-//                  do {
-//                    try handler.perform([request])
-//                  } catch {
-//                    print("Failed to perform classification: \(error)")
-//                  }
-//                }
+                    let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
+                    let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
+                    let prediction = try! classifier.prediction(input: input)
+                    print(prediction.labelProbability)
+                }
+                Button("Clear") {
+                    canvasView.drawing = PKDrawing()
+                }
             }
         }
     }

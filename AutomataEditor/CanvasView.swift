@@ -2,10 +2,9 @@ import SwiftUI
 import PencilKit
 
 struct CanvasView: UIViewRepresentable {
-    @Binding var drawing: PKDrawing
+    @Binding var canvasView: PKCanvasView
     
     func makeUIView(context: Context) -> PKCanvasView {
-        let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
         canvasView.drawingPolicy = .anyInput
         canvasView.tool = PKInkingTool(.pen, color: .black, width: 15)
@@ -31,6 +30,5 @@ final class CanvasCoordinator: NSObject {
 
 extension CanvasCoordinator: PKCanvasViewDelegate {
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        parent.drawing = canvasView.drawing
     }
 }
