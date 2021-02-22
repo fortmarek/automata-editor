@@ -17,27 +17,71 @@ struct ContentView: View {
             CanvasView(canvasView: $canvasView)
             HStack {
                 Button("Detect") {
-                    let image = canvasView.drawing.image(
-                        from: canvasView.drawing.bounds,
-                        scale: 1.0
-                    )
-                    .resize(
-                        newSize: CGSize(
-                            width: 28,
-                            height: 28
-                        )
-                    )!
-
-                    let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
-                    let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
-                    let prediction = try! classifier.prediction(input: input)
-                    print(prediction.labelProbability)
+                    detect()
                 }
                 Button("Clear") {
                     canvasView.drawing = PKDrawing()
                 }
             }
         }
+    }
+    
+    private func detect() {
+        let image = canvasView.drawing.image(
+            from: canvasView.drawing.bounds,
+            scale: 1.0
+        )
+        .resize(
+            newSize: CGSize(
+                width: 28,
+                height: 28
+            )
+        )!
+
+        let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
+        let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
+        let prediction = try! classifier.prediction(input: input)
+        print(prediction.labelProbability)
+        
+        let lastStroke = canvasView.drawing.strokes[canvasView.drawing.strokes.endIndex - 1]
+        let (sumX, sumY, count) = lastStroke.path.interpolatedPoints(by: .distance(50))
+            .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
+                (acc.0 + current.location.x, acc.1 + current.location.y, acc.2 + 1)
+            }
+        let center = CGPoint(x: sumX / count, y: sumY / count)
+        
+        let radius: CGFloat = 200.0
+        let controlPoints: [PKStrokePoint] = stride(from: CGFloat(0), to: 362, by: 2).map { index in
+            let radians = index * CGFloat.pi / 180
+            
+            let location = CGPoint(
+                x: CGFloat(center.x + radius * cos(radians)),
+                y: CGFloat(center.y + radius * sin(radians))
+            )
+            return strokePoint(location)
+        }
+        
+        let strokePath = PKStrokePath(
+            controlPoints: controlPoints,
+            creationDate: Date()
+        )
+        let stroke = PKStroke(ink: PKInk(.pen), path: strokePath)
+        
+        canvasView.drawing.strokes[canvasView.drawing.strokes.endIndex - 1] = stroke
+    }
+    
+    private func strokePoint(
+        _ location: CGPoint
+    ) -> PKStrokePoint {
+        PKStrokePoint(
+            location: location,
+            timeOffset: 0,
+            size: CGSize(width: 5, height: 5),
+            opacity: 1,
+            force: 1,
+            azimuth: 0,
+            altitude: 0
+        )
     }
 }
 
