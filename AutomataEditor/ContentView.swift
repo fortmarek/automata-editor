@@ -43,6 +43,11 @@ struct ContentView: View {
         let prediction = try! classifier.prediction(input: input)
         print(prediction.labelProbability)
         
+        guard prediction.label == "circle" else {
+            canvasView.drawing = PKDrawing()
+            return
+        }
+        
         let lastStroke = canvasView.drawing.strokes[canvasView.drawing.strokes.endIndex - 1]
         let (sumX, sumY, count) = lastStroke.path.interpolatedPoints(by: .distance(50))
             .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
@@ -50,7 +55,12 @@ struct ContentView: View {
             }
         let center = CGPoint(x: sumX / count, y: sumY / count)
         
-        let radius: CGFloat = 200.0
+        let sumDistance = lastStroke.path.interpolatedPoints(by: .distance(50))
+            .reduce(0) { acc, current in
+                acc + abs(center.x - current.location.x) + abs(center.y - current.location.y)
+            }
+        let radius = sumDistance / count
+
         let controlPoints: [PKStrokePoint] = stride(from: CGFloat(0), to: 362, by: 2).map { index in
             let radians = index * CGFloat.pi / 180
             
@@ -76,7 +86,7 @@ struct ContentView: View {
         PKStrokePoint(
             location: location,
             timeOffset: 0,
-            size: CGSize(width: 5, height: 5),
+            size: CGSize(width: 4, height: 4),
             opacity: 1,
             force: 1,
             azimuth: 0,
