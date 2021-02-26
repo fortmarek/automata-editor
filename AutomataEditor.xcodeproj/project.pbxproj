@@ -3,12 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F81641CA25E940BE00F49800 /* ComposableArchitecture */; };
+		F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641CF25E9419800F49800 /* UIImage+Extra.swift */; };
+		F81641D825E9425F00F49800 /* EditorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641D725E9425F00F49800 /* EditorStore.swift */; };
 		F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E025DD1C0800791701 /* AutomataEditorApp.swift */; };
-		F85184E325DD1C0800791701 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E225DD1C0800791701 /* ContentView.swift */; };
+		F85184E325DD1C0800791701 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E225DD1C0800791701 /* EditorView.swift */; };
 		F85184E525DD1C0C00791701 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E425DD1C0C00791701 /* Assets.xcassets */; };
 		F85184E825DD1C0C00791701 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E725DD1C0C00791701 /* Preview Assets.xcassets */; };
 		F85184F325DD1C0D00791701 /* AutomataEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184F225DD1C0D00791701 /* AutomataEditorTests.swift */; };
@@ -35,9 +38,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F81641CF25E9419800F49800 /* UIImage+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extra.swift"; sourceTree = "<group>"; };
+		F81641D725E9425F00F49800 /* EditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorStore.swift; sourceTree = "<group>"; };
 		F85184DD25DD1C0700791701 /* AutomataEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutomataEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85184E025DD1C0800791701 /* AutomataEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataEditorApp.swift; sourceTree = "<group>"; };
-		F85184E225DD1C0800791701 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F85184E225DD1C0800791701 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		F85184E425DD1C0C00791701 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F85184E725DD1C0C00791701 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F85184E925DD1C0C00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +107,9 @@
 			children = (
 				F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */,
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
-				F85184E225DD1C0800791701 /* ContentView.swift */,
+				F85184E225DD1C0800791701 /* EditorView.swift */,
+				F81641D725E9425F00F49800 /* EditorStore.swift */,
+				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
 				F851851925DD623000791701 /* CanvasView.swift */,
 				F85184E425DD1C0C00791701 /* Assets.xcassets */,
 				F85184E925DD1C0C00791701 /* Info.plist */,
@@ -152,6 +160,9 @@
 			dependencies = (
 			);
 			name = AutomataEditor;
+			packageProductDependencies = (
+				F81641CA25E940BE00F49800 /* ComposableArchitecture */,
+			);
 			productName = AutomataEditor;
 			productReference = F85184DD25DD1C0700791701 /* AutomataEditor.app */;
 			productType = "com.apple.product-type.application";
@@ -223,6 +234,9 @@
 				Base,
 			);
 			mainGroup = F85184D425DD1C0600791701;
+			packageReferences = (
+				F81641C925E940BD00F49800 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+			);
 			productRefGroup = F85184DE25DD1C0700791701 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -265,8 +279,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F85184E325DD1C0800791701 /* ContentView.swift in Sources */,
+				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
+				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
+				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
 			);
@@ -588,6 +604,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F81641C925E940BD00F49800 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F81641CA25E940BE00F49800 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F81641C925E940BD00F49800 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F85184D525DD1C0600791701 /* Project object */;
 }

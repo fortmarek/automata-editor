@@ -11,7 +11,13 @@ import SwiftUI
 struct AutomataEditorApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            EditorView(
+                store: EditorStore(
+                    initialState: .init(),
+                    reducer: editorReducer,
+                    environment: EditorEnvironment()
+                )
+            )
         }
     }
 }
