@@ -15,7 +15,10 @@ struct EditorView: View {
     var body: some View {
         WithViewStore(store) { (viewStore: EditorViewStore) in
             VStack {
-                CanvasView(canvasView: $canvasView)
+                CanvasView(
+                    canvasView: $canvasView,
+                    strokes: viewStore.binding(get: \.strokes, send: EditorAction.strokesChanged)
+                )
                 HStack {
                     Button("Detect") {
                         detect()
