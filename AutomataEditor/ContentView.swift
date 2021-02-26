@@ -37,6 +37,7 @@ struct ContentView: View {
                 height: 28
             )
         )!
+        .grayscale()!
 
         let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
         let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
@@ -95,14 +96,46 @@ struct ContentView: View {
     }
 }
 
-extension UIImage
-{
+extension UIImage {
     func resize(newSize: CGSize) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
         self.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return newImage
+    }
+
+    // Taken and modified from: https://prograils.com/grayscale-conversion-swift
+    func grayscale() -> UIImage? {
+        let context = CIContext(options: nil)
+
+        let shouldInvert: Bool
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified:
+            shouldInvert = true
+        case .dark:
+            shouldInvert = false
+        @unknown default:
+            shouldInvert = false
+        }
+        guard
+            let grayScaleFilter = CIFilter(name: "CIPhotoEffectNoir"),
+            let invertFilter = CIFilter(name: "CIColorInvert"),
+            let output = CIImage(image: self)?
+                .apply(grayScaleFilter)
+                .apply(invertFilter, condition: shouldInvert)
+        else { return nil }
+        return context.createCGImage(output, from: output.extent)
+            .map(UIImage.init)
+    }
+}
+
+extension CIImage {
+    func apply(_ filter: CIFilter?, condition: Bool = true) -> CIImage {
+        guard condition else { return self }
+        guard let filter = filter else { return self }
+        filter.setValue(self, forKey: kCIInputImageKey)
+        return filter.outputImage ?? self
     }
 }
 
