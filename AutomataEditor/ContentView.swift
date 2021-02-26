@@ -8,6 +8,7 @@
 import SwiftUI
 import Vision
 import PencilKit
+import CoreGraphics
 
 struct ContentView: View {
     @State var canvasView: PKCanvasView = .init()
@@ -22,8 +23,31 @@ struct ContentView: View {
                 Button("Clear") {
                     canvasView.drawing = PKDrawing()
                 }
+                Button("Export") {
+                    export()
+                    canvasView.drawing = PKDrawing()
+                }
             }
         }
+    }
+    
+    private func export() {
+        let image = canvasView.drawing.image(
+            from: canvasView.drawing.bounds,
+            scale: 1.0
+        )
+        .modelImage()!
+        savePNG(image)
+    }
+    
+    func savePNG(_ image: UIImage) {
+        guard
+            let pngData = image.pngData(),
+            let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                .first?
+                .appendingPathComponent("\(UUID().uuidString).png")
+        else { return }
+        try! pngData.write(to: path)
     }
     
     private func detect() {
@@ -31,13 +55,7 @@ struct ContentView: View {
             from: canvasView.drawing.bounds,
             scale: 1.0
         )
-        .resize(
-            newSize: CGSize(
-                width: 28,
-                height: 28
-            )
-        )!
-        .grayscale()!
+        .modelImage()!
 
         let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
         let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
@@ -97,36 +115,81 @@ struct ContentView: View {
 }
 
 extension UIImage {
+    func modelImage() -> UIImage? {
+        resize(
+            newSize: CGSize(
+                width: 28,
+                height: 28
+            )
+        )?
+        .grayscale()
+    }
+    
     func resize(newSize: CGSize) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-        self.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage
+        UIGraphicsImageRenderer(size: newSize)
+            .image { _ in
+            draw(in: CGRect(origin: .zero, size: newSize))
+        }
     }
 
     // Taken and modified from: https://prograils.com/grayscale-conversion-swift
     func grayscale() -> UIImage? {
-        let context = CIContext(options: nil)
-
-        let shouldInvert: Bool
-        switch traitCollection.userInterfaceStyle {
-        case .light, .unspecified:
-            shouldInvert = true
-        case .dark:
-            shouldInvert = false
-        @unknown default:
-            shouldInvert = false
-        }
+        // Create image rectangle with current image width/height
+        let imageRect: CGRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        
+        // Grayscale color space
+        let colorSpace: CGColorSpace = CGColorSpaceCreateDeviceGray()
+        
+        // Create bitmap content with current image size and grayscale colorspace
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        let context = CGContext(
+            data: nil,
+            width: Int(size.width),
+            height: Int(size.height),
+            bitsPerComponent: 8,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo.rawValue
+        )
         guard
-            let grayScaleFilter = CIFilter(name: "CIPhotoEffectNoir"),
-            let invertFilter = CIFilter(name: "CIColorInvert"),
-            let output = CIImage(image: self)?
-                .apply(grayScaleFilter)
-                .apply(invertFilter, condition: shouldInvert)
+            let cgImage = cgImage
         else { return nil }
-        return context.createCGImage(output, from: output.extent)
-            .map(UIImage.init)
+        // Draw image into current context, with specified rectangle using previously defined context (with grayscale colorspace)
+        context?.draw(cgImage, in: imageRect)
+
+        // Create bitmap image info from pixel data in current context
+        let imageRef: CGImage = context!.makeImage()!
+
+        // Create a new UIImage object
+        let newImage: UIImage = UIImage(cgImage: imageRef)
+
+        // Return the new grayscale image
+        return newImage
+////        return cgImage?
+////            .copy(colorSpace: CGColorSpaceCreateDeviceGray())
+////            .map(UIImage.init)
+//
+//        let context = CIContext(options: nil)
+//
+////        let shouldInvert: Bool
+////        switch traitCollection.userInterfaceStyle {
+////        case .light, .unspecified:
+////            shouldInvert = false
+////        case .dark:
+////            shouldInvert = true
+////        @unknown default:
+////            shouldInvert = true
+////        }
+//        guard
+//            let grayScaleFilter = CIFilter(name: "CIPhotoEffectNoir"),
+//            let invertFilter = CIFilter(name: "CIColorInvert"),
+//            let output = CIImage(image: self)?
+//                .apply(grayScaleFilter)
+////                .apply(invertFilter, condition: shouldInvert)
+//        else { return nil }
+//        let image = context.createCGImage(output, from: output.extent)
+//            .map(UIImage.init)
+//        return image
     }
 }
 
