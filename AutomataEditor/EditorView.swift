@@ -16,15 +16,19 @@ struct EditorView: View {
         WithViewStore(store) { (viewStore: EditorViewStore) in
             VStack {
                 CanvasView(
+                    shouldDeleteLastStroke: viewStore.binding(
+                        get: \.shouldDeleteLastStroke,
+                        send: EditorAction.shouldDeleteLastStrokeChanged
+                    ),
                     canvasView: $canvasView,
-                    strokes: viewStore.binding(get: \.strokes, send: EditorAction.strokesChanged)
+                    strokes: viewStore.binding(
+                        get: \.strokes,
+                        send: EditorAction.strokesChanged
+                    )
                 )
                 HStack {
-                    Button("Detect") {
-                        detect()
-                    }
                     Button("Clear") {
-                        canvasView.drawing = PKDrawing()
+                        viewStore.send(.clear)
                     }
                     Button("Export") {
                         export()
@@ -52,55 +56,6 @@ struct EditorView: View {
                 .appendingPathComponent("\(UUID().uuidString).png")
         else { return }
         try! pngData.write(to: path)
-    }
-    
-    private func detect() {
-        let image = canvasView.drawing.image(
-            from: canvasView.drawing.bounds,
-            scale: 1.0
-        )
-        .modelImage()!
-
-        let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
-        let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
-        let prediction = try! classifier.prediction(input: input)
-        print(prediction.labelProbability)
-        
-        guard prediction.label == "circle" else {
-            canvasView.drawing = PKDrawing()
-            return
-        }
-        
-        let lastStroke = canvasView.drawing.strokes[canvasView.drawing.strokes.endIndex - 1]
-        let (sumX, sumY, count) = lastStroke.path.interpolatedPoints(by: .distance(50))
-            .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
-                (acc.0 + current.location.x, acc.1 + current.location.y, acc.2 + 1)
-            }
-        let center = CGPoint(x: sumX / count, y: sumY / count)
-        
-        let sumDistance = lastStroke.path.interpolatedPoints(by: .distance(50))
-            .reduce(0) { acc, current in
-                acc + abs(center.x - current.location.x) + abs(center.y - current.location.y)
-            }
-        let radius = sumDistance / count
-
-        let controlPoints: [PKStrokePoint] = stride(from: CGFloat(0), to: 362, by: 2).map { index in
-            let radians = index * CGFloat.pi / 180
-            
-            let location = CGPoint(
-                x: CGFloat(center.x + radius * cos(radians)),
-                y: CGFloat(center.y + radius * sin(radians))
-            )
-            return strokePoint(location)
-        }
-        
-        let strokePath = PKStrokePath(
-            controlPoints: controlPoints,
-            creationDate: Date()
-        )
-        let stroke = PKStroke(ink: PKInk(.pen), path: strokePath)
-        
-        canvasView.drawing.strokes[canvasView.drawing.strokes.endIndex - 1] = stroke
     }
     
     private func strokePoint(

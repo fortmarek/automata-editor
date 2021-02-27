@@ -2,6 +2,7 @@ import SwiftUI
 import PencilKit
 
 struct CanvasView: UIViewRepresentable {
+    @Binding var shouldDeleteLastStroke: Bool
     @Binding var canvasView: PKCanvasView
     @Binding var strokes: [Stroke]
     
@@ -19,6 +20,12 @@ struct CanvasView: UIViewRepresentable {
 
     func updateUIView(_ canvasView: PKCanvasView, context: Context) {
         canvasView.drawing.strokes = strokes.map { $0.pkStroke() }
+        if shouldDeleteLastStroke {
+            if !canvasView.drawing.strokes.isEmpty {
+                canvasView.drawing.strokes.removeLast()
+            }
+            shouldDeleteLastStroke = false
+        }
     }
 }
 

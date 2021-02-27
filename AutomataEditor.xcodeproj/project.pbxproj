@@ -10,6 +10,7 @@
 		F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F81641CA25E940BE00F49800 /* ComposableArchitecture */; };
 		F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641CF25E9419800F49800 /* UIImage+Extra.swift */; };
 		F81641D825E9425F00F49800 /* EditorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641D725E9425F00F49800 /* EditorStore.swift */; };
+		F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641DC25EAAA6B00F49800 /* Stroke.swift */; };
 		F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E025DD1C0800791701 /* AutomataEditorApp.swift */; };
 		F85184E325DD1C0800791701 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E225DD1C0800791701 /* EditorView.swift */; };
 		F85184E525DD1C0C00791701 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E425DD1C0C00791701 /* Assets.xcassets */; };
@@ -40,6 +41,7 @@
 /* Begin PBXFileReference section */
 		F81641CF25E9419800F49800 /* UIImage+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extra.swift"; sourceTree = "<group>"; };
 		F81641D725E9425F00F49800 /* EditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorStore.swift; sourceTree = "<group>"; };
+		F81641DC25EAAA6B00F49800 /* Stroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
 		F85184DD25DD1C0700791701 /* AutomataEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutomataEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85184E025DD1C0800791701 /* AutomataEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataEditorApp.swift; sourceTree = "<group>"; };
 		F85184E225DD1C0800791701 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
 				F85184E225DD1C0800791701 /* EditorView.swift */,
 				F81641D725E9425F00F49800 /* EditorStore.swift */,
+				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
 				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
 				F851851925DD623000791701 /* CanvasView.swift */,
 				F85184E425DD1C0C00791701 /* Assets.xcassets */,
@@ -285,6 +288,7 @@
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
+				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

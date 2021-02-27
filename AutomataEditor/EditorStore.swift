@@ -1,64 +1,48 @@
 import ComposableArchitecture
 import CoreGraphics
 import PencilKit
+import CoreML
 
 typealias EditorStore = Store<EditorState, EditorAction>
 typealias EditorViewStore = ViewStore<EditorState, EditorAction>
 
 struct EditorEnvironment {}
 
-struct Stroke: Equatable {
-    let controlPoints: [CGPoint]
-    
-    init(
-        controlPoints: [CGPoint]
-    ) {
-        self.controlPoints = controlPoints
-    }
-    
-    init(_ stroke: PKStroke) {
-        controlPoints = stroke.path
-            .interpolatedPoints(by: .distance(50))
-            .map(\.location)
-    }
-    
-    func pkStroke() -> PKStroke {
-        PKStroke(
-            ink: PKInk(.pen),
-            path: PKStrokePath(
-                controlPoints: controlPoints.map(strokePoint),
-                creationDate: Date()
-            )
-        )
-    }
-    
-    private func strokePoint(
-        _ location: CGPoint
-    ) -> PKStrokePoint {
-        PKStrokePoint(
-            location: location,
-            timeOffset: 0,
-            size: CGSize(width: 4, height: 4),
-            opacity: 1,
-            force: 1,
-            azimuth: 0,
-            altitude: 0
-        )
-    }
-}
-
 struct EditorState: Equatable {
     var strokes: [Stroke] = []
+    var shouldDeleteLastStroke = false
 }
 
 enum EditorAction: Equatable {
+    case clear
     case strokesChanged([Stroke])
+    case shouldDeleteLastStrokeChanged(Bool)
 }
 
 let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
     switch action {
+    case .clear:
+        state.strokes = []
     case let .strokesChanged(strokes):
         guard let stroke = strokes.last else { return .none }
+        
+        let image = PKDrawing(strokes: [stroke.pkStroke()])
+            .image(
+                from: stroke.pkStroke().renderBounds,
+                scale: 1.0
+            )
+        .modelImage()!
+
+        let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
+        let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
+        let prediction = try! classifier.prediction(input: input)
+        print(prediction.labelProbability)
+        
+        guard prediction.label == "circle" else {
+            state.shouldDeleteLastStroke = true
+            return .none
+        }
+        
         let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = stroke.controlPoints
             .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
                 (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
@@ -83,6 +67,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.strokes.append(
             Stroke(controlPoints: controlPoints)
         )
+    case let .shouldDeleteLastStrokeChanged(shouldDeleteLastStroke):
+        state.shouldDeleteLastStroke = shouldDeleteLastStroke
     }
     
     return .none
