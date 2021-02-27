@@ -20,29 +20,7 @@ enum EditorAction: Equatable {
 }
 
 let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
-    switch action {
-    case .clear:
-        state.strokes = []
-    case let .strokesChanged(strokes):
-        guard let stroke = strokes.last else { return .none }
-        
-        let image = PKDrawing(strokes: [stroke.pkStroke()])
-            .image(
-                from: stroke.pkStroke().renderBounds,
-                scale: 1.0
-            )
-        .modelImage()!
-
-        let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
-        let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
-        let prediction = try! classifier.prediction(input: input)
-        print(prediction.labelProbability)
-        
-        guard prediction.label == "circle" else {
-            state.shouldDeleteLastStroke = true
-            return .none
-        }
-        
+    func drawCircle(from stroke: Stroke) {
         let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = stroke.controlPoints
             .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
                 (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
@@ -67,6 +45,34 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.strokes.append(
             Stroke(controlPoints: controlPoints)
         )
+    }
+    
+    switch action {
+    case .clear:
+        state.strokes = []
+    case let .strokesChanged(strokes):
+        guard let stroke = strokes.last else { return .none }
+        
+        let image = PKDrawing(strokes: [stroke.pkStroke()])
+            .image(
+                from: stroke.pkStroke().renderBounds,
+                scale: 1.0
+            )
+        .modelImage()!
+
+        let input = try! AutomataClassifierInput(drawingWith: image.cgImage!)
+        let classifier = try! AutomataClassifier(configuration: MLModelConfiguration())
+        let prediction = try! classifier.prediction(input: input)
+        print(prediction.labelProbability)
+        
+        if prediction.label == "circle" {
+            drawCircle(from: stroke)
+        } else if prediction.label == "arrow" {
+            // TODO: Implement drawing of arrow
+            state.shouldDeleteLastStroke = true
+        } else {
+            state.shouldDeleteLastStroke = true
+        }
     case let .shouldDeleteLastStrokeChanged(shouldDeleteLastStroke):
         state.shouldDeleteLastStroke = shouldDeleteLastStroke
     }
