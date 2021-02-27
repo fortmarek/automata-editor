@@ -9,7 +9,11 @@ typealias EditorViewStore = ViewStore<EditorState, EditorAction>
 struct EditorEnvironment {}
 
 struct EditorState: Equatable {
-    var strokes: [Stroke] = []
+    var automatonStates: [AutomatonState] = []
+    var transitions: [Transition] = []
+    var strokes: [Stroke] {
+        automatonStates.map(\.stroke) + transitions.map(\.stroke)
+    }
     var shouldDeleteLastStroke = false
 }
 
@@ -42,14 +46,17 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             )
         }
 
-        state.strokes.append(
-            Stroke(controlPoints: controlPoints)
+        state.automatonStates.append(
+            AutomatonState(
+                stroke: Stroke(controlPoints: controlPoints)
+            )
         )
     }
     
     switch action {
     case .clear:
-        state.strokes = []
+        state.automatonStates = []
+        state.transitions = []
     case let .strokesChanged(strokes):
         guard let stroke = strokes.last else { return .none }
         
@@ -78,21 +85,25 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             }
             .0
             
-            state.strokes.append(
-                Stroke(
-                    controlPoints: [
-                        startPoint,
-                        tipPoint,
-                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
-                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-                        tipPoint,
-                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
-                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-                    ]
+            state.transitions.append(
+                Transition(
+                    startState: nil,
+                    endState: nil,
+                    stroke: Stroke(
+                        controlPoints: [
+                            startPoint,
+                            tipPoint,
+                            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
+                            CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
+                            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+                            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+                            tipPoint,
+                            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
+                            CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
+                            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+                            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+                        ]
+                    )
                 )
             )
             

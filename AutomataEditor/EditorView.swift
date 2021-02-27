@@ -3,8 +3,16 @@ import Vision
 import PencilKit
 import ComposableArchitecture
 
-struct AutomatonState {
+struct AutomatonState: Equatable {
     let symbol: String = ""
+    let stroke: Stroke
+}
+
+struct Transition: Equatable {
+    let startState: AutomatonState?
+    let endState: AutomatonState?
+    let symbol: String = ""
+    let stroke: Stroke
 }
 
 struct EditorView: View {
