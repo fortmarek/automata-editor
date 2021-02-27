@@ -68,8 +68,34 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         if prediction.label == "circle" {
             drawCircle(from: stroke)
         } else if prediction.label == "arrow" {
-            // TODO: Implement drawing of arrow
-            state.shouldDeleteLastStroke = true
+            guard
+                let startPoint = stroke.controlPoints.first
+            else { return .none }
+            
+            let tipPoint: CGPoint = stroke.controlPoints.reduce((CGPoint.zero, CGFloat(0))) { acc, current in
+                let currentDistance = (pow(startPoint.x - current.x, 2) + pow(startPoint.y - current.y, 2))
+                return currentDistance > acc.1 ? (current, currentDistance) : acc
+            }
+            .0
+            
+            state.strokes.append(
+                Stroke(
+                    controlPoints: [
+                        startPoint,
+                        tipPoint,
+                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
+                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
+                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+                        tipPoint,
+                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
+                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
+                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+                    ]
+                )
+            )
+            
         } else {
             state.shouldDeleteLastStroke = true
         }
