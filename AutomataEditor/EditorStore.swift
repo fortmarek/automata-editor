@@ -76,8 +76,26 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             drawCircle(from: stroke)
         } else if prediction.label == "arrow" {
             guard
-                let startPoint = stroke.controlPoints.first
+                let strokeStartPoint = stroke.controlPoints.first
             else { return .none }
+            
+            let (closestStartState, closestStartStatePoint, _): (AutomatonState?, CGPoint, CGFloat) = state.automatonStates.reduce((nil, .zero, CGFloat.infinity)) { acc, currentState in
+                let closestPoint = currentState.stroke.controlPoints.reduce((CGPoint.zero, CGFloat.infinity)) { acc, current in
+                    let currentDistance = (pow(strokeStartPoint.x - current.x, 2) + pow(strokeStartPoint.y - current.y, 2))
+                    return currentDistance < acc.1 ? (current, currentDistance) : acc
+                }
+                .0
+                let currentDistance = (pow(strokeStartPoint.x - closestPoint.x, 2) + pow(strokeStartPoint.y - closestPoint.y, 2))
+                return currentDistance < acc.2 ? (currentState, closestPoint, currentDistance) : acc
+            }
+            
+            
+            let startPoint: CGPoint
+            if let closestStartState = closestStartState {
+                startPoint = closestStartStatePoint
+            } else {
+                startPoint = strokeStartPoint
+            }
             
             let tipPoint: CGPoint = stroke.controlPoints.reduce((CGPoint.zero, CGFloat(0))) { acc, current in
                 let currentDistance = (pow(startPoint.x - current.x, 2) + pow(startPoint.y - current.y, 2))
@@ -87,7 +105,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             
             state.transitions.append(
                 Transition(
-                    startState: nil,
+                    startState: closestStartState,
                     endState: nil,
                     stroke: Stroke(
                         controlPoints: [
