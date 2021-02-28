@@ -7,6 +7,15 @@ final class EditorTests: XCTestCase {
     
     func testSimpleAutomatonIsDrawn() {
         var stubShapeType: AutomatonShapeType = .circle
+        let initialState = AutomatonState(
+            scribblePosition: CGPoint(x: 0, y: 0),
+            stroke: Stroke(
+                controlPoints: .circle(
+                    center: CGPoint(x: 0, y: 0),
+                    radius: 1
+                )
+            )
+        )
         TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
@@ -38,16 +47,16 @@ final class EditorTests: XCTestCase {
                 )
             ) {
                 $0.automatonStates = [
-                    AutomatonState(
-                        scribblePosition: CGPoint(x: 0, y: 0),
-                        stroke: Stroke(
-                            controlPoints: .circle(
-                                center: CGPoint(x: 0, y: 0),
-                                radius: 1
-                            )
-                        )
-                    )
+                    initialState,
                 ]
+            },
+            .send(
+                .stateSymbolChanged(
+                    initialState,
+                    "A"
+                )
+            ) {
+                $0.automatonStates[0].symbol = "A"
             },
             .do {
                 stubShapeType = .arrow
@@ -83,15 +92,7 @@ final class EditorTests: XCTestCase {
             ) {
                 $0.transitions = [
                     Transition(
-                        startState: AutomatonState(
-                            scribblePosition: CGPoint(x: 0, y: 0),
-                            stroke: Stroke(
-                                controlPoints: .circle(
-                                    center: CGPoint(x: 0, y: 0),
-                                    radius: 1
-                                )
-                            )
-                        ),
+                        startState: $0.automatonStates[0],
                         endState: nil,
                         stroke: Stroke(
                             controlPoints: .arrow(
