@@ -94,6 +94,10 @@ final class EditorTests: XCTestCase {
                     Transition(
                         startState: $0.automatonStates[0],
                         endState: nil,
+                        scribblePosition: CGPoint(
+                            x: 2,
+                            y: -50
+                        ),
                         stroke: Stroke(
                             controlPoints: .arrow(
                                 startPoint: CGPoint(x: 1, y: 0),
@@ -102,6 +106,27 @@ final class EditorTests: XCTestCase {
                         )
                     )
                 ]
+            },
+            .send(
+                .transitionSymbolChanged(
+                    Transition(
+                        startState: nil,
+                        endState: nil,
+                        scribblePosition: CGPoint(
+                            x: 2,
+                            y: -50
+                        ),
+                        stroke: Stroke(
+                            controlPoints: .arrow(
+                                startPoint: CGPoint(x: 1, y: 0),
+                                tipPoint: CGPoint(x: 3, y: 0)
+                            )
+                        )
+                    ),
+                    "A"
+                )
+            ) {
+                $0.transitions[0].symbol = "A"
             }
         )
     }

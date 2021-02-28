@@ -3,23 +3,6 @@ import Vision
 import PencilKit
 import ComposableArchitecture
 
-struct AutomatonState: Equatable, Identifiable {
-    var symbol: String = ""
-    let scribblePosition: CGPoint
-    let stroke: Stroke
-    
-    var id: Stroke {
-        stroke
-    }
-}
-
-struct Transition: Equatable {
-    let startState: AutomatonState?
-    let endState: AutomatonState?
-    let symbol: String = ""
-    let stroke: Stroke
-}
-
 struct EditorView: View {
     @State var canvasView: PKCanvasView = .init()
     @Environment(\.colorScheme) var colorScheme
@@ -51,6 +34,17 @@ struct EditorView: View {
                         .border(colorScheme == .dark ? Color.white : Color.black)
                         .frame(width: 100, height: 30)
                         .position(automatonState.scribblePosition)
+                    }
+                    ForEach(viewStore.transitions) { transition in
+                        TextEditor(
+                            text: viewStore.binding(
+                                get: { $0.transitions.first(where: { $0.id == transition.id })?.symbol ?? "" },
+                                send: { .transitionSymbolChanged(transition, $0) }
+                            )
+                        )
+                        .border(colorScheme == .dark ? Color.white : Color.black)
+                        .frame(width: 100, height: 30)
+                        .position(transition.scribblePosition)
                     }
 
                 }
