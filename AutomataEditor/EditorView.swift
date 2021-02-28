@@ -114,8 +114,10 @@ struct ContentView_Previews: PreviewProvider {
             store: EditorStore(
                 initialState: .init(),
                 reducer: editorReducer,
-                // TODO: Change for mock environment
-                environment: EditorEnvironment()
+                environment: EditorEnvironment(
+                    automataClassifierService: .successfulTransition,
+                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+                )
             )
         )
     }

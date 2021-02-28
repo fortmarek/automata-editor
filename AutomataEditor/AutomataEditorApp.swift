@@ -1,11 +1,5 @@
-//
-//  AutomataEditorApp.swift
-//  AutomataEditor
-//
-//  Created by Marek Fořt on 17.02.2021.
-//
-
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct AutomataEditorApp: App {
@@ -15,7 +9,10 @@ struct AutomataEditorApp: App {
                 store: EditorStore(
                     initialState: .init(),
                     reducer: editorReducer,
-                    environment: EditorEnvironment()
+                    environment: EditorEnvironment(
+                        automataClassifierService: .live(),
+                        mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+                    )
                 )
             )
         }
