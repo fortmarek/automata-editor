@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F81641CA25E940BE00F49800 /* ComposableArchitecture */; };
 		F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641CF25E9419800F49800 /* UIImage+Extra.swift */; };
 		F81641D825E9425F00F49800 /* EditorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641D725E9425F00F49800 /* EditorStore.swift */; };
@@ -17,8 +18,6 @@
 		F85184E325DD1C0800791701 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184E225DD1C0800791701 /* EditorView.swift */; };
 		F85184E525DD1C0C00791701 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E425DD1C0C00791701 /* Assets.xcassets */; };
 		F85184E825DD1C0C00791701 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E725DD1C0C00791701 /* Preview Assets.xcassets */; };
-		F85184F325DD1C0D00791701 /* AutomataEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184F225DD1C0D00791701 /* AutomataEditorTests.swift */; };
-		F85184FE25DD1C0D00791701 /* AutomataEditorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85184FD25DD1C0D00791701 /* AutomataEditorUITests.swift */; };
 		F851851A25DD623000791701 /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F851851925DD623000791701 /* CanvasView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 /* End PBXBuildFile section */
@@ -31,16 +30,10 @@
 			remoteGlobalIDString = F85184DC25DD1C0700791701;
 			remoteInfo = AutomataEditor;
 		};
-		F85184FA25DD1C0D00791701 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F85184D525DD1C0600791701 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F85184DC25DD1C0700791701;
-			remoteInfo = AutomataEditor;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
 		F81641CF25E9419800F49800 /* UIImage+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extra.swift"; sourceTree = "<group>"; };
 		F81641D725E9425F00F49800 /* EditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorStore.swift; sourceTree = "<group>"; };
 		F81641DC25EAAA6B00F49800 /* Stroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
@@ -53,11 +46,7 @@
 		F85184E725DD1C0C00791701 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F85184E925DD1C0C00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F85184EE25DD1C0D00791701 /* AutomataEditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutomataEditorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F85184F225DD1C0D00791701 /* AutomataEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataEditorTests.swift; sourceTree = "<group>"; };
 		F85184F425DD1C0D00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F85184F925DD1C0D00791701 /* AutomataEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutomataEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F85184FD25DD1C0D00791701 /* AutomataEditorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataEditorUITests.swift; sourceTree = "<group>"; };
-		F85184FF25DD1C0D00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F851851925DD623000791701 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -78,16 +67,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F85184F625DD1C0D00791701 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F815A40625EB99C2002C44DE /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				F85184E225DD1C0800791701 /* EditorView.swift */,
+				F81641D725E9425F00F49800 /* EditorStore.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		F815A40725EB99D2002C44DE /* EditorTests */ = {
+			isa = PBXGroup;
+			children = (
+				F815A40B25EB9A05002C44DE /* EditorTests.swift */,
+			);
+			path = EditorTests;
+			sourceTree = "<group>";
+		};
 		F81641E125EB8E4300F49800 /* AutomataClassifierService */ = {
 			isa = PBXGroup;
 			children = (
@@ -102,7 +101,6 @@
 			children = (
 				F85184DF25DD1C0700791701 /* AutomataEditor */,
 				F85184F125DD1C0D00791701 /* AutomataEditorTests */,
-				F85184FC25DD1C0D00791701 /* AutomataEditorUITests */,
 				F85184DE25DD1C0700791701 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,7 +110,6 @@
 			children = (
 				F85184DD25DD1C0700791701 /* AutomataEditor.app */,
 				F85184EE25DD1C0D00791701 /* AutomataEditorTests.xctest */,
-				F85184F925DD1C0D00791701 /* AutomataEditorUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,8 +120,7 @@
 				F81641E125EB8E4300F49800 /* AutomataClassifierService */,
 				F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */,
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
-				F85184E225DD1C0800791701 /* EditorView.swift */,
-				F81641D725E9425F00F49800 /* EditorStore.swift */,
+				F815A40625EB99C2002C44DE /* Editor */,
 				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
 				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
 				F851851925DD623000791701 /* CanvasView.swift */,
@@ -146,19 +142,10 @@
 		F85184F125DD1C0D00791701 /* AutomataEditorTests */ = {
 			isa = PBXGroup;
 			children = (
-				F85184F225DD1C0D00791701 /* AutomataEditorTests.swift */,
+				F815A40725EB99D2002C44DE /* EditorTests */,
 				F85184F425DD1C0D00791701 /* Info.plist */,
 			);
 			path = AutomataEditorTests;
-			sourceTree = "<group>";
-		};
-		F85184FC25DD1C0D00791701 /* AutomataEditorUITests */ = {
-			isa = PBXGroup;
-			children = (
-				F85184FD25DD1C0D00791701 /* AutomataEditorUITests.swift */,
-				F85184FF25DD1C0D00791701 /* Info.plist */,
-			);
-			path = AutomataEditorUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,24 +189,6 @@
 			productReference = F85184EE25DD1C0D00791701 /* AutomataEditorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F85184F825DD1C0D00791701 /* AutomataEditorUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F851850825DD1C0D00791701 /* Build configuration list for PBXNativeTarget "AutomataEditorUITests" */;
-			buildPhases = (
-				F85184F525DD1C0D00791701 /* Sources */,
-				F85184F625DD1C0D00791701 /* Frameworks */,
-				F85184F725DD1C0D00791701 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F85184FB25DD1C0D00791701 /* PBXTargetDependency */,
-			);
-			name = AutomataEditorUITests;
-			productName = AutomataEditorUITests;
-			productReference = F85184F925DD1C0D00791701 /* AutomataEditorUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -234,10 +203,7 @@
 					};
 					F85184ED25DD1C0D00791701 = {
 						CreatedOnToolsVersion = 12.3;
-						TestTargetID = F85184DC25DD1C0700791701;
-					};
-					F85184F825DD1C0D00791701 = {
-						CreatedOnToolsVersion = 12.3;
+						LastSwiftMigration = 1230;
 						TestTargetID = F85184DC25DD1C0700791701;
 					};
 				};
@@ -260,7 +226,6 @@
 			targets = (
 				F85184DC25DD1C0700791701 /* AutomataEditor */,
 				F85184ED25DD1C0D00791701 /* AutomataEditorTests */,
-				F85184F825DD1C0D00791701 /* AutomataEditorUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -276,13 +241,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F85184EC25DD1C0D00791701 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F85184F725DD1C0D00791701 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -312,15 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F85184F325DD1C0D00791701 /* AutomataEditorTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F85184F525DD1C0D00791701 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F85184FE25DD1C0D00791701 /* AutomataEditorUITests.swift in Sources */,
+				F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,11 +281,6 @@
 			isa = PBXTargetDependency;
 			target = F85184DC25DD1C0700791701 /* AutomataEditor */;
 			targetProxy = F85184EF25DD1C0D00791701 /* PBXContainerItemProxy */;
-		};
-		F85184FB25DD1C0D00791701 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F85184DC25DD1C0700791701 /* AutomataEditor */;
-			targetProxy = F85184FA25DD1C0D00791701 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -505,6 +450,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QH95ER52SG;
 				INFOPLIST_FILE = AutomataEditorTests/Info.plist;
@@ -516,6 +462,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = marekfort.AutomataEditorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AutomataEditor.app/AutomataEditor";
@@ -527,6 +474,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QH95ER52SG;
 				INFOPLIST_FILE = AutomataEditorTests/Info.plist;
@@ -541,46 +489,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AutomataEditor.app/AutomataEditor";
-			};
-			name = Release;
-		};
-		F851850925DD1C0D00791701 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QH95ER52SG;
-				INFOPLIST_FILE = AutomataEditorUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = marekfort.AutomataEditorUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = AutomataEditor;
-			};
-			name = Debug;
-		};
-		F851850A25DD1C0D00791701 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QH95ER52SG;
-				INFOPLIST_FILE = AutomataEditorUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = marekfort.AutomataEditorUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = AutomataEditor;
 			};
 			name = Release;
 		};
@@ -610,15 +518,6 @@
 			buildConfigurations = (
 				F851850625DD1C0D00791701 /* Debug */,
 				F851850725DD1C0D00791701 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F851850825DD1C0D00791701 /* Build configuration list for PBXNativeTarget "AutomataEditorUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F851850925DD1C0D00791701 /* Debug */,
-				F851850A25DD1C0D00791701 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

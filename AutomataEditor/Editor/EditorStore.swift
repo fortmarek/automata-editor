@@ -28,7 +28,7 @@ enum EditorAction: Equatable {
     case stateSymbolChanged(AutomatonState, String)
     case strokesChanged([Stroke])
     case shouldDeleteLastStrokeChanged(Bool)
-    case automataShapeClassified(Result<AutomataShape, AutomataClassifierError>)
+    case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
 }
 
 let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in    
@@ -54,14 +54,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             }
         let radius = sumDistance / count
 
-        let controlPoints: [CGPoint] = stride(from: CGFloat(0), to: 362, by: 2).map { index in
-            let radians = index * CGFloat.pi / 180
-
-            return CGPoint(
-                x: CGFloat(center.x + radius * cos(radians)),
-                y: CGFloat(center.y + radius * sin(radians))
-            )
-        }
+        let controlPoints: [CGPoint] = .circle(
+            center: center,
+            radius: radius
+        )
 
         state.automatonStates.append(
             AutomatonState(
@@ -103,19 +99,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 startState: closestStartState,
                 endState: nil,
                 stroke: Stroke(
-                    controlPoints: [
-                        startPoint,
-                        tipPoint,
-                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
-                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-                        tipPoint,
-                        CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
-                        CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-                        CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-                    ]
+                    controlPoints: .arrow(
+                        startPoint: startPoint,
+                        tipPoint: tipPoint
+                    )
                 )
             )
         )
@@ -134,4 +121,39 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     }
     
     return .none
+}
+
+extension Array where Element == CGPoint {
+    static func circle(
+        center: CGPoint,
+        radius: CGFloat
+    ) -> Self {
+        stride(from: CGFloat(0), to: 362, by: 2).map { index in
+            let radians = index * CGFloat.pi / 180
+
+            return CGPoint(
+                x: CGFloat(center.x + radius * cos(radians)),
+                y: CGFloat(center.y + radius * sin(radians))
+            )
+        }
+    }
+    
+    static func arrow(
+        startPoint: CGPoint,
+        tipPoint: CGPoint
+    ) -> Self {
+        [
+            startPoint,
+            tipPoint,
+            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
+            CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
+            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
+            tipPoint,
+            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
+            CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
+            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
+        ]
+    }
 }

@@ -5,7 +5,7 @@ import PencilKit
 import ComposableArchitecture
 import Combine
 
-private enum AutomataShapeType: String {
+enum AutomatonShapeType: String {
     case circle
     case arrow
 }
@@ -14,7 +14,7 @@ extension AutomataClassifierService {
     static func live() -> Self {
         Self(
             recognizeStroke: { stroke in
-                Future<AutomataShape, AutomataClassifierError> { promise in
+                Future<AutomatonShape, AutomataClassifierError> { promise in
                     do {
                         guard
                             let image = PKDrawing(strokes: [stroke.pkStroke()])
@@ -34,7 +34,7 @@ extension AutomataClassifierService {
                         let classifier = try AutomataClassifier(configuration: MLModelConfiguration())
                         let prediction = try classifier.prediction(input: input)
                         print(prediction.labelProbability)
-                        if let automataShapeType = AutomataShapeType(rawValue: prediction.label) {
+                        if let automataShapeType = AutomatonShapeType(rawValue: prediction.label) {
                             switch automataShapeType {
                             case .arrow:
                                 promise(.success(.transition(stroke)))
