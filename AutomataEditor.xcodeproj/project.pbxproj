@@ -10,6 +10,7 @@
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F815A41625EBA827002C44DE /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* Transition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
+		F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */; };
 		F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F81641CA25E940BE00F49800 /* ComposableArchitecture */; };
 		F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641CF25E9419800F49800 /* UIImage+Extra.swift */; };
 		F81641D825E9425F00F49800 /* EditorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641D725E9425F00F49800 /* EditorStore.swift */; };
@@ -38,6 +39,7 @@
 		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
 		F815A41525EBA827002C44DE /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		F815A41925EBA844002C44DE /* AutomatonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonState.swift; sourceTree = "<group>"; };
+		F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Shape.swift"; sourceTree = "<group>"; };
 		F81641CF25E9419800F49800 /* UIImage+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extra.swift"; sourceTree = "<group>"; };
 		F81641D725E9425F00F49800 /* EditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorStore.swift; sourceTree = "<group>"; };
 		F81641DC25EAAA6B00F49800 /* Stroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
 				F815A40625EB99C2002C44DE /* Editor */,
 				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
+				F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */,
 				F815A41525EBA827002C44DE /* Transition.swift */,
 				F815A41925EBA844002C44DE /* AutomatonState.swift */,
 				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
@@ -266,6 +269,7 @@
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
 				F81641E325EB8E6400F49800 /* AutomataClassifierService.swift in Sources */,
+				F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
 				F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,

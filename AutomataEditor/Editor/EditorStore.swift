@@ -21,6 +21,14 @@ struct EditorState: Equatable {
         automatonStates.map(\.scribblePosition) + transitions.map(\.scribblePosition)
     }
     var shouldDeleteLastStroke = false
+    
+    fileprivate var transitionsWithoutEndState: [Transition] {
+        transitions.filter { $0.endState == nil }
+    }
+    
+    fileprivate var transitionsWithoutStartState: [Transition] {
+        transitions.filter { $0.startState == nil }
+    }
 }
 
 enum EditorAction: Equatable {
@@ -32,7 +40,30 @@ enum EditorAction: Equatable {
     case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
 }
 
-let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in    
+let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
+    struct ClosestStateResult {
+        let state: AutomatonState
+        let point: CGPoint
+        let distance: CGFloat
+    }
+    func closestState(from point: CGPoint) -> ClosestStateResult? {
+        let result: (AutomatonState?, CGPoint, CGFloat) = state.automatonStates.reduce((nil, .zero, CGFloat.infinity)) { acc, currentState in
+            let closestPoint = currentState.stroke.controlPoints.closestPoint(from: point)
+            let currentDistance = closestPoint.distance(from: point)
+            return currentDistance < acc.2 ? (currentState, closestPoint, currentDistance) : acc
+        }
+        
+        if let state = result.0 {
+            return ClosestStateResult(
+                state: state,
+                point: result.1,
+                distance: result.2
+            )
+        } else {
+            return nil
+        }
+    }
+    
     switch action {
     case .clear:
         state.automatonStates = []
@@ -76,34 +107,37 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let strokeStartPoint = stroke.controlPoints.first
         else { return .none }
         
-        let (closestStartState, closestStartStatePoint, _): (AutomatonState?, CGPoint, CGFloat) = state.automatonStates.reduce((nil, .zero, CGFloat.infinity)) { acc, currentState in
-            let closestPoint = currentState.stroke.controlPoints.reduce((CGPoint.zero, CGFloat.infinity)) { acc, current in
-                let currentDistance = (pow(strokeStartPoint.x - current.x, 2) + pow(strokeStartPoint.y - current.y, 2))
-                return currentDistance < acc.1 ? (current, currentDistance) : acc
-            }
-            .0
-            let currentDistance = (pow(strokeStartPoint.x - closestPoint.x, 2) + pow(strokeStartPoint.y - closestPoint.y, 2))
-            return currentDistance < acc.2 ? (currentState, closestPoint, currentDistance) : acc
-        }
+        let closestStartStateResult = closestState(from: strokeStartPoint)
         
+        let furthestPoint = stroke.controlPoints.furthestPoint(from: closestStartStateResult?.point ?? strokeStartPoint)
+        let closestEndStateResult = closestState(
+            from: furthestPoint
+        )
         
         let startPoint: CGPoint
-        if let closestStartState = closestStartState {
-            startPoint = closestStartStatePoint
+        let tipPoint: CGPoint
+        let startState: AutomatonState?
+        let endState: AutomatonState?
+        if
+            let closestStartStateResult = closestStartStateResult,
+            let closestEndStateResult = closestEndStateResult,
+            closestStartStateResult.state == closestEndStateResult.state {
+            let startIsCloser = closestStartStateResult.distance < closestEndStateResult.distance
+            startPoint = startIsCloser ? closestStartStateResult.point : strokeStartPoint
+            tipPoint = startIsCloser ? furthestPoint : closestEndStateResult.point
+            startState = startIsCloser ? closestStartStateResult.state : nil
+            endState = startIsCloser ? nil : closestEndStateResult.state
         } else {
-            startPoint = strokeStartPoint
+            startPoint = closestStartStateResult?.point ?? strokeStartPoint
+            tipPoint = closestEndStateResult?.point ?? furthestPoint
+            startState = closestStartStateResult?.state
+            endState = closestEndStateResult?.state
         }
-        
-        let tipPoint: CGPoint = stroke.controlPoints.reduce((CGPoint.zero, CGFloat(0))) { acc, current in
-            let currentDistance = (pow(startPoint.x - current.x, 2) + pow(startPoint.y - current.y, 2))
-            return currentDistance > acc.1 ? (current, currentDistance) : acc
-        }
-        .0
         
         state.transitions.append(
             Transition(
-                startState: closestStartState,
-                endState: nil,
+                startState: startState,
+                endState: endState,
                 scribblePosition: CGPoint(
                     x: (startPoint.x + tipPoint.x) / 2,
                     y: (startPoint.y + tipPoint.y) / 2 - 50
@@ -133,37 +167,26 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     return .none
 }
 
-extension Array where Element == CGPoint {
-    static func circle(
-        center: CGPoint,
-        radius: CGFloat
-    ) -> Self {
-        stride(from: CGFloat(0), to: 362, by: 2).map { index in
-            let radians = index * CGFloat.pi / 180
+extension CGPoint {
+    func distance(from other: CGPoint) -> CGFloat {
+        pow(other.x - x, 2) + pow(other.y - y, 2)
+    }
+}
 
-            return CGPoint(
-                x: CGFloat(center.x + radius * cos(radians)),
-                y: CGFloat(center.y + radius * sin(radians))
-            )
+extension Array where Element == CGPoint {
+    func closestPoint(from point: CGPoint) -> CGPoint {
+        reduce((CGPoint.zero, CGFloat.infinity)) { acc, current in
+            let currentDistance = current.distance(from: point)
+            return currentDistance < acc.1 ? (current, currentDistance) : acc
         }
+        .0
     }
     
-    static func arrow(
-        startPoint: CGPoint,
-        tipPoint: CGPoint
-    ) -> Self {
-        [
-            startPoint,
-            tipPoint,
-            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y + 0.1),
-            CGPoint(x: tipPoint.x - 1, y: tipPoint.y + 1),
-            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-            CGPoint(x: tipPoint.x - 20, y: tipPoint.y + 30),
-            tipPoint,
-            CGPoint(x: tipPoint.x - 0.1, y: tipPoint.y - 0.1),
-            CGPoint(x: tipPoint.x - 1, y: tipPoint.y - 1),
-            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-            CGPoint(x: tipPoint.x - 20, y: tipPoint.y - 30),
-        ]
+    func furthestPoint(from point: CGPoint) -> CGPoint {
+        reduce((CGPoint.zero, -CGFloat.infinity)) { acc, current in
+            let currentDistance = current.distance(from: point)
+            return currentDistance > acc.1 ? (current, currentDistance) : acc
+        }
+        .0
     }
 }
