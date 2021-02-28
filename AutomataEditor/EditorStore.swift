@@ -14,11 +14,15 @@ struct EditorState: Equatable {
     var strokes: [Stroke] {
         automatonStates.map(\.stroke) + transitions.map(\.stroke)
     }
+    var scribblePositions: [CGPoint] {
+        automatonStates.map(\.scribblePosition)
+    }
     var shouldDeleteLastStroke = false
 }
 
 enum EditorAction: Equatable {
     case clear
+    case stateSymbolChanged(AutomatonState, String)
     case strokesChanged([Stroke])
     case shouldDeleteLastStrokeChanged(Bool)
 }
@@ -48,6 +52,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
 
         state.automatonStates.append(
             AutomatonState(
+                scribblePosition: center,
                 stroke: Stroke(controlPoints: controlPoints)
             )
         )
@@ -57,6 +62,11 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .clear:
         state.automatonStates = []
         state.transitions = []
+    case let .stateSymbolChanged(automatonState, symbol):
+        guard
+            let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonState.id })
+        else { return .none }
+        state.automatonStates[automatonIndex].symbol = symbol
     case let .strokesChanged(strokes):
         guard let stroke = strokes.last else { return .none }
         

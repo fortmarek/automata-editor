@@ -1,7 +1,7 @@
 import CoreGraphics
 import PencilKit
 
-struct Stroke: Equatable {
+struct Stroke: Equatable, Hashable {
     let controlPoints: [CGPoint]
     
     init(
