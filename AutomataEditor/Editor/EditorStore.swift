@@ -15,7 +15,7 @@ struct EditorState: Equatable {
     var automatonStates: [AutomatonState] = []
     var transitions: [Transition] = []
     var strokes: [Stroke] {
-        automatonStates.map(\.stroke) + transitions.map(\.stroke)
+        automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
     var scribblePositions: [CGPoint] {
         automatonStates.map(\.scribblePosition) + transitions.map(\.scribblePosition)
@@ -79,29 +79,47 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         else { return .none }
         state.transitions[transitionIndex].symbol = symbol
     case let .automataShapeClassified(.success(.state(stroke))):
-        let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = stroke.controlPoints
-            .reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
-                (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
-            }
-        let center = CGPoint(x: sumX / count, y: sumY / count)
+        let center = stroke.controlPoints.center()
 
-        let sumDistance = stroke.controlPoints
-            .reduce(0) { acc, current in
-                acc + abs(center.x - current.x) + abs(center.y - current.y)
-            }
-        let radius = sumDistance / count
+        let radius = stroke.controlPoints.radius(with: center)
 
         let controlPoints: [CGPoint] = .circle(
             center: center,
             radius: radius
         )
-
-        state.automatonStates.append(
-            AutomatonState(
-                scribblePosition: center,
-                stroke: Stroke(controlPoints: controlPoints)
+        
+        if
+            let minX = controlPoints.min(by: { $0.x < $1.x })?.x,
+            let maxX = controlPoints.max(by: { $0.x < $1.x })?.x,
+            let minY = controlPoints.min(by: { $0.y < $1.y })?.y,
+            let maxY = controlPoints.max(by: { $0.y < $1.y })?.y,
+            let stateIndex = state.automatonStates.firstIndex(
+                where: {
+                    CGRect(
+                        x: minX,
+                        y: minY,
+                        width: maxX - minX,
+                        height: maxY - minY
+                    )
+                    .contains($0.stroke.controlPoints.center())
+                }
+            ) {
+            let controlPoints = state.automatonStates[stateIndex].stroke.controlPoints
+            let center = controlPoints.center()
+            state.automatonStates[stateIndex].endStroke = Stroke(
+                controlPoints: .circle(
+                    center: center,
+                    radius: controlPoints.radius(with: center)
+                )
             )
-        )
+        } else {
+            state.automatonStates.append(
+                AutomatonState(
+                    scribblePosition: center,
+                    stroke: Stroke(controlPoints: controlPoints)
+                )
+            )
+        }
     case let .automataShapeClassified(.success(.transition(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first
@@ -188,5 +206,19 @@ extension Array where Element == CGPoint {
             return currentDistance > acc.1 ? (current, currentDistance) : acc
         }
         .0
+    }
+    
+    func center() -> CGPoint {
+        let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
+                (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
+            }
+        return CGPoint(x: sumX / count, y: sumY / count)
+    }
+    
+    func radius(with center: CGPoint) -> CGFloat {
+        let sumDistance = reduce(0) { acc, current in
+                acc + abs(center.x - current.x) + abs(center.y - current.y)
+            }
+        return sumDistance / CGFloat(count)
     }
 }

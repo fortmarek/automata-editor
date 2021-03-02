@@ -103,6 +103,48 @@ final class EditorTests: XCTestCase {
                             )
                         ) {
                             $0.transitions[0].symbol = "A"
+                        },
+                        .do {
+                            stubShapeType = .circle
+                        },
+                        .send(
+                            .strokesChanged(
+                                [
+                                    Stroke(
+                                        controlPoints: [
+                                            CGPoint(x: 0, y: -2),
+                                            CGPoint(x: 2, y: 0),
+                                            CGPoint(x: 0, y: 2),
+                                            CGPoint(x: -2, y: 0),
+                                        ]
+                                    )
+                                ]
+                            )
+                        ),
+                        .do { self.scheduler.advance() },
+                        .receive(
+                            .automataShapeClassified(
+                                .success(
+                                    .state(
+                                        Stroke(
+                                            controlPoints: [
+                                                CGPoint(x: 0, y: -2),
+                                                CGPoint(x: 2, y: 0),
+                                                CGPoint(x: 0, y: 2),
+                                                CGPoint(x: -2, y: 0),
+                                            ]
+                                        )
+                                    )
+                                )
+                            )
+                        ) {
+                            let center = $0.automatonStates[0].stroke.controlPoints.center()
+                            $0.automatonStates[0].endStroke = Stroke(
+                                controlPoints: .circle(
+                                    center: center,
+                                    radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center)
+                                )
+                            )
                         }
                     ]
             )
