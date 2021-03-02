@@ -104,12 +104,16 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     .contains($0.stroke.controlPoints.center())
                 }
             ) {
+            guard state.automatonStates[stateIndex].endStroke == nil else {
+                state.shouldDeleteLastStroke = true
+                return .none
+            }
             let controlPoints = state.automatonStates[stateIndex].stroke.controlPoints
             let center = controlPoints.center()
             state.automatonStates[stateIndex].endStroke = Stroke(
                 controlPoints: .circle(
                     center: center,
-                    radius: controlPoints.radius(with: center)
+                    radius: controlPoints.radius(with: center) * 0.7
                 )
             )
         } else {
