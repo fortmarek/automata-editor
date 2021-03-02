@@ -1,0 +1,3 @@
+[submodule "automata-library"]
+	path = automata-library
+	url = https://gitlab.fit.cvut.cz/fortmare/automata-library/
