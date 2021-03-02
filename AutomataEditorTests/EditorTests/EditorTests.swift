@@ -142,7 +142,7 @@ final class EditorTests: XCTestCase {
                             $0.automatonStates[0].endStroke = Stroke(
                                 controlPoints: .circle(
                                     center: center,
-                                    radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center)
+                                    radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center) * 0.7
                                 )
                             )
                         }
