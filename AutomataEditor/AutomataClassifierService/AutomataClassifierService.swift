@@ -15,7 +15,6 @@ struct AutomataClassifierService {
     let recognizeStroke: (Stroke) -> Effect<AutomatonShape, AutomataClassifierError>
 }
 
-#if DEBUG
 extension AutomataClassifierService {
     static let successfulTransition = Self(
         recognizeStroke: { stroke in
@@ -56,4 +55,3 @@ extension AutomataClassifierService {
         )
     }
 }
-#endif

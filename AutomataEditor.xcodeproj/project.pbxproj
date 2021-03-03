@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F807592125EECC9600E9D369 /* Hex.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592025EECC9600E9D369 /* Hex.mm */; };
+		F807592325EED5D800E9D369 /* ExtendedNFA.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592225EED5D700E9D369 /* ExtendedNFA.mm */; };
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F815A41625EBA827002C44DE /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* Transition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
@@ -23,6 +25,15 @@
 		F85184E825DD1C0C00791701 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85184E725DD1C0C00791701 /* Preview Assets.xcassets */; };
 		F851851A25DD623000791701 /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F851851925DD623000791701 /* CanvasView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
+		F8CF054D25F01D2C00077209 /* ExtendedNFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */; };
+		F8CF055225F01E6900077209 /* libalib2xml.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF052825F0041600077209 /* libalib2xml.dylib */; };
+		F8CF055325F01E6E00077209 /* libalib2str.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF052625F0041100077209 /* libalib2str.dylib */; };
+		F8CF055425F01E7800077209 /* libalib2std.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF052425F0040B00077209 /* libalib2std.dylib */; };
+		F8CF055625F01E8500077209 /* libalib2data.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF052025F003FF00077209 /* libalib2data.dylib */; };
+		F8CF055725F01E8900077209 /* libalib2common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF051E25F003F800077209 /* libalib2common.dylib */; };
+		F8CF055825F01E8F00077209 /* libalib2abstraction.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF051825F003DF00077209 /* libalib2abstraction.dylib */; };
+		F8CF056225F0204E00077209 /* libalib2measure.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF052225F0040600077209 /* libalib2measure.dylib */; };
+		F8CF056925F02E1900077209 /* libalib2abstraction.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF051625F003DF00077209 /* libalib2abstraction.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,7 +46,34 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		F8CF055F25F01EB500077209 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8CF056525F02CD100077209 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		F807591E25EECC7E00E9D369 /* Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hex.h; sourceTree = "<group>"; };
+		F807591F25EECC9600E9D369 /* AutomataEditor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AutomataEditor-Bridging-Header.h"; sourceTree = "<group>"; };
+		F807592025EECC9600E9D369 /* Hex.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hex.mm; sourceTree = "<group>"; };
+		F807592225EED5D700E9D369 /* ExtendedNFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtendedNFA.mm; sourceTree = "<group>"; };
+		F807592425EED5EA00E9D369 /* ExtendedNFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtendedNFA.h; sourceTree = "<group>"; };
 		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
 		F815A41525EBA827002C44DE /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		F815A41925EBA844002C44DE /* AutomatonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonState.swift; sourceTree = "<group>"; };
@@ -55,6 +93,19 @@
 		F85184F425DD1C0D00791701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F851851925DD623000791701 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
+		F8CF051025F003B900077209 /* libalib2measure.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2measure.0.dylib; path = "../automata-library/debug/alib2measure/Release-iphonesimulator/libalib2measure.0.dylib"; sourceTree = "<group>"; };
+		F8CF051125F003B900077209 /* libalib2measure.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2measure.dylib; path = "../automata-library/debug/alib2measure/Release-iphonesimulator/libalib2measure.dylib"; sourceTree = "<group>"; };
+		F8CF051225F003B900077209 /* libalib2measure.0.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2measure.0.0.0.dylib; path = "../automata-library/debug/alib2measure/Release-iphonesimulator/libalib2measure.0.0.0.dylib"; sourceTree = "<group>"; };
+		F8CF051625F003DF00077209 /* libalib2abstraction.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2abstraction.0.dylib; path = "../automata-library/debug/alib2abstraction/Release-iphoneos/libalib2abstraction.0.dylib"; sourceTree = "<group>"; };
+		F8CF051725F003DF00077209 /* libalib2abstraction.0.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2abstraction.0.0.0.dylib; path = "../automata-library/debug/alib2abstraction/Release-iphoneos/libalib2abstraction.0.0.0.dylib"; sourceTree = "<group>"; };
+		F8CF051825F003DF00077209 /* libalib2abstraction.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2abstraction.dylib; path = "../automata-library/debug/alib2abstraction/Release-iphoneos/libalib2abstraction.dylib"; sourceTree = "<group>"; };
+		F8CF051E25F003F800077209 /* libalib2common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2common.dylib; path = "../automata-library/debug/alib2common/Release-iphoneos/libalib2common.dylib"; sourceTree = "<group>"; };
+		F8CF052025F003FF00077209 /* libalib2data.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2data.dylib; path = "../automata-library/debug/alib2data/Release-iphoneos/libalib2data.dylib"; sourceTree = "<group>"; };
+		F8CF052225F0040600077209 /* libalib2measure.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2measure.dylib; path = "../automata-library/debug/alib2measure/Release-iphoneos/libalib2measure.dylib"; sourceTree = "<group>"; };
+		F8CF052425F0040B00077209 /* libalib2std.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2std.dylib; path = "../automata-library/debug/alib2std/Release-iphoneos/libalib2std.dylib"; sourceTree = "<group>"; };
+		F8CF052625F0041100077209 /* libalib2str.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2str.dylib; path = "../automata-library/debug/alib2str/Release-iphoneos/libalib2str.dylib"; sourceTree = "<group>"; };
+		F8CF052825F0041600077209 /* libalib2xml.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libalib2xml.dylib; path = "../automata-library/debug/alib2xml/Release-iphoneos/libalib2xml.dylib"; sourceTree = "<group>"; };
+		F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedNFA.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +114,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */,
+				F8CF056925F02E1900077209 /* libalib2abstraction.0.dylib in Frameworks */,
+				F8CF055825F01E8F00077209 /* libalib2abstraction.dylib in Frameworks */,
+				F8CF055725F01E8900077209 /* libalib2common.dylib in Frameworks */,
+				F8CF055225F01E6900077209 /* libalib2xml.dylib in Frameworks */,
+				F8CF056225F0204E00077209 /* libalib2measure.dylib in Frameworks */,
+				F8CF055325F01E6E00077209 /* libalib2str.dylib in Frameworks */,
+				F8CF055425F01E7800077209 /* libalib2std.dylib in Frameworks */,
+				F8CF055625F01E8500077209 /* libalib2data.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +167,7 @@
 				F85184DF25DD1C0700791701 /* AutomataEditor */,
 				F85184F125DD1C0D00791701 /* AutomataEditorTests */,
 				F85184DE25DD1C0700791701 /* Products */,
+				F8CF050F25F003B900077209 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -136,6 +196,12 @@
 				F85184E425DD1C0C00791701 /* Assets.xcassets */,
 				F85184E925DD1C0C00791701 /* Info.plist */,
 				F85184E625DD1C0C00791701 /* Preview Content */,
+				F807591E25EECC7E00E9D369 /* Hex.h */,
+				F807592025EECC9600E9D369 /* Hex.mm */,
+				F807592425EED5EA00E9D369 /* ExtendedNFA.h */,
+				F807592225EED5D700E9D369 /* ExtendedNFA.mm */,
+				F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */,
+				F807591F25EECC9600E9D369 /* AutomataEditor-Bridging-Header.h */,
 			);
 			path = AutomataEditor;
 			sourceTree = "<group>";
@@ -157,6 +223,25 @@
 			path = AutomataEditorTests;
 			sourceTree = "<group>";
 		};
+		F8CF050F25F003B900077209 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F8CF052825F0041600077209 /* libalib2xml.dylib */,
+				F8CF052625F0041100077209 /* libalib2str.dylib */,
+				F8CF052425F0040B00077209 /* libalib2std.dylib */,
+				F8CF052225F0040600077209 /* libalib2measure.dylib */,
+				F8CF052025F003FF00077209 /* libalib2data.dylib */,
+				F8CF051E25F003F800077209 /* libalib2common.dylib */,
+				F8CF051725F003DF00077209 /* libalib2abstraction.0.0.0.dylib */,
+				F8CF051625F003DF00077209 /* libalib2abstraction.0.dylib */,
+				F8CF051825F003DF00077209 /* libalib2abstraction.dylib */,
+				F8CF051225F003B900077209 /* libalib2measure.0.0.0.dylib */,
+				F8CF051025F003B900077209 /* libalib2measure.0.dylib */,
+				F8CF051125F003B900077209 /* libalib2measure.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -167,6 +252,8 @@
 				F85184D925DD1C0700791701 /* Sources */,
 				F85184DA25DD1C0700791701 /* Frameworks */,
 				F85184DB25DD1C0700791701 /* Resources */,
+				F8CF055F25F01EB500077209 /* Embed Libraries */,
+				F8CF056525F02CD100077209 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -209,6 +296,7 @@
 				TargetAttributes = {
 					F85184DC25DD1C0700791701 = {
 						CreatedOnToolsVersion = 12.3;
+						LastSwiftMigration = 1250;
 					};
 					F85184ED25DD1C0D00791701 = {
 						CreatedOnToolsVersion = 12.3;
@@ -267,11 +355,14 @@
 				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
+				F807592125EECC9600E9D369 /* Hex.mm in Sources */,
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
 				F81641E325EB8E6400F49800 /* AutomataClassifierService.swift in Sources */,
 				F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
+				F8CF054D25F01D2C00077209 /* ExtendedNFA.swift in Sources */,
 				F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */,
+				F807592325EED5D800E9D369 /* ExtendedNFA.mm in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
@@ -418,18 +509,43 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AutomataEditor/Preview Content\"";
 				DEVELOPMENT_TEAM = QH95ER52SG;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2measure/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2xml/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2abstraction/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2common/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2std/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2data/src",
+				);
 				INFOPLIST_FILE = AutomataEditor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"'-std=gnu++17'",
+				);
+				OTHER_LDFLAGS = (
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2abstraction/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2common/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2data/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2std/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2measure/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2str/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2xml/Release-iphoneos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = marekfort.AutomataEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "AutomataEditor/AutomataEditor-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -440,18 +556,42 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AutomataEditor/Preview Content\"";
 				DEVELOPMENT_TEAM = QH95ER52SG;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2measure/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2xml/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2abstraction/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2common/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2std/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2data/src",
+				);
 				INFOPLIST_FILE = AutomataEditor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"'-std=gnu++17'",
+				);
+				OTHER_LDFLAGS = (
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2abstraction/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2common/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2data/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2std/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2measure/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2str/Release-iphoneos",
+					"-L/Users/marekfort/Development/school/thesis/automata-library/debug/alib2xml/Release-iphoneos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = marekfort.AutomataEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "AutomataEditor/AutomataEditor-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
