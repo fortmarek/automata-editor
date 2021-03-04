@@ -1,9 +1,15 @@
-public final class ExtendedNFA {
-    private let automaton = ExtendedNFA_objc()
+final class ExtendedNFA {
+    private let automaton: ExtendedNFA_objc
     
-    public var initialState: String {
-        automaton!.getInitialState()
+    init(
+        initialState: String
+    ) {
+        automaton = ExtendedNFA_objc(
+            initialState
+        )
     }
     
-    public init() {}
+    public var initialState: String {
+        automaton.getInitialState()
+    }
 }
