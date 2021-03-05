@@ -1,28 +1,36 @@
 #import <Foundation/Foundation.h>
 #import "ExtendedNFA.h"
+#import "Transition.h"
 
 #include "automaton/FSM/ExtendedNFA.h"
 
 @implementation ExtendedNFA_objc {
     automaton::ExtendedNFA<NSString*, NSString*>* automaton;
 }
-- (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates {
+- (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates transitions: (NSArray *) transitions {
     self = [super init];
     auto statesSet = [self set: states];
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
     automaton = new automaton::ExtendedNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
     
-    NSString * symbolString = inputAlphabet[0];
-    auto symbol = regexp::FormalRegExpStructure<NSString*>(regexp::FormalRegExpSymbol(symbolString));
-    regexp::UnboundedRegExpStructure<NSString*> structure = regexp::UnboundedRegExpStructure<NSString*>(symbol);
-    automaton->addTransition(initialState, structure, (NSString *)finalStates[0]);
+    [self setTransitions: transitions];
     
     return self;
 }
 
 - (void)dealloc {
     delete automaton;
+}
+
+- (void)setTransitions: (NSArray *) transitions {
+    for (Transition_objc * transition in transitions) {
+        for (NSString * symbolString in transition.symbols) {
+            auto symbol = regexp::FormalRegExpStructure<NSString*>(regexp::FormalRegExpSymbol(symbolString));
+            regexp::UnboundedRegExpStructure<NSString*> structure = regexp::UnboundedRegExpStructure<NSString*>(symbol);
+            automaton->addTransition(transition.fromState, structure, transition.toState);
+        }
+    }
 }
 
 - (ext::set<NSString *>)set: (NSArray*) array {

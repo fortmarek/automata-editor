@@ -7,11 +7,19 @@ final class ExtendedNFA {
         initialState: String,
         finalStates: [String]
     ) {
+        let transitions: [Transition_objc] = [
+            Transition_objc(
+                initialState,
+                toState: finalStates[0],
+                symbols: inputAlphabet
+            ),
+        ]
         automaton = ExtendedNFA_objc(
             states,
             inputAlphabet: inputAlphabet,
             initialState: initialState,
-            finalStates: finalStates
+            finalStates: finalStates,
+            transitions: transitions
         )
     }
     
