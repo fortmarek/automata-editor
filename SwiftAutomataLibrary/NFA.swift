@@ -1,7 +1,7 @@
-final class NFA {
+public final class NFA {
     private let automaton: NFA_objc
     
-    init(
+    public init(
         states: [String],
         inputAlphabet: [String],
         initialState: String,
@@ -23,17 +23,7 @@ final class NFA {
         )
     }
     
-    public var initialState: String {
-        print("Final: ", automaton.getFinalStates())
-        print("Input alphabet: ", automaton.getInputAlphabet())
-        return automaton.getInitialState()
-    }
-    
-    public var states: [String] {
-        automaton.getStates() as! [String]
-    }
-    
-    func simulate(input: String) -> AutomatonRunResult {
+    public func simulate(input: String) -> AutomatonRunResult {
         guard
             let result = automaton.simulate(input),
             let endStates = result.endStates as? [String]
@@ -46,7 +36,7 @@ final class NFA {
     }
 }
 
-enum AutomatonRunResult {
+public enum AutomatonRunResult {
     case succeeded([String])
     case failed([String])
 }

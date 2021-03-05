@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreGraphics
 import PencilKit
 import CoreML
+import SwiftAutomataLibrary
 
 typealias EditorStore = Store<EditorState, EditorAction>
 typealias EditorViewStore = ViewStore<EditorState, EditorAction>
@@ -72,8 +73,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             initialState: "1",
             finalStates: ["2"]
         )
-        print(extendedNFA.initialState)
-        print(extendedNFA.states)
         print(extendedNFA.simulate(input: "A"))
         state.automatonStates = []
         state.transitions = []
