@@ -6,23 +6,13 @@
 @implementation ExtendedNFA_objc {
     automaton::ExtendedNFA<NSString*, NSString*>* automaton;
 }
-- (instancetype)init: (NSArray*) states initialState:(NSString*) initialState {
+- (instancetype)init: (NSArray*) states initialState:(NSString*) initialState finalStates:(NSArray*) finalStates {
     self = [super init];
     auto inputAlphabet = ext::set<NSString *>({@"A"});
-    auto finalStates = ext::set<NSString *>({});
-//    std::initializer_list<NSString*>(states);
-//    int count = [states count];
-//
-//    for(int i=0; i<count; i++) {
-//        array[i] = [[states objectAtIndex:i] stringValue];
-//    }
-//
-    std::vector<NSString*> a = {};
-    for (NSString * str in states) {
-       a.push_back(str);
-    }
-    auto hello = ext::set<NSString *>(ext::make_iterator_range(a.begin(), a.end()));
-    automaton = new automaton::ExtendedNFA(hello, inputAlphabet, initialState, finalStates);
+
+    auto statesSet = [self set: states];
+    auto finalStatesSet = [self set: finalStates];
+    automaton = new automaton::ExtendedNFA(statesSet, inputAlphabet, initialState, finalStatesSet);
     return self;
 }
 
@@ -30,14 +20,26 @@
     delete automaton;
 }
 
-- (NSArray *) getStates {
-    NSMutableArray * states = [NSMutableArray array];
-    auto iterator = automaton->getStates().begin();
-    while(iterator != automaton->getStates().end()) {
-        [states addObject: *iterator];
+- (ext::set<NSString *>)set: (NSArray*) array {
+    std::vector<NSString*> vector = {};
+    for (NSString * str in array) {
+       vector.push_back(str);
+    }
+    return ext::set<NSString *>(ext::make_iterator_range(vector.begin(), vector.end()));
+}
+
+- (NSArray *) array: (ext::set<NSString *>) set {
+    NSMutableArray * array = [NSMutableArray array];
+    auto iterator = set.begin();
+    while (iterator != automaton-set.end()) {
+        [array addObject: *iterator];
         iterator++;
     }
-    return states;
+    return array;
+}
+
+- (NSArray *) getStates {
+    return [self array: automaton->getStates()];
 }
 
 - (NSString *)getInitialState {

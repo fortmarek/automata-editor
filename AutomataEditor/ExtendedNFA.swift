@@ -3,11 +3,13 @@ final class ExtendedNFA {
     
     init(
         states: [String],
-        initialState: String
+        initialState: String,
+        finalStates: [String]
     ) {
         automaton = ExtendedNFA_objc(
             states,
-            initialState: initialState
+            initialState: initialState,
+            finalStates: finalStates
         )
     }
     

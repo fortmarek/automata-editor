@@ -5,8 +5,8 @@
 
 @interface ExtendedNFA_objc: NSObject
 
-- (instancetype)init: (NSArray*) states initialState:(NSString*) initialState;
-- (NSString*)getInitialState;
+- (instancetype)init: (NSArray*) states initialState:(NSString*) initialState finalStates:(NSArray*) finalStates;
+- (NSString*) getInitialState;
 - (NSArray *) getStates;
 
 @end
