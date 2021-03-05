@@ -39,6 +39,8 @@
 		F876CCB425F15DE500AE92FC /* libalib2str.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F876CCB525F15DE500AE92FC /* libalib2xml.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F876CCBA25F2360100AE92FC /* Transition.m in Sources */ = {isa = PBXBuildFile; fileRef = F876CCB925F2360100AE92FC /* Transition.m */; };
+		F876CCC525F25BEA00AE92FC /* libalib2algo.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; };
+		F876CCC625F25C0400AE92FC /* libalib2algo.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 		F8CF054D25F01D2C00077209 /* ExtendedNFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */; };
 /* End PBXBuildFile section */
@@ -60,6 +62,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F876CCC625F25C0400AE92FC /* libalib2algo.0.dylib in Embed Libraries */,
 				F876CCB025F15DE500AE92FC /* libalib2abstraction.0.dylib in Embed Libraries */,
 				F876CCB125F15DE500AE92FC /* libalib2common.0.dylib in Embed Libraries */,
 				F876CCB225F15DE500AE92FC /* libalib2data.0.dylib in Embed Libraries */,
@@ -115,6 +118,7 @@
 		F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2str.0.dylib; sourceTree = "<group>"; };
 		F876CCB825F2359700AE92FC /* Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transition.h; sourceTree = "<group>"; };
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
+		F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2algo.0.dylib; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
 		F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedNFA.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +134,7 @@
 				F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */,
 				F876CCAB25F15DDF00AE92FC /* libalib2abstraction.0.dylib in Frameworks */,
 				F876CCAF25F15DDF00AE92FC /* libalib2str.0.dylib in Frameworks */,
+				F876CCC525F25BEA00AE92FC /* libalib2algo.0.dylib in Frameworks */,
 				F876CC9F25F15D0500AE92FC /* libalib2std.0.dylib in Frameworks */,
 				F876CCAC25F15DDF00AE92FC /* libalib2data.0.dylib in Frameworks */,
 			);
@@ -174,6 +179,7 @@
 		F85184D425DD1C0600791701 = {
 			isa = PBXGroup;
 			children = (
+				F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */,
 				F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */,
 				F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */,
 				F876CCA725F15DDE00AE92FC /* libalib2common.0.dylib */,
