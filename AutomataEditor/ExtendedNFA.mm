@@ -12,6 +12,12 @@
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
     automaton = new automaton::ExtendedNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
+    
+    NSString * symbolString = inputAlphabet[0];
+    auto symbol = regexp::FormalRegExpStructure<NSString*>(regexp::FormalRegExpSymbol(symbolString));
+    regexp::UnboundedRegExpStructure<NSString*> structure = regexp::UnboundedRegExpStructure<NSString*>(symbol);
+    automaton->addTransition(initialState, structure, (NSString *)finalStates[0]);
+    
     return self;
 }
 
@@ -54,3 +60,20 @@
 }
 
 @end
+
+template < >
+struct ext::compare < NSString * > {
+
+    /**
+     * \brief
+     * Implementation of the three-way comparison
+     *
+     * \param first the left operand of the comparison
+     * \param second the right operand of the comparison
+     *
+     * \return negative value of left < right, positive value if left > right, zero if left == right
+     */
+    int operator ( ) ( NSString * first, NSString * second ) const {
+        return [first intValue] - [second intValue];
+    }
+};
