@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F807592125EECC9600E9D369 /* Hex.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592025EECC9600E9D369 /* Hex.mm */; };
-		F807592325EED5D800E9D369 /* ExtendedNFA.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592225EED5D700E9D369 /* ExtendedNFA.mm */; };
+		F807592325EED5D800E9D369 /* NFA.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592225EED5D700E9D369 /* NFA.mm */; };
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F815A41625EBA827002C44DE /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* Transition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
@@ -42,7 +42,7 @@
 		F876CCC525F25BEA00AE92FC /* libalib2algo.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; };
 		F876CCC625F25C0400AE92FC /* libalib2algo.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
-		F8CF054D25F01D2C00077209 /* ExtendedNFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */; };
+		F8CF054D25F01D2C00077209 /* NFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* NFA.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,8 +89,8 @@
 		F807591E25EECC7E00E9D369 /* Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hex.h; sourceTree = "<group>"; };
 		F807591F25EECC9600E9D369 /* AutomataEditor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AutomataEditor-Bridging-Header.h"; sourceTree = "<group>"; };
 		F807592025EECC9600E9D369 /* Hex.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hex.mm; sourceTree = "<group>"; };
-		F807592225EED5D700E9D369 /* ExtendedNFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtendedNFA.mm; sourceTree = "<group>"; };
-		F807592425EED5EA00E9D369 /* ExtendedNFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtendedNFA.h; sourceTree = "<group>"; };
+		F807592225EED5D700E9D369 /* NFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NFA.mm; sourceTree = "<group>"; };
+		F807592425EED5EA00E9D369 /* NFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
 		F815A41525EBA827002C44DE /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		F815A41925EBA844002C44DE /* AutomatonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonState.swift; sourceTree = "<group>"; };
@@ -120,7 +120,7 @@
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
 		F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2algo.0.dylib; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
-		F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedNFA.swift; sourceTree = "<group>"; };
+		F8CF054C25F01D2C00077209 /* NFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFA.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,11 +221,11 @@
 				F85184E625DD1C0C00791701 /* Preview Content */,
 				F807591E25EECC7E00E9D369 /* Hex.h */,
 				F807592025EECC9600E9D369 /* Hex.mm */,
-				F807592425EED5EA00E9D369 /* ExtendedNFA.h */,
-				F807592225EED5D700E9D369 /* ExtendedNFA.mm */,
+				F807592425EED5EA00E9D369 /* NFA.h */,
+				F807592225EED5D700E9D369 /* NFA.mm */,
 				F876CCB825F2359700AE92FC /* Transition.h */,
 				F876CCB925F2360100AE92FC /* Transition.m */,
-				F8CF054C25F01D2C00077209 /* ExtendedNFA.swift */,
+				F8CF054C25F01D2C00077209 /* NFA.swift */,
 				F807591F25EECC9600E9D369 /* AutomataEditor-Bridging-Header.h */,
 			);
 			path = AutomataEditor;
@@ -374,9 +374,9 @@
 				F81641E325EB8E6400F49800 /* AutomataClassifierService.swift in Sources */,
 				F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
-				F8CF054D25F01D2C00077209 /* ExtendedNFA.swift in Sources */,
+				F8CF054D25F01D2C00077209 /* NFA.swift in Sources */,
 				F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */,
-				F807592325EED5D800E9D369 /* ExtendedNFA.mm in Sources */,
+				F807592325EED5D800E9D369 /* NFA.mm in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
@@ -541,6 +541,7 @@
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2measure/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2str/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2xml/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2algo/src",
 				);
 				INFOPLIST_FILE = AutomataEditor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -589,6 +590,7 @@
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2measure/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2str/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2xml/src",
+					"/Users/marekfort/Development/school/thesis/automata-library/alib2algo/src",
 				);
 				INFOPLIST_FILE = AutomataEditor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;

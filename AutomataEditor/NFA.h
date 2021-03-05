@@ -3,7 +3,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ExtendedNFA_objc: NSObject
+@interface NFA_objc: NSObject
 
 - (instancetype)init: (NSArray *) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString *) initialState finalStates:(NSArray *) finalStates transitions: (NSArray *) transitions;
 - (NSString *) getInitialState;

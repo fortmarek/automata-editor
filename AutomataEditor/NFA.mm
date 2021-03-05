@@ -2,20 +2,21 @@
 #import "ExtendedNFA.h"
 #import "Transition.h"
 
-#include "automaton/FSM/ExtendedNFA.h"
+#include "automaton/FSM/NFA.h"
+#include "automaton/run/Run.h"
 
-@implementation ExtendedNFA_objc {
-    automaton::ExtendedNFA<NSString*, NSString*>* automaton;
+@implementation NFA_objc {
+    automaton::NFA<NSString*, NSString*>* automaton;
 }
 - (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates transitions: (NSArray *) transitions {
     self = [super init];
     auto statesSet = [self set: states];
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
-    automaton = new automaton::ExtendedNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
+    automaton = new automaton::NFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
     
     [self setTransitions: transitions];
-    
+
     return self;
 }
 
@@ -26,9 +27,7 @@
 - (void)setTransitions: (NSArray *) transitions {
     for (Transition_objc * transition in transitions) {
         for (NSString * symbolString in transition.symbols) {
-            auto symbol = regexp::FormalRegExpStructure<NSString*>(regexp::FormalRegExpSymbol(symbolString));
-            regexp::UnboundedRegExpStructure<NSString*> structure = regexp::UnboundedRegExpStructure<NSString*>(symbol);
-            automaton->addTransition(transition.fromState, structure, transition.toState);
+            automaton->addTransition(transition.fromState, symbolString, transition.toState);
         }
     }
 }
@@ -39,6 +38,14 @@
        vector.push_back(str);
     }
     return ext::set<NSString *>(ext::make_iterator_range(vector.begin(), vector.end()));
+}
+
+- (ext::vector<NSString *>)vector: (NSArray*) array {
+    ext::vector<NSString*> vector = {};
+    for (NSString * str in array) {
+       vector.push_back(str);
+    }
+    return vector;
 }
 
 - (NSArray *) array: (ext::set<NSString *>) set {

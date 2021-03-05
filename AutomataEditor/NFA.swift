@@ -1,5 +1,5 @@
-final class ExtendedNFA {
-    private let automaton: ExtendedNFA_objc
+final class NFA {
+    private let automaton: NFA_objc
     
     init(
         states: [String],
@@ -14,7 +14,7 @@ final class ExtendedNFA {
                 symbols: inputAlphabet
             ),
         ]
-        automaton = ExtendedNFA_objc(
+        automaton = NFA_objc(
             states,
             inputAlphabet: inputAlphabet,
             initialState: initialState,
