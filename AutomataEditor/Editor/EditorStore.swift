@@ -67,9 +67,11 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     switch action {
     case .clear:
         let extendedNFA = ExtendedNFA(
+            states: ["1", "2"],
             initialState: "1"
         )
         print(extendedNFA.initialState)
+        print(extendedNFA.states)
         state.automatonStates = []
         state.transitions = []
     case let .stateSymbolChanged(automatonState, symbol):
