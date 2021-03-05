@@ -3,18 +3,22 @@ final class ExtendedNFA {
     
     init(
         states: [String],
+        inputAlphabet: [String],
         initialState: String,
         finalStates: [String]
     ) {
         automaton = ExtendedNFA_objc(
             states,
+            inputAlphabet: inputAlphabet,
             initialState: initialState,
             finalStates: finalStates
         )
     }
     
     public var initialState: String {
-        automaton.getInitialState()
+        print("Final: ", automaton.getFinalStates())
+        print("Input alphabet: ", automaton.getInputAlphabet())
+        return automaton.getInitialState()
     }
     
     public var states: [String] {

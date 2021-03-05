@@ -68,6 +68,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .clear:
         let extendedNFA = ExtendedNFA(
             states: ["1", "2"],
+            inputAlphabet: ["A", "B"],
             initialState: "1",
             finalStates: ["2"]
         )

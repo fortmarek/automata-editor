@@ -6,13 +6,12 @@
 @implementation ExtendedNFA_objc {
     automaton::ExtendedNFA<NSString*, NSString*>* automaton;
 }
-- (instancetype)init: (NSArray*) states initialState:(NSString*) initialState finalStates:(NSArray*) finalStates {
+- (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates {
     self = [super init];
-    auto inputAlphabet = ext::set<NSString *>({@"A"});
-
     auto statesSet = [self set: states];
+    auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
-    automaton = new automaton::ExtendedNFA(statesSet, inputAlphabet, initialState, finalStatesSet);
+    automaton = new automaton::ExtendedNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
     return self;
 }
 
@@ -31,11 +30,19 @@
 - (NSArray *) array: (ext::set<NSString *>) set {
     NSMutableArray * array = [NSMutableArray array];
     auto iterator = set.begin();
-    while (iterator != automaton-set.end()) {
+    while (iterator != set.end()) {
         [array addObject: *iterator];
         iterator++;
     }
     return array;
+}
+
+- (NSArray *) getFinalStates {
+    return [self array: automaton->getFinalStates()];
+}
+
+- (NSArray *) getInputAlphabet {
+    return [self array: automaton->getInputAlphabet()];
 }
 
 - (NSArray *) getStates {
