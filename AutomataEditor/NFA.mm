@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
-#import "ExtendedNFA.h"
 #import "Transition.h"
+#import "NFA.h"
+#import "AutomatonRunResult.h"
 
 #include "automaton/FSM/NFA.h"
 #include "automaton/run/Run.h"
@@ -14,7 +15,7 @@
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
     automaton = new automaton::NFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
-    
+
     [self setTransitions: transitions];
 
     return self;
@@ -22,6 +23,13 @@
 
 - (void)dealloc {
     delete automaton;
+}
+
+- (AutomatonRunResult *)simulate: (NSString *) input {
+    ext::vector<NSString*> inputVector = {input};
+    auto linearString = string::LinearString(automaton->getInputAlphabet(), inputVector);
+    auto result = automaton::run::Run::calculateStates(*automaton, linearString);
+    return [[AutomatonRunResult alloc] initWithSucceeded:std::get<0>(result) endStates:[self array: std::get<1>(result)]];
 }
 
 - (void)setTransitions: (NSArray *) transitions {

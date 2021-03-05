@@ -32,4 +32,21 @@ final class NFA {
     public var states: [String] {
         automaton.getStates() as! [String]
     }
+    
+    func simulate(input: String) -> AutomatonRunResult {
+        guard
+            let result = automaton.simulate(input),
+            let endStates = result.endStates as? [String]
+        else { return .failed([]) }
+        if result.succeeded {
+            return .succeeded(endStates)
+        } else {
+            return .failed(endStates)
+        }
+    }
+}
+
+enum AutomatonRunResult {
+    case succeeded([String])
+    case failed([String])
 }
