@@ -1,6 +1,6 @@
 import UIKit
 
-struct Transition: Equatable, Identifiable {
+struct AutomatonTransition: Equatable, Identifiable {
     let startState: AutomatonState?
     let endState: AutomatonState?
     var symbol: String = ""

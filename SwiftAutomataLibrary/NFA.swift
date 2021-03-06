@@ -1,19 +1,37 @@
-public final class NFA {
+public struct Transition {
+    public let fromState: String
+    public let toState: String
+    public let symbols: [String]
+    
+    public init(
+        fromState: String,
+        toState: String,
+        symbols: [String]
+    ) {
+        self.fromState = fromState
+        self.toState = toState
+        self.symbols = symbols
+    }
+}
+
+public struct NFA {
     private let automaton: NFA_objc
     
     public init(
         states: [String],
         inputAlphabet: [String],
         initialState: String,
-        finalStates: [String]
+        finalStates: [String],
+        transitions: [Transition]
     ) {
-        let transitions: [Transition_objc] = [
-            Transition_objc(
-                initialState,
-                toState: finalStates[0],
-                symbols: inputAlphabet
-            ),
-        ]
+        let transitions: [Transition_objc] = transitions
+            .map {
+                Transition_objc(
+                    $0.fromState,
+                    toState: $0.toState,
+                    symbols: $0.symbols
+                )
+            }
         automaton = NFA_objc(
             states,
             inputAlphabet: inputAlphabet,

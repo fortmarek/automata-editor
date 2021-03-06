@@ -49,6 +49,9 @@ struct EditorView: View {
 
                 }
                 HStack {
+                    Button("Simulate") {
+                        viewStore.send(.simulateInput("A"))
+                    }
                     Button("Clear") {
                         viewStore.send(.clear)
                     }
@@ -110,6 +113,8 @@ struct ContentView_Previews: PreviewProvider {
                 reducer: editorReducer,
                 environment: EditorEnvironment(
                     automataClassifierService: .successfulTransition,
+                    // TODO: Use mock
+                    automataLibraryService: .live(),
                     mainQueue: DispatchQueue.main.eraseToAnyScheduler()
                 )
             )

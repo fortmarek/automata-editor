@@ -67,7 +67,7 @@ final class EditorTests: XCTestCase {
                             )
                         ) {
                             $0.transitions = [
-                                Transition(
+                                AutomatonTransition(
                                     startState: $0.automatonStates[0],
                                     endState: nil,
                                     scribblePosition: CGPoint(
@@ -85,7 +85,7 @@ final class EditorTests: XCTestCase {
                         },
                         .send(
                             .transitionSymbolChanged(
-                                Transition(
+                                AutomatonTransition(
                                     startState: nil,
                                     endState: nil,
                                     scribblePosition: CGPoint(

@@ -11,6 +11,7 @@ struct AutomataEditorApp: App {
                     reducer: editorReducer,
                     environment: EditorEnvironment(
                         automataClassifierService: .live(),
+                        automataLibraryService: .live(),
                         mainQueue: DispatchQueue.main.eraseToAnyScheduler()
                     )
                 )

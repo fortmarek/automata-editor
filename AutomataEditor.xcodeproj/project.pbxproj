@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
-		F815A41625EBA827002C44DE /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* Transition.swift */; };
+		F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* AutomatonTransition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
 		F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */; };
 		F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F81641CA25E940BE00F49800 /* ComposableArchitecture */; };
@@ -46,6 +46,8 @@
 		F856E09225F27B8900905BED /* libalib2xml.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F856E0BA25F280EF00905BED /* NFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* NFA.swift */; };
 		F856E0CC25F2826300905BED /* SwiftAutomataLibrary-BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */; };
+		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
+		F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 /* End PBXBuildFile section */
 
@@ -113,7 +115,7 @@
 		F807592225EED5D700E9D369 /* NFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NFA.mm; sourceTree = "<group>"; };
 		F807592425EED5EA00E9D369 /* NFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
-		F815A41525EBA827002C44DE /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
+		F815A41525EBA827002C44DE /* AutomatonTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonTransition.swift; sourceTree = "<group>"; };
 		F815A41925EBA844002C44DE /* AutomatonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonState.swift; sourceTree = "<group>"; };
 		F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Shape.swift"; sourceTree = "<group>"; };
 		F81641CF25E9419800F49800 /* UIImage+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extra.swift"; sourceTree = "<group>"; };
@@ -133,6 +135,8 @@
 		F856E05D25F27AB200905BED /* SwiftAutomataLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftAutomataLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F856E06025F27AB200905BED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftAutomataLibrary-BridgingHeader.h"; sourceTree = "<group>"; };
+		F856E0D025F283AF00905BED /* AutomataLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryService.swift; sourceTree = "<group>"; };
+		F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryServiceLive.swift; sourceTree = "<group>"; };
 		F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2std.0.dylib; sourceTree = "<group>"; };
 		F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2xml.0.dylib; sourceTree = "<group>"; };
 		F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2abstraction.0.dylib; sourceTree = "<group>"; };
@@ -242,13 +246,14 @@
 		F85184DF25DD1C0700791701 /* AutomataEditor */ = {
 			isa = PBXGroup;
 			children = (
+				F856E0CF25F2839900905BED /* AutomataLibraryService */,
 				F81641E125EB8E4300F49800 /* AutomataClassifierService */,
 				F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */,
 				F85184E025DD1C0800791701 /* AutomataEditorApp.swift */,
 				F815A40625EB99C2002C44DE /* Editor */,
 				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
 				F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */,
-				F815A41525EBA827002C44DE /* Transition.swift */,
+				F815A41525EBA827002C44DE /* AutomatonTransition.swift */,
 				F815A41925EBA844002C44DE /* AutomatonState.swift */,
 				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
 				F851851925DD623000791701 /* CanvasView.swift */,
@@ -292,6 +297,15 @@
 				F856E06025F27AB200905BED /* Info.plist */,
 			);
 			path = SwiftAutomataLibrary;
+			sourceTree = "<group>";
+		};
+		F856E0CF25F2839900905BED /* AutomataLibraryService */ = {
+			isa = PBXGroup;
+			children = (
+				F856E0D025F283AF00905BED /* AutomataLibraryService.swift */,
+				F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */,
+			);
+			path = AutomataLibraryService;
 			sourceTree = "<group>";
 		};
 		F8CF050F25F003B900077209 /* Frameworks */ = {
@@ -452,7 +466,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F815A41625EBA827002C44DE /* Transition.swift in Sources */,
+				F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */,
+				F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */,
 				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
@@ -462,6 +477,7 @@
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
 				F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
+				F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
 			);

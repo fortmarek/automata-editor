@@ -9,12 +9,13 @@ typealias EditorViewStore = ViewStore<EditorState, EditorAction>
 
 struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
+    let automataLibraryService: AutomataLibraryService
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
 struct EditorState: Equatable {
     var automatonStates: [AutomatonState] = []
-    var transitions: [Transition] = []
+    var transitions: [AutomatonTransition] = []
     var strokes: [Stroke] {
         automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
@@ -23,19 +24,30 @@ struct EditorState: Equatable {
     }
     var shouldDeleteLastStroke = false
     
-    fileprivate var transitionsWithoutEndState: [Transition] {
+    fileprivate var transitionsWithoutEndState: [AutomatonTransition] {
         transitions.filter { $0.endState == nil }
     }
     
-    fileprivate var transitionsWithoutStartState: [Transition] {
+    fileprivate var transitionsWithoutStartState: [AutomatonTransition] {
         transitions.filter { $0.startState == nil }
+    }
+    
+    fileprivate var initialStates: [AutomatonState] {
+        transitionsWithoutStartState
+            .compactMap(\.endState)
+    }
+    
+    fileprivate var finalStates: [AutomatonState] {
+        automatonStates.filter { $0.endStroke != nil }
     }
 }
 
 enum EditorAction: Equatable {
     case clear
+    case simulateInput(String)
+    case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState, String)
-    case transitionSymbolChanged(Transition, String)
+    case transitionSymbolChanged(AutomatonTransition, String)
     case strokesChanged([Stroke])
     case shouldDeleteLastStrokeChanged(Bool)
     case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
@@ -67,15 +79,28 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     
     switch action {
     case .clear:
-        let extendedNFA = NFA(
-            states: ["1", "2"],
-            inputAlphabet: ["A", "B"],
-            initialState: "1",
-            finalStates: ["2"]
-        )
-        print(extendedNFA.simulate(input: "A"))
         state.automatonStates = []
         state.transitions = []
+    case let .simulateInput(input):
+        // TODO: Handle no or multiple initial states
+        guard let initialStates = state.initialStates.first else { return .none }
+        return env.automataLibraryService.simulateInput(
+            input,
+            state.automatonStates,
+            initialStates,
+            state.finalStates,
+            // TODO: Let users specify this
+            ["A"],
+            state.transitions
+        )
+        .receive(on: env.mainQueue)
+        .catchToEffect()
+        .map(EditorAction.simulateInputResult)
+        .eraseToEffect()
+    case let .simulateInputResult(.success(endStates)):
+        print("Succeeded with following states: \(endStates)")
+    case let .simulateInputResult(.failure(endStates)):
+        print("Failed with following states: \(endStates)")
     case let .stateSymbolChanged(automatonState, symbol):
         guard
             let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonState.id })
@@ -165,7 +190,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         }
         
         state.transitions.append(
-            Transition(
+            AutomatonTransition(
                 startState: startState,
                 endState: endState,
                 scribblePosition: CGPoint(
