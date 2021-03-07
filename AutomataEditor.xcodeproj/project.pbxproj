@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F815820D25F4F19B00E11150 /* alib2abstraction.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F825F4F07500E11150 /* alib2abstraction.framework */; };
+		F815820E25F4F19B00E11150 /* alib2algo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F725F4F07500E11150 /* alib2algo.framework */; };
+		F815820F25F4F19B00E11150 /* alib2common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F425F4F07500E11150 /* alib2common.framework */; };
+		F815821025F4F19B00E11150 /* alib2data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F625F4F07500E11150 /* alib2data.framework */; };
+		F815821125F4F19B00E11150 /* alib2measure.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F925F4F07500E11150 /* alib2measure.framework */; };
+		F815821225F4F19B00E11150 /* alib2std.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F325F4F07400E11150 /* alib2std.framework */; };
+		F815821325F4F19B00E11150 /* alib2str.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581FA25F4F07500E11150 /* alib2str.framework */; };
+		F815821425F4F19B00E11150 /* alib2xml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F525F4F07500E11150 /* alib2xml.framework */; };
+		F815821525F4F19E00E11150 /* alib2abstraction.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F825F4F07500E11150 /* alib2abstraction.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821625F4F19E00E11150 /* alib2algo.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F725F4F07500E11150 /* alib2algo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821725F4F19E00E11150 /* alib2common.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F425F4F07500E11150 /* alib2common.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821825F4F19E00E11150 /* alib2data.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F625F4F07500E11150 /* alib2data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821925F4F19E00E11150 /* alib2measure.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F925F4F07500E11150 /* alib2measure.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821A25F4F19E00E11150 /* alib2std.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F325F4F07400E11150 /* alib2std.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821B25F4F19E00E11150 /* alib2str.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581FA25F4F07500E11150 /* alib2str.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F815821C25F4F19E00E11150 /* alib2xml.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F81581F525F4F07500E11150 /* alib2xml.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* AutomatonTransition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
@@ -28,22 +44,6 @@
 		F856E06D25F27AC100905BED /* AutomatonRunResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F876CCCC25F26B4C00AE92FC /* AutomatonRunResult.m */; };
 		F856E06E25F27AC100905BED /* Transition.m in Sources */ = {isa = PBXBuildFile; fileRef = F876CCB925F2360100AE92FC /* Transition.m */; };
 		F856E06F25F27AC100905BED /* Hex.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592025EECC9600E9D369 /* Hex.mm */; };
-		F856E07F25F27B6600905BED /* libalib2algo.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; };
-		F856E08025F27B6600905BED /* libalib2std.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */; };
-		F856E08125F27B6600905BED /* libalib2abstraction.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */; };
-		F856E08225F27B6600905BED /* libalib2common.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA725F15DDE00AE92FC /* libalib2common.0.dylib */; };
-		F856E08325F27B6600905BED /* libalib2data.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA625F15DDE00AE92FC /* libalib2data.0.dylib */; };
-		F856E08425F27B6600905BED /* libalib2measure.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA825F15DDE00AE92FC /* libalib2measure.0.dylib */; };
-		F856E08525F27B6600905BED /* libalib2str.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */; };
-		F856E08625F27B6600905BED /* libalib2xml.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */; };
-		F856E08B25F27B8900905BED /* libalib2algo.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E08C25F27B8900905BED /* libalib2std.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E08D25F27B8900905BED /* libalib2abstraction.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E08E25F27B8900905BED /* libalib2common.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA725F15DDE00AE92FC /* libalib2common.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E08F25F27B8900905BED /* libalib2data.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA625F15DDE00AE92FC /* libalib2data.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E09025F27B8900905BED /* libalib2measure.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA825F15DDE00AE92FC /* libalib2measure.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E09125F27B8900905BED /* libalib2str.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F856E09225F27B8900905BED /* libalib2xml.0.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F856E0BA25F280EF00905BED /* NFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* NFA.swift */; };
 		F856E0CC25F2826300905BED /* SwiftAutomataLibrary-BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */; };
 		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
@@ -71,18 +71,18 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		F856E08A25F27B6A00905BED /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F856E08B25F27B8900905BED /* libalib2algo.0.dylib in Copy Frameworks */,
-				F856E08C25F27B8900905BED /* libalib2std.0.dylib in Copy Frameworks */,
-				F856E08D25F27B8900905BED /* libalib2abstraction.0.dylib in Copy Frameworks */,
-				F856E08E25F27B8900905BED /* libalib2common.0.dylib in Copy Frameworks */,
-				F856E08F25F27B8900905BED /* libalib2data.0.dylib in Copy Frameworks */,
-				F856E09025F27B8900905BED /* libalib2measure.0.dylib in Copy Frameworks */,
-				F856E09125F27B8900905BED /* libalib2str.0.dylib in Copy Frameworks */,
-				F856E09225F27B8900905BED /* libalib2xml.0.dylib in Copy Frameworks */,
+				F815821525F4F19E00E11150 /* alib2abstraction.framework in Copy Frameworks */,
+				F815821625F4F19E00E11150 /* alib2algo.framework in Copy Frameworks */,
+				F815821725F4F19E00E11150 /* alib2common.framework in Copy Frameworks */,
+				F815821825F4F19E00E11150 /* alib2data.framework in Copy Frameworks */,
+				F815821925F4F19E00E11150 /* alib2measure.framework in Copy Frameworks */,
+				F815821A25F4F19E00E11150 /* alib2std.framework in Copy Frameworks */,
+				F815821B25F4F19E00E11150 /* alib2str.framework in Copy Frameworks */,
+				F815821C25F4F19E00E11150 /* alib2xml.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,6 +114,14 @@
 		F807592025EECC9600E9D369 /* Hex.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hex.mm; sourceTree = "<group>"; };
 		F807592225EED5D700E9D369 /* NFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NFA.mm; sourceTree = "<group>"; };
 		F807592425EED5EA00E9D369 /* NFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
+		F81581F325F4F07400E11150 /* alib2std.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2std.framework; sourceTree = "<group>"; };
+		F81581F425F4F07500E11150 /* alib2common.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2common.framework; sourceTree = "<group>"; };
+		F81581F525F4F07500E11150 /* alib2xml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2xml.framework; sourceTree = "<group>"; };
+		F81581F625F4F07500E11150 /* alib2data.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2data.framework; sourceTree = "<group>"; };
+		F81581F725F4F07500E11150 /* alib2algo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2algo.framework; sourceTree = "<group>"; };
+		F81581F825F4F07500E11150 /* alib2abstraction.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2abstraction.framework; sourceTree = "<group>"; };
+		F81581F925F4F07500E11150 /* alib2measure.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2measure.framework; sourceTree = "<group>"; };
+		F81581FA25F4F07500E11150 /* alib2str.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = alib2str.framework; sourceTree = "<group>"; };
 		F815A40B25EB9A05002C44DE /* EditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTests.swift; sourceTree = "<group>"; };
 		F815A41525EBA827002C44DE /* AutomatonTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonTransition.swift; sourceTree = "<group>"; };
 		F815A41925EBA844002C44DE /* AutomatonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonState.swift; sourceTree = "<group>"; };
@@ -137,16 +145,8 @@
 		F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftAutomataLibrary-BridgingHeader.h"; sourceTree = "<group>"; };
 		F856E0D025F283AF00905BED /* AutomataLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryService.swift; sourceTree = "<group>"; };
 		F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryServiceLive.swift; sourceTree = "<group>"; };
-		F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2std.0.dylib; sourceTree = "<group>"; };
-		F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2xml.0.dylib; sourceTree = "<group>"; };
-		F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2abstraction.0.dylib; sourceTree = "<group>"; };
-		F876CCA625F15DDE00AE92FC /* libalib2data.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2data.0.dylib; sourceTree = "<group>"; };
-		F876CCA725F15DDE00AE92FC /* libalib2common.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2common.0.dylib; sourceTree = "<group>"; };
-		F876CCA825F15DDE00AE92FC /* libalib2measure.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2measure.0.dylib; sourceTree = "<group>"; };
-		F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2str.0.dylib; sourceTree = "<group>"; };
 		F876CCB825F2359700AE92FC /* Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transition.h; sourceTree = "<group>"; };
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
-		F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libalib2algo.0.dylib; sourceTree = "<group>"; };
 		F876CCCB25F26A8200AE92FC /* AutomatonRunResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomatonRunResult.h; sourceTree = "<group>"; };
 		F876CCCC25F26B4C00AE92FC /* AutomatonRunResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AutomatonRunResult.m; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
@@ -174,14 +174,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F856E07F25F27B6600905BED /* libalib2algo.0.dylib in Frameworks */,
-				F856E08025F27B6600905BED /* libalib2std.0.dylib in Frameworks */,
-				F856E08125F27B6600905BED /* libalib2abstraction.0.dylib in Frameworks */,
-				F856E08225F27B6600905BED /* libalib2common.0.dylib in Frameworks */,
-				F856E08325F27B6600905BED /* libalib2data.0.dylib in Frameworks */,
-				F856E08425F27B6600905BED /* libalib2measure.0.dylib in Frameworks */,
-				F856E08525F27B6600905BED /* libalib2str.0.dylib in Frameworks */,
-				F856E08625F27B6600905BED /* libalib2xml.0.dylib in Frameworks */,
+				F815820D25F4F19B00E11150 /* alib2abstraction.framework in Frameworks */,
+				F815820E25F4F19B00E11150 /* alib2algo.framework in Frameworks */,
+				F815820F25F4F19B00E11150 /* alib2common.framework in Frameworks */,
+				F815821025F4F19B00E11150 /* alib2data.framework in Frameworks */,
+				F815821125F4F19B00E11150 /* alib2measure.framework in Frameworks */,
+				F815821225F4F19B00E11150 /* alib2std.framework in Frameworks */,
+				F815821325F4F19B00E11150 /* alib2str.framework in Frameworks */,
+				F815821425F4F19B00E11150 /* alib2xml.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,14 +217,14 @@
 		F85184D425DD1C0600791701 = {
 			isa = PBXGroup;
 			children = (
-				F876CCC425F25BE800AE92FC /* libalib2algo.0.dylib */,
-				F876CC9E25F15D0500AE92FC /* libalib2std.0.dylib */,
-				F876CCA525F15DDE00AE92FC /* libalib2abstraction.0.dylib */,
-				F876CCA725F15DDE00AE92FC /* libalib2common.0.dylib */,
-				F876CCA625F15DDE00AE92FC /* libalib2data.0.dylib */,
-				F876CCA825F15DDE00AE92FC /* libalib2measure.0.dylib */,
-				F876CCA925F15DDE00AE92FC /* libalib2str.0.dylib */,
-				F876CCA425F15DDE00AE92FC /* libalib2xml.0.dylib */,
+				F81581F825F4F07500E11150 /* alib2abstraction.framework */,
+				F81581F725F4F07500E11150 /* alib2algo.framework */,
+				F81581F425F4F07500E11150 /* alib2common.framework */,
+				F81581F625F4F07500E11150 /* alib2data.framework */,
+				F81581F925F4F07500E11150 /* alib2measure.framework */,
+				F81581F325F4F07400E11150 /* alib2std.framework */,
+				F81581FA25F4F07500E11150 /* alib2str.framework */,
+				F81581F525F4F07500E11150 /* alib2xml.framework */,
 				F85184DF25DD1C0700791701 /* AutomataEditor */,
 				F85184F125DD1C0D00791701 /* AutomataEditorTests */,
 				F856E05E25F27AB200905BED /* SwiftAutomataLibrary */,
@@ -762,6 +762,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2std/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2abstraction/src",
@@ -810,6 +814,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2std/src",
 					"/Users/marekfort/Development/school/thesis/automata-library/alib2abstraction/src",
