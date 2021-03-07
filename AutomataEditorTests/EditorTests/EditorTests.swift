@@ -12,6 +12,8 @@ final class EditorTests: XCTestCase {
                 reducer: editorReducer,
                 environment: EditorEnvironment(
                     automataClassifierService: .successfulShape { stubShapeType },
+                    // TODO: Mock
+                    automataLibraryService: .live(),
                     mainQueue: scheduler.eraseToAnyScheduler()
                 )
             )
