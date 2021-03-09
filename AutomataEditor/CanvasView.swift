@@ -9,7 +9,7 @@ struct CanvasView: UIViewRepresentable {
     func makeUIView(context: Context) -> PKCanvasView {
         canvasView.delegate = context.coordinator
         canvasView.drawingGestureRecognizer.delegate = context.coordinator
-        canvasView.drawingPolicy = .anyInput
+        canvasView.drawingPolicy = .default
         canvasView.tool = PKInkingTool(.pen, color: .black, width: 15)
         return canvasView
     }
@@ -40,7 +40,7 @@ final class CanvasCoordinator: NSObject {
     }
 }
 
-extension CanvasCoordinator: PKCanvasViewDelegate {
+extension CanvasCoordinator: PKCanvasViewDelegate {    
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
         guard shouldUpdateStrokes else { return }
         shouldUpdateStrokes = false
