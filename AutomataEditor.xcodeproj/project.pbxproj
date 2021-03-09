@@ -72,7 +72,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		F856E08A25F27B6A00905BED /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
@@ -86,7 +86,7 @@
 				F815822925F4FED800E11150 /* alib2std.xcframework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8CF055F25F01EB500077209 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;

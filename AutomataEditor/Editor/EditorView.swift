@@ -46,7 +46,35 @@ struct EditorView: View {
                         .frame(width: 100, height: 30)
                         .position(transition.scribblePosition)
                     }
-
+                    VStack(alignment: .center) {
+                        Text("Alphabet")
+                        HStack {
+                            TextEditor(
+                                text: viewStore.binding(
+                                    get: \.currentAlphabetSymbol,
+                                    send: { .currentAlphabetSymbolChanged($0) }
+                                )
+                            )
+                            .border(colorScheme == .dark ? Color.white : Color.black)
+                            .frame(width: 100, height: 30)
+                            Button(
+                                action: { viewStore.send(.addedCurrentAlphabetSymbol) }
+                            ) {
+                                Image(systemName: "plus.circle.fill")
+                            }
+                        }
+                        ForEach(viewStore.state.alphabetSymbols, id: \.self) { symbol in
+                            HStack {
+                                Text(symbol)
+                                Button(
+                                    action: { viewStore.send(.removedAlphabetSymbol(symbol)) }
+                                ) {
+                                    Image(systemName: "trash.fill")
+                                }
+                            }
+                        }
+                    }
+                    .position(x: 70, y: 100)
                 }
                 HStack(alignment: .top) {
                     VStack {
@@ -115,7 +143,12 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         EditorView(
             store: EditorStore(
-                initialState: .init(),
+                initialState: .init(
+                    alphabetSymbols: [
+                        "A",
+                        "B",
+                    ]
+                ),
                 reducer: editorReducer,
                 environment: EditorEnvironment(
                     automataClassifierService: .successfulTransition,

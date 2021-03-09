@@ -15,6 +15,8 @@ struct EditorEnvironment {
 
 struct EditorState: Equatable {
     var input: String = ""
+    var currentAlphabetSymbol: String = ""
+    var alphabetSymbols: [String] = []
     var automatonStates: [AutomatonState] = []
     var transitions: [AutomatonTransition] = []
     var strokes: [Stroke] {
@@ -48,6 +50,9 @@ struct EditorState: Equatable {
 
 enum EditorAction: Equatable {
     case clear
+    case currentAlphabetSymbolChanged(String)
+    case addedCurrentAlphabetSymbol
+    case removedAlphabetSymbol(String)
     case inputChanged(String)
     case simulateInput(String)
     case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
@@ -83,6 +88,13 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     }
     
     switch action {
+    case let .currentAlphabetSymbolChanged(symbol):
+        state.currentAlphabetSymbol = symbol
+    case let .removedAlphabetSymbol(symbol):
+        state.alphabetSymbols.removeAll(where: { $0 == symbol })
+    case .addedCurrentAlphabetSymbol:
+        state.alphabetSymbols.append(state.currentAlphabetSymbol)
+        state.currentAlphabetSymbol = ""
     case .clear:
         state.automatonStates = []
         state.transitions = []
@@ -96,8 +108,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.automatonStates,
             initialStates,
             state.finalStates,
-            // TODO: Let users specify this
-            ["A"],
+            state.alphabetSymbols,
             state.transitions
         )
         .receive(on: env.mainQueue)
