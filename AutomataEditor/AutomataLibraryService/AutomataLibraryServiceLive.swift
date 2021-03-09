@@ -15,19 +15,19 @@ extension AutomataLibraryService {
         .init { input, states, initialState, finalStates, alphabet, transitions in
             Future<[AutomatonState], AutomataLibraryError> { promise in
                 switch NFA(
-                    states: states.map(\.symbol),
+                    states: states.map(\.name),
                     inputAlphabet: alphabet,
-                    initialState: initialState.symbol,
-                    finalStates: finalStates.map(\.symbol),
+                    initialState: initialState.name,
+                    finalStates: finalStates.map(\.name),
                     transitions: transitions
                         .compactMap { transition -> Transition? in
                             guard
-                                let startState = transition.startState,
-                                let endState = transition.endState
+                                let startState = states.first(where: { $0.id == transition.startState }),
+                                let endState = states.first(where: { $0.id == transition.endState })
                             else { return nil }
                             return Transition(
-                                fromState: startState.symbol,
-                                toState: endState.symbol,
+                                fromState: startState.name,
+                                toState: endState.name,
                                 symbols: [transition.symbol]
                             )
                         }
@@ -36,7 +36,7 @@ extension AutomataLibraryService {
                 case let .succeeded(resultStates):
                     promise(
                         .success(
-                            states.filter { resultStates.contains($0.symbol) }
+                            states.filter { resultStates.contains($0.name) }
                         )
                     )
                 case let .failed(resultStates):
@@ -44,7 +44,7 @@ extension AutomataLibraryService {
                         .failure(
                             .failed(
                                 states.filter {
-                                    resultStates.contains($0.symbol)
+                                    resultStates.contains($0.name)
                                 }
                             )
                         )

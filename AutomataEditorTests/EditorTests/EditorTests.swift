@@ -34,7 +34,7 @@ final class EditorTests: XCTestCase {
                                 "A"
                             )
                         ) {
-                            $0.automatonStates[0].symbol = "A"
+                            $0.automatonStates[0].name = "A"
                         },
                         .do {
                             stubShapeType = .arrow

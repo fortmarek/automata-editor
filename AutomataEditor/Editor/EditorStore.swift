@@ -35,6 +35,9 @@ struct EditorState: Equatable {
     fileprivate var initialStates: [AutomatonState] {
         transitionsWithoutStartState
             .compactMap(\.endState)
+            .compactMap { stateID in
+                automatonStates.first(where: { $0.id == stateID })
+            }
     }
     
     fileprivate var finalStates: [AutomatonState] {
@@ -105,7 +108,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard
             let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonState.id })
         else { return .none }
-        state.automatonStates[automatonIndex].symbol = symbol
+        state.automatonStates[automatonIndex].name = symbol
     case let .transitionSymbolChanged(transition, symbol):
         guard
             let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
@@ -191,8 +194,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         
         state.transitions.append(
             AutomatonTransition(
-                startState: startState,
-                endState: endState,
+                startState: startState?.id,
+                endState: endState?.id,
                 scribblePosition: CGPoint(
                     x: (startPoint.x + tipPoint.x) / 2,
                     y: (startPoint.y + tipPoint.y) / 2 - 50

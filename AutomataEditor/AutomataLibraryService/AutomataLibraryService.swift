@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import Combine
 
 enum AutomataLibraryError: Error, Equatable {
     case failed([AutomatonState])
@@ -21,4 +22,18 @@ struct AutomataLibraryService {
         _ alphabet: [String],
         _ transitions: [AutomatonTransition]
     ) -> Effect<[AutomatonState], AutomataLibraryError>
+}
+
+extension AutomataLibraryService {
+    static func successful(
+        with states: [AutomatonState] = []
+    ) -> Self {
+        .init(
+            simulateInput: { _, _, _, _, _, _ in
+                Just([])
+                    .setFailureType(to: AutomataLibraryError.self)
+                    .eraseToEffect()
+            }
+        )
+    }
 }

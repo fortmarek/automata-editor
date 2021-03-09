@@ -48,6 +48,7 @@
 		F856E0CC25F2826300905BED /* SwiftAutomataLibrary-BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */; };
 		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
 		F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */; };
+		F86C866125F784B20000BCA9 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C866025F784B20000BCA9 /* Transition.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 /* End PBXBuildFile section */
 
@@ -145,6 +146,7 @@
 		F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftAutomataLibrary-BridgingHeader.h"; sourceTree = "<group>"; };
 		F856E0D025F283AF00905BED /* AutomataLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryService.swift; sourceTree = "<group>"; };
 		F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryServiceLive.swift; sourceTree = "<group>"; };
+		F86C866025F784B20000BCA9 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		F876CCB825F2359700AE92FC /* Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transition.h; sourceTree = "<group>"; };
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
 		F876CCCB25F26A8200AE92FC /* AutomatonRunResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomatonRunResult.h; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				F8CF054C25F01D2C00077209 /* NFA.swift */,
+				F86C866025F784B20000BCA9 /* Transition.swift */,
 				F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */,
 				F807591E25EECC7E00E9D369 /* Hex.h */,
 				F807592025EECC9600E9D369 /* Hex.mm */,
@@ -495,6 +498,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F86C866125F784B20000BCA9 /* Transition.swift in Sources */,
 				F856E06E25F27AC100905BED /* Transition.m in Sources */,
 				F856E06C25F27AC100905BED /* NFA.mm in Sources */,
 				F856E0BA25F280EF00905BED /* NFA.swift in Sources */,

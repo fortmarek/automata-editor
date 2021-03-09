@@ -27,7 +27,7 @@ struct EditorView: View {
                     ForEach(viewStore.automatonStates) { automatonState in
                         TextEditor(
                             text: viewStore.binding(
-                                get: { $0.automatonStates.first(where: { $0.id == automatonState.id })?.symbol ?? "" },
+                                get: { $0.automatonStates.first(where: { $0.id == automatonState.id })?.name ?? "" },
                                 send: { .stateSymbolChanged(automatonState, $0) }
                             )
                         )
@@ -113,8 +113,7 @@ struct ContentView_Previews: PreviewProvider {
                 reducer: editorReducer,
                 environment: EditorEnvironment(
                     automataClassifierService: .successfulTransition,
-                    // TODO: Use mock
-                    automataLibraryService: .live(),
+                    automataLibraryService: .successful(),
                     mainQueue: DispatchQueue.main.eraseToAnyScheduler()
                 )
             )
