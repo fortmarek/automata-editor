@@ -48,16 +48,22 @@ struct EditorView: View {
                     }
 
                 }
-                HStack {
-                    Button("Simulate") {
-                        viewStore.send(.simulateInput("A"))
+                HStack(alignment: .top) {
+                    VStack {
+                        Button("Simulate") {
+                            viewStore.send(.simulateInput(viewStore.state.input))
+                        }
+                        TextEditor(
+                            text: viewStore.binding(
+                                get: \.input,
+                                send: { .inputChanged($0) }
+                            )
+                        )
+                        .border(colorScheme == .dark ? Color.white : Color.black)
+                        .frame(width: 200, height: 30)
                     }
                     Button("Clear") {
                         viewStore.send(.clear)
-                    }
-                    Button("Export") {
-                        export()
-                        canvasView.drawing = PKDrawing()
                     }
                 }
             }

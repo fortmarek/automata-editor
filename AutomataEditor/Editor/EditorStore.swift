@@ -14,6 +14,7 @@ struct EditorEnvironment {
 }
 
 struct EditorState: Equatable {
+    var input: String = ""
     var automatonStates: [AutomatonState] = []
     var transitions: [AutomatonTransition] = []
     var strokes: [Stroke] {
@@ -47,6 +48,7 @@ struct EditorState: Equatable {
 
 enum EditorAction: Equatable {
     case clear
+    case inputChanged(String)
     case simulateInput(String)
     case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState, String)
@@ -84,6 +86,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .clear:
         state.automatonStates = []
         state.transitions = []
+    case let .inputChanged(input):
+        state.input = input
     case let .simulateInput(input):
         // TODO: Handle no or multiple initial states
         guard let initialStates = state.initialStates.first else { return .none }
