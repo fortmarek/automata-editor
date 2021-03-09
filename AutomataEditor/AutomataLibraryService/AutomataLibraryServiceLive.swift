@@ -28,7 +28,7 @@ extension AutomataLibraryService {
                             return Transition(
                                 fromState: startState.name,
                                 toState: endState.name,
-                                symbols: [transition.symbol]
+                                symbols: transition.symbols
                             )
                         }
                 )

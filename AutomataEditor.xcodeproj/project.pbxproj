@@ -49,6 +49,9 @@
 		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
 		F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */; };
 		F86C866125F784B20000BCA9 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C866025F784B20000BCA9 /* Transition.swift */; };
+		F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872A25F7BF480000BCA9 /* _FlexibleView.swift */; };
+		F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872E25F7BF630000BCA9 /* FlexibleView.swift */; };
+		F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C873125F7BFA20000BCA9 /* SizeReader.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 /* End PBXBuildFile section */
 
@@ -147,6 +150,9 @@
 		F856E0D025F283AF00905BED /* AutomataLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryService.swift; sourceTree = "<group>"; };
 		F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomataLibraryServiceLive.swift; sourceTree = "<group>"; };
 		F86C866025F784B20000BCA9 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
+		F86C872A25F7BF480000BCA9 /* _FlexibleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FlexibleView.swift; sourceTree = "<group>"; };
+		F86C872E25F7BF630000BCA9 /* FlexibleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleView.swift; sourceTree = "<group>"; };
+		F86C873125F7BFA20000BCA9 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		F876CCB825F2359700AE92FC /* Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transition.h; sourceTree = "<group>"; };
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
 		F876CCCB25F26A8200AE92FC /* AutomatonRunResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomatonRunResult.h; sourceTree = "<group>"; };
@@ -248,6 +254,7 @@
 		F85184DF25DD1C0700791701 /* AutomataEditor */ = {
 			isa = PBXGroup;
 			children = (
+				F86C872925F7BF340000BCA9 /* FlexibleView */,
 				F856E0CF25F2839900905BED /* AutomataLibraryService */,
 				F81641E125EB8E4300F49800 /* AutomataClassifierService */,
 				F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */,
@@ -309,6 +316,16 @@
 				F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */,
 			);
 			path = AutomataLibraryService;
+			sourceTree = "<group>";
+		};
+		F86C872925F7BF340000BCA9 /* FlexibleView */ = {
+			isa = PBXGroup;
+			children = (
+				F86C872A25F7BF480000BCA9 /* _FlexibleView.swift */,
+				F86C872E25F7BF630000BCA9 /* FlexibleView.swift */,
+				F86C873125F7BFA20000BCA9 /* SizeReader.swift */,
+			);
+			path = FlexibleView;
 			sourceTree = "<group>";
 		};
 		F8CF050F25F003B900077209 /* Frameworks */ = {
@@ -472,9 +489,11 @@
 				F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */,
 				F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */,
 				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
+				F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
+				F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */,
 				F81641E325EB8E6400F49800 /* AutomataClassifierService.swift in Sources */,
 				F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */,
 				F851851A25DD623000791701 /* CanvasView.swift in Sources */,
@@ -482,6 +501,7 @@
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
 				F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
+				F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

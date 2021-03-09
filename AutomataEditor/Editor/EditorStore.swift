@@ -58,6 +58,8 @@ enum EditorAction: Equatable {
     case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState, String)
     case transitionSymbolChanged(AutomatonTransition, String)
+    case transitionSymbolAdded(AutomatonTransition)
+    case transitionSymbolRemoved(AutomatonTransition, String)
     case strokesChanged([Stroke])
     case shouldDeleteLastStrokeChanged(Bool)
     case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
@@ -128,7 +130,18 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard
             let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
         else { return .none }
-        state.transitions[transitionIndex].symbol = symbol
+        state.transitions[transitionIndex].currentSymbol = symbol
+    case let .transitionSymbolAdded(transition):
+        guard
+            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+        else { return .none }
+        state.transitions[transitionIndex].currentSymbol = ""
+        state.transitions[transitionIndex].symbols.append(transition.currentSymbol)
+    case let .transitionSymbolRemoved(transition, symbol):
+        guard
+            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+        else { return .none }
+        state.transitions[transitionIndex].symbols.removeAll(where: { $0 == symbol })
     case let .automataShapeClassified(.success(.state(stroke))):
         let center = stroke.controlPoints.center()
 

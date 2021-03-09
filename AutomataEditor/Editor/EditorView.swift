@@ -31,19 +31,49 @@ struct EditorView: View {
                                 send: { .stateSymbolChanged(automatonState, $0) }
                             )
                         )
-                        .border(colorScheme == .dark ? Color.white : Color.black)
+                        .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
                         .frame(width: 100, height: 30)
                         .position(automatonState.scribblePosition)
                     }
                     ForEach(viewStore.transitions) { transition in
-                        TextEditor(
-                            text: viewStore.binding(
-                                get: { $0.transitions.first(where: { $0.id == transition.id })?.symbol ?? "" },
-                                send: { .transitionSymbolChanged(transition, $0) }
+                        VStack(alignment: .center) {
+                            FlexibleView(
+                                data: transition.symbols,
+                                spacing: 3,
+                                alignment: .leading,
+                                content: { symbol in
+                                    Button(
+                                        action: { viewStore.send(.transitionSymbolRemoved(transition, symbol)) }
+                                    ) {
+                                        HStack {
+                                            Text(symbol)
+                                                .foregroundColor(Color.black)
+                                            Image(systemName: "xmark")
+                                                .foregroundColor(Color.black)
+                                        }
+                                        .padding(.all, 5)
+                                        .background(Color.white)
+                                        .cornerRadius(10)
+                                    }
+                                }
                             )
-                        )
-                        .border(colorScheme == .dark ? Color.white : Color.black)
-                        .frame(width: 100, height: 30)
+                            .frame(width: 200)
+                            HStack {
+                                TextEditor(
+                                    text: viewStore.binding(
+                                        get: { _ in transition.currentSymbol },
+                                        send: { .transitionSymbolChanged(transition, $0) }
+                                    )
+                                )
+                                .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
+                                .frame(width: 100, height: 30)
+                                Button(
+                                    action: { viewStore.send(.transitionSymbolAdded(transition)) }
+                                ) {
+                                    Image(systemName: "plus.circle.fill")
+                                }
+                            }
+                        }
                         .position(transition.scribblePosition)
                     }
                     VStack(alignment: .center) {
@@ -139,7 +169,7 @@ extension CGPoint: Hashable {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct EditorView_Previews: PreviewProvider {
     static var previews: some View {
         EditorView(
             store: EditorStore(
@@ -147,6 +177,21 @@ struct ContentView_Previews: PreviewProvider {
                     alphabetSymbols: [
                         "A",
                         "B",
+                    ],
+                    transitions: [
+                        AutomatonTransition(
+                            startState: nil,
+                            endState: nil,
+                            currentSymbol: "A",
+                            symbols: ["B", "C"],
+                            scribblePosition: CGPoint(x: 200, y: 200),
+                            stroke: Stroke(
+                                controlPoints: .arrow(
+                                    startPoint: CGPoint(x: 180, y: 200),
+                                    tipPoint: CGPoint(x: 220, y: 200)
+                                )
+                            )
+                        )
                     ]
                 ),
                 reducer: editorReducer,
