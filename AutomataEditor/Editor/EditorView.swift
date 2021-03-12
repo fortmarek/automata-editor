@@ -128,25 +128,6 @@ struct EditorView: View {
         }
     }
     
-    private func export() {
-        let image = canvasView.drawing.image(
-            from: canvasView.drawing.bounds,
-            scale: 1.0
-        )
-        .modelImage()!
-        savePNG(image)
-    }
-    
-    func savePNG(_ image: UIImage) {
-        guard
-            let pngData = image.pngData(),
-            let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-                .first?
-                .appendingPathComponent("\(UUID().uuidString).png")
-        else { return }
-        try! pngData.write(to: path)
-    }
-    
     private func strokePoint(
         _ location: CGPoint
     ) -> PKStrokePoint {

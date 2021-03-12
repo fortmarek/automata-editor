@@ -70,7 +70,7 @@ final class EditorTests: XCTestCase {
                         ) {
                             $0.transitions = [
                                 AutomatonTransition(
-                                    startState: $0.automatonStates[0],
+                                    startState: $0.automatonStates[0].id,
                                     endState: nil,
                                     scribblePosition: CGPoint(
                                         x: 2,
@@ -104,7 +104,7 @@ final class EditorTests: XCTestCase {
                                 "A"
                             )
                         ) {
-                            $0.transitions[0].symbol = "A"
+                            $0.transitions[0].currentSymbol = "A"
                         },
                         .do {
                             stubShapeType = .circle
