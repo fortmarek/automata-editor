@@ -4,7 +4,6 @@ import PencilKit
 import ComposableArchitecture
 
 struct EditorView: View {
-    @State var canvasView: PKCanvasView = .init()
     @Environment(\.colorScheme) var colorScheme
     
     let store: EditorStore
@@ -18,7 +17,6 @@ struct EditorView: View {
                             get: \.shouldDeleteLastStroke,
                             send: EditorAction.shouldDeleteLastStrokeChanged
                         ),
-                        canvasView: $canvasView,
                         strokes: viewStore.binding(
                             get: \.strokes,
                             send: EditorAction.strokesChanged

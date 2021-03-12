@@ -3,10 +3,10 @@ import PencilKit
 
 struct CanvasView: UIViewRepresentable {
     @Binding var shouldDeleteLastStroke: Bool
-    @Binding var canvasView: PKCanvasView
     @Binding var strokes: [Stroke]
     
     func makeUIView(context: Context) -> PKCanvasView {
+        let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
         canvasView.drawingGestureRecognizer.delegate = context.coordinator
         canvasView.drawingPolicy = .default
