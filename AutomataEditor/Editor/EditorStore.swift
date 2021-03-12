@@ -3,6 +3,7 @@ import CoreGraphics
 import PencilKit
 import CoreML
 import SwiftAutomataLibrary
+import SwiftUI
 
 typealias EditorStore = Store<EditorState, EditorAction>
 typealias EditorViewStore = ViewStore<EditorState, EditorAction>
@@ -14,6 +15,9 @@ struct EditorEnvironment {
 }
 
 struct EditorState: Equatable {
+    var tool: Tool = .pen
+    var eraserImage: Image = Image(systemName: "minus.square")
+    var penImage: Image = Image(systemName: "pencil.circle.fill")
     var outputString: String = ""
     var input: String = ""
     var currentAlphabetSymbol: String = ""
@@ -51,6 +55,8 @@ struct EditorState: Equatable {
 
 enum EditorAction: Equatable {
     case clear
+    case selectedEraser
+    case selectedPen
     case currentAlphabetSymbolChanged(String)
     case addedCurrentAlphabetSymbol
     case removedAlphabetSymbol(String)
@@ -91,6 +97,14 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     }
     
     switch action {
+    case .selectedEraser:
+        state.tool = .eraser
+        state.eraserImage = Image(systemName: "minus.square.fill")
+        state.penImage = Image(systemName: "pencil.circle")
+    case .selectedPen:
+        state.tool = .pen
+        state.eraserImage = Image(systemName: "minus.square")
+        state.penImage = Image(systemName: "pencil.circle.fill")
     case let .currentAlphabetSymbolChanged(symbol):
         state.currentAlphabetSymbol = symbol
     case let .removedAlphabetSymbol(symbol):

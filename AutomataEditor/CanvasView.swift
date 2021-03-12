@@ -1,16 +1,31 @@
 import SwiftUI
 import PencilKit
 
+enum Tool {
+    case pen
+    case eraser
+    
+    fileprivate var pkTool: PKTool {
+        switch self {
+        case .pen:
+            return PKInkingTool(.pen, color: .black, width: 15)
+        case .eraser:
+            return PKEraserTool(.vector)
+        }
+    }
+}
+
 struct CanvasView: UIViewRepresentable {
     @Binding var shouldDeleteLastStroke: Bool
     @Binding var strokes: [Stroke]
+    var tool: Tool
     
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
         canvasView.drawingGestureRecognizer.delegate = context.coordinator
         canvasView.drawingPolicy = .default
-        canvasView.tool = PKInkingTool(.pen, color: .black, width: 15)
+        canvasView.tool = tool.pkTool
         return canvasView
     }
     
@@ -19,6 +34,7 @@ struct CanvasView: UIViewRepresentable {
     }
 
     func updateUIView(_ canvasView: PKCanvasView, context: Context) {
+        canvasView.tool = tool.pkTool
         canvasView.drawing.strokes = strokes.map { $0.pkStroke() }
         if shouldDeleteLastStroke {
             if !canvasView.drawing.strokes.isEmpty {

@@ -20,7 +20,8 @@ struct EditorView: View {
                         strokes: viewStore.binding(
                             get: \.strokes,
                             send: EditorAction.strokesChanged
-                        )
+                        ),
+                        tool: viewStore.state.tool
                     )
                     ForEach(viewStore.automatonStates) { automatonState in
                         TextEditor(
@@ -122,6 +123,24 @@ struct EditorView: View {
                     }
                     Button("Clear") {
                         viewStore.send(.clear)
+                    }
+                    Button(
+                        action: {
+                            viewStore.send(.selectedPen)
+                        }
+                    ) {
+                        viewStore.state.penImage
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                    }
+                    Button(
+                        action: {
+                            viewStore.send(.selectedEraser)
+                        }
+                    ) {
+                        viewStore.state.eraserImage
+                            .resizable()
+                            .frame(width: 20, height: 20)
                     }
                 }
             }
