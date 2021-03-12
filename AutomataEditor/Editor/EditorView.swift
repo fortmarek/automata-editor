@@ -103,6 +103,8 @@ struct EditorView: View {
                                 }
                             }
                         }
+                        Text("Output: \(viewStore.state.outputString)")
+                            .frame(width: 150)
                     }
                     .position(x: 70, y: 100)
                 }
@@ -155,6 +157,7 @@ struct EditorView_Previews: PreviewProvider {
         EditorView(
             store: EditorStore(
                 initialState: .init(
+                    outputString: "✅ with states A, B, C",
                     alphabetSymbols: [
                         "A",
                         "B",
@@ -165,11 +168,11 @@ struct EditorView_Previews: PreviewProvider {
                             endState: nil,
                             currentSymbol: "A",
                             symbols: ["B", "C"],
-                            scribblePosition: CGPoint(x: 200, y: 200),
+                            scribblePosition: CGPoint(x: 400, y: 200),
                             stroke: Stroke(
                                 controlPoints: .arrow(
-                                    startPoint: CGPoint(x: 180, y: 200),
-                                    tipPoint: CGPoint(x: 220, y: 200)
+                                    startPoint: CGPoint(x: 380, y: 200),
+                                    tipPoint: CGPoint(x: 420, y: 200)
                                 )
                             )
                         )

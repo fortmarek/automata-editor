@@ -14,6 +14,7 @@ struct EditorEnvironment {
 }
 
 struct EditorState: Equatable {
+    var outputString: String = ""
     var input: String = ""
     var currentAlphabetSymbol: String = ""
     var alphabetSymbols: [String] = []
@@ -118,9 +119,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         .map(EditorAction.simulateInputResult)
         .eraseToEffect()
     case let .simulateInputResult(.success(endStates)):
-        print("Succeeded with following states: \(endStates)")
+        state.outputString = "✅ with states: \(endStates)"
     case let .simulateInputResult(.failure(endStates)):
-        print("Failed with following states: \(endStates)")
+        state.outputString = "❌ with states: \(endStates)"
     case let .stateSymbolChanged(automatonState, symbol):
         guard
             let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonState.id })
