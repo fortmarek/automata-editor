@@ -27,7 +27,7 @@ struct EditorView: View {
                         TextEditor(
                             text: viewStore.binding(
                                 get: { $0.automatonStates.first(where: { $0.id == automatonState.id })?.name ?? "" },
-                                send: { .stateSymbolChanged(automatonState, $0) }
+                                send: { .stateSymbolChanged(automatonState.id, $0) }
                             )
                         )
                         .border(colorScheme == .dark ? Color.white : Color.black, width: 2)

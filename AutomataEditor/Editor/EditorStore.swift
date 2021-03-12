@@ -63,7 +63,7 @@ enum EditorAction: Equatable {
     case inputChanged(String)
     case simulateInput(String)
     case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
-    case stateSymbolChanged(AutomatonState, String)
+    case stateSymbolChanged(AutomatonState.ID, String)
     case transitionSymbolChanged(AutomatonTransition, String)
     case transitionSymbolAdded(AutomatonTransition)
     case transitionSymbolRemoved(AutomatonTransition, String)
@@ -136,9 +136,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.outputString = "✅ with states: \(endStates)"
     case let .simulateInputResult(.failure(endStates)):
         state.outputString = "❌ with states: \(endStates)"
-    case let .stateSymbolChanged(automatonState, symbol):
+    case let .stateSymbolChanged(automatonStateID, symbol):
         guard
-            let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonState.id })
+            let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID })
         else { return .none }
         state.automatonStates[automatonIndex].name = symbol
     case let .transitionSymbolChanged(transition, symbol):
@@ -254,13 +254,31 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .automataShapeClassified(.failure):
         state.shouldDeleteLastStroke = true
     case let .strokesChanged(strokes):
-        guard let stroke = strokes.last else { return .none }
-        return env.automataClassifierService
-            .recognizeStroke(stroke)
-            .receive(on: env.mainQueue)
-            .catchToEffect()
-            .map(EditorAction.automataShapeClassified)
-            .eraseToEffect()
+        // A stroke was deleted
+        if strokes.count < state.strokes.count {
+            if let automatonStateIndex = state.automatonStates.firstIndex(where: { !strokes.contains($0.stroke) }) {
+                let automatonState = state.automatonStates[automatonStateIndex]
+                state.automatonStates.remove(at: automatonStateIndex)
+                state.transitions = state.transitions.map { transition in
+                    var transition = transition
+                    if transition.startState == automatonState.id {
+                        transition.startState = nil
+                    }
+                    if transition.endState == automatonState.id {
+                        transition.endState = nil
+                    }
+                    return transition
+                }
+            }
+        } else {
+            guard let stroke = strokes.last else { return .none }
+            return env.automataClassifierService
+                .recognizeStroke(stroke)
+                .receive(on: env.mainQueue)
+                .catchToEffect()
+                .map(EditorAction.automataShapeClassified)
+                .eraseToEffect()
+        }
     case let .shouldDeleteLastStrokeChanged(shouldDeleteLastStroke):
         state.shouldDeleteLastStroke = shouldDeleteLastStroke
     }

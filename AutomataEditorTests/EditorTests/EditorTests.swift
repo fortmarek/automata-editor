@@ -5,113 +5,128 @@ import ComposableArchitecture
 final class EditorTests: XCTestCase {
     let scheduler = DispatchQueue.testScheduler
     
-    func testSimpleAutomatonIsDrawn() {
+    func testEraseAutomatonWithTransition() {
         var stubShapeType: AutomatonShapeType = .circle
-            TestStore(
-                initialState: EditorState(),
-                reducer: editorReducer,
-                environment: EditorEnvironment(
-                    automataClassifierService: .successfulShape { stubShapeType },
-                    // TODO: Mock
-                    automataLibraryService: .live(),
-                    mainQueue: scheduler.eraseToAnyScheduler()
-                )
+        TestStore(
+            initialState: EditorState(),
+            reducer: editorReducer,
+            environment: EditorEnvironment(
+                automataClassifierService: .successfulShape { stubShapeType },
+                automataLibraryService: .successful(),
+                mainQueue: scheduler.eraseToAnyScheduler()
             )
-            .assert(
-                createState(center: .zero) +
-                    [
-                        .send(
-                            .stateSymbolChanged(
-                                AutomatonState(
-                                    scribblePosition: .zero,
-                                    stroke: Stroke(
-                                        controlPoints: .circle(
-                                            center: .zero,
-                                            radius: 1
-                                        )
-                                    )
-                                ),
-                                "A"
-                            )
-                        ) {
-                            $0.automatonStates[0].name = "A"
-                        },
-                        .do {
-                            stubShapeType = .arrow
-                        },
-                        .send(
-                            .strokesChanged(
-                                [
-                                    Stroke(
-                                        controlPoints: [
-                                            CGPoint(x: 2, y: 0),
-                                            CGPoint(x: 3, y: 0),
-                                        ]
-                                    )
-                                ]
-                            )
-                        ),
-                        .do {
-                            self.scheduler.advance()
-                        },
-                        .receive(
-                            .automataShapeClassified(
-                                .success(
-                                    .transition(
-                                        Stroke(
-                                            controlPoints: [
-                                                CGPoint(x: 2, y: 0),
-                                                CGPoint(x: 3, y: 0),
-                                            ]
-                                        )
-                                    )
-                                )
-                            )
-                        ) {
-                            $0.transitions = [
-                                AutomatonTransition(
-                                    startState: $0.automatonStates[0].id,
-                                    endState: nil,
-                                    scribblePosition: CGPoint(
-                                        x: 2,
-                                        y: -50
-                                    ),
-                                    stroke: Stroke(
-                                        controlPoints: .arrow(
-                                            startPoint: CGPoint(x: 1, y: 0),
-                                            tipPoint: CGPoint(x: 3, y: 0)
-                                        )
+        )
+        .assert(
+            createState(center: .zero)
+                + [
+                    .do { stubShapeType = .arrow }
+                ]
+                + createTransition(startAutomatonIndex: 0)
+                + [
+                    .send(
+                        // Automaton state is missing signalling it has been erased
+                        .strokesChanged(
+                            [
+                                Stroke(
+                                    controlPoints: .arrow(
+                                        startPoint: CGPoint(x: 1, y: 0),
+                                        tipPoint: CGPoint(x: 3, y: 0)
                                     )
                                 )
                             ]
-                        },
-                        .send(
-                            .transitionSymbolChanged(
-                                AutomatonTransition(
-                                    startState: nil,
-                                    endState: nil,
-                                    scribblePosition: CGPoint(
-                                        x: 2,
-                                        y: -50
-                                    ),
-                                    stroke: Stroke(
-                                        controlPoints: .arrow(
-                                            startPoint: CGPoint(x: 1, y: 0),
-                                            tipPoint: CGPoint(x: 3, y: 0)
-                                        )
+                        )
+                    ) {
+                        $0.automatonStates = []
+                        $0.transitions[0].startState = nil
+                    }
+                ]
+        )
+    }
+    
+    func testSimpleAutomatonIsDrawn() {
+        var stubShapeType: AutomatonShapeType = .circle
+        TestStore(
+            initialState: EditorState(),
+            reducer: editorReducer,
+            environment: EditorEnvironment(
+                automataClassifierService: .successfulShape { stubShapeType },
+                automataLibraryService: .successful(),
+                mainQueue: scheduler.eraseToAnyScheduler()
+            )
+        )
+        .assert(
+            createState(center: .zero) +
+                [
+                    .send(
+                        .stateSymbolChanged(
+                            Stroke(
+                                controlPoints: .circle(
+                                    center: .zero,
+                                    radius: 1
+                                )
+                            ),
+                            "A"
+                        )
+                    ) {
+                        $0.automatonStates[0].name = "A"
+                    },
+                    .do {
+                        stubShapeType = .arrow
+                    }
+                ]
+                + createTransition(
+                    startAutomatonIndex: 0
+                )
+                + [
+                    .send(
+                        .transitionSymbolChanged(
+                            AutomatonTransition(
+                                startState: nil,
+                                endState: nil,
+                                scribblePosition: CGPoint(
+                                    x: 2,
+                                    y: -50
+                                ),
+                                stroke: Stroke(
+                                    controlPoints: .arrow(
+                                        startPoint: CGPoint(x: 1, y: 0),
+                                        tipPoint: CGPoint(x: 3, y: 0)
+                                    )
+                                )
+                            ),
+                            "A"
+                        )
+                    ) {
+                        $0.transitions[0].currentSymbol = "A"
+                    },
+                    .do {
+                        stubShapeType = .circle
+                    },
+                    .send(
+                        .strokesChanged(
+                            [
+                                Stroke(
+                                    controlPoints: .circle(
+                                        center: .zero,
+                                        radius: 1
                                     )
                                 ),
-                                "A"
-                            )
-                        ) {
-                            $0.transitions[0].currentSymbol = "A"
-                        },
-                        .do {
-                            stubShapeType = .circle
-                        },
-                        .send(
-                            .strokesChanged(
-                                [
+                                Stroke(
+                                    controlPoints: [
+                                        CGPoint(x: 0, y: -2),
+                                        CGPoint(x: 2, y: 0),
+                                        CGPoint(x: 0, y: 2),
+                                        CGPoint(x: -2, y: 0),
+                                    ]
+                                )
+                            ]
+                        )
+                    ),
+                    .do { self.scheduler.advance() },
+                    .receive(
+                        .automataShapeClassified(
+                            .success(
+                                .state(
                                     Stroke(
                                         controlPoints: [
                                             CGPoint(x: 0, y: -2),
@@ -120,36 +135,20 @@ final class EditorTests: XCTestCase {
                                             CGPoint(x: -2, y: 0),
                                         ]
                                     )
-                                ]
-                            )
-                        ),
-                        .do { self.scheduler.advance() },
-                        .receive(
-                            .automataShapeClassified(
-                                .success(
-                                    .state(
-                                        Stroke(
-                                            controlPoints: [
-                                                CGPoint(x: 0, y: -2),
-                                                CGPoint(x: 2, y: 0),
-                                                CGPoint(x: 0, y: 2),
-                                                CGPoint(x: -2, y: 0),
-                                            ]
-                                        )
-                                    )
                                 )
                             )
-                        ) {
-                            let center = $0.automatonStates[0].stroke.controlPoints.center()
-                            $0.automatonStates[0].endStroke = Stroke(
-                                controlPoints: .circle(
-                                    center: center,
-                                    radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center) * 0.7
-                                )
+                        )
+                    ) {
+                        let center = $0.automatonStates[0].stroke.controlPoints.center()
+                        $0.automatonStates[0].endStroke = Stroke(
+                            controlPoints: .circle(
+                                center: center,
+                                radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center) * 0.7
                             )
-                        }
-                    ]
-            )
+                        )
+                    }
+                ]
+        )
     }
     
     private func createState(
@@ -189,6 +188,60 @@ final class EditorTests: XCTestCase {
                     ),
                 ]
             },
+        ]
+    }
+    
+    private func createTransition(
+        startAutomatonIndex: Int? = nil,
+        endAutomatonIndex: Int? = nil
+    ) -> [TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>.Step] {
+        [
+            .send(
+                .strokesChanged(
+                    [
+                        Stroke(
+                            controlPoints: [
+                                CGPoint(x: 2, y: 0),
+                                CGPoint(x: 3, y: 0),
+                            ]
+                        )
+                    ]
+                )
+            ),
+            .do {
+                self.scheduler.advance()
+            },
+            .receive(
+                .automataShapeClassified(
+                    .success(
+                        .transition(
+                            Stroke(
+                                controlPoints: [
+                                    CGPoint(x: 2, y: 0),
+                                    CGPoint(x: 3, y: 0),
+                                ]
+                            )
+                        )
+                    )
+                )
+            ) { state in
+                state.transitions = [
+                    AutomatonTransition(
+                        startState: startAutomatonIndex.map { state.automatonStates[$0].id },
+                        endState: endAutomatonIndex.map { state.automatonStates[$0].id },
+                        scribblePosition: CGPoint(
+                            x: 2,
+                            y: -50
+                        ),
+                        stroke: Stroke(
+                            controlPoints: .arrow(
+                                startPoint: CGPoint(x: 1, y: 0),
+                                tipPoint: CGPoint(x: 3, y: 0)
+                            )
+                        )
+                    )
+                ]
+            }
         ]
     }
 }
