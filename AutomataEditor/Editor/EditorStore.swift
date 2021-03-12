@@ -159,9 +159,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitions[transitionIndex].symbols.removeAll(where: { $0 == symbol })
     case let .automataShapeClassified(.success(.state(stroke))):
         let center = stroke.controlPoints.center()
-
+        
         let radius = stroke.controlPoints.radius(with: center)
-
+        
         let controlPoints: [CGPoint] = .circle(
             center: center,
             radius: radius
@@ -256,7 +256,26 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .strokesChanged(strokes):
         // A stroke was deleted
         if strokes.count < state.strokes.count {
-            if let automatonStateIndex = state.automatonStates.firstIndex(where: { !strokes.contains($0.stroke) }) {
+            let centerPoints = strokes.map { $0.controlPoints.center() }
+            if let transitionIndex = state.transitions.firstIndex(
+                        where: { transition in
+                            !strokes.contains(
+                                where: {
+                                    transition.stroke.controlPoints[0].distance(from: $0.controlPoints[0]) == 0
+                                }
+                            )
+                        }
+            ) {
+                state.transitions.remove(at: transitionIndex)
+            } else if let automatonStateIndex = state.automatonStates.firstIndex(
+                where: { state in
+                    !centerPoints.contains(
+                        where: {
+                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
+                        }
+                    )
+                }
+            ) {
                 let automatonState = state.automatonStates[automatonStateIndex]
                 state.automatonStates.remove(at: automatonStateIndex)
                 state.transitions = state.transitions.map { transition in
@@ -311,15 +330,15 @@ extension Array where Element == CGPoint {
     
     func center() -> CGPoint {
         let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
-                (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
-            }
+            (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
+        }
         return CGPoint(x: sumX / count, y: sumY / count)
     }
     
     func radius(with center: CGPoint) -> CGFloat {
         let sumDistance = reduce(0) { acc, current in
-                acc + abs(center.x - current.x) + abs(center.y - current.y)
-            }
+            acc + abs(center.x - current.x) + abs(center.y - current.y)
+        }
         return sumDistance / CGFloat(count)
     }
 }

@@ -5,7 +5,7 @@ import ComposableArchitecture
 final class EditorTests: XCTestCase {
     let scheduler = DispatchQueue.testScheduler
     
-    func testEraseAutomatonWithTransition() {
+    func testEraseAutomatonAndTransition() {
         var stubShapeType: AutomatonShapeType = .circle
         TestStore(
             initialState: EditorState(),
@@ -21,8 +21,11 @@ final class EditorTests: XCTestCase {
                 + [
                     .do { stubShapeType = .arrow }
                 ]
-                + createTransition(startAutomatonIndex: 0)
+                + createTransition(
+                    startAutomatonIndex: 0
+                )
                 + [
+                    // the computation of center is not good enough
                     .send(
                         // Automaton state is missing signalling it has been erased
                         .strokesChanged(
@@ -38,7 +41,14 @@ final class EditorTests: XCTestCase {
                     ) {
                         $0.automatonStates = []
                         $0.transitions[0].startState = nil
-                    }
+                    },
+                    .send(
+                        // Automaton state is missing signalling it has been erased
+                        .strokesChanged([])
+                    ) {
+                        $0.automatonStates = []
+                        $0.transitions = []
+                    },
                 ]
         )
     }
