@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Combine
 
 enum AutomataLibraryError: Error, Equatable {
-    case failed([AutomatonState])
+    case failed
 }
 
 struct AutomataLibraryService {
@@ -21,7 +21,7 @@ struct AutomataLibraryService {
         _ finalStates: [AutomatonState],
         _ alphabet: [String],
         _ transitions: [AutomatonTransition]
-    ) -> Effect<[AutomatonState], AutomataLibraryError>
+    ) -> Effect<Void, AutomataLibraryError>
 }
 
 extension AutomataLibraryService {
@@ -30,7 +30,7 @@ extension AutomataLibraryService {
     ) -> Self {
         .init(
             simulateInput: { _, _, _, _, _, _ in
-                Just([])
+                Just(())
                     .setFailureType(to: AutomataLibraryError.self)
                     .eraseToEffect()
             }

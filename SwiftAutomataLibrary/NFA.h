@@ -7,7 +7,7 @@
 @interface NFA_objc: NSObject
 
 - (instancetype)init: (NSArray *) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString *) initialState finalStates:(NSArray *) finalStates transitions: (NSArray *) transitions;
-- (AutomatonRunResult *)simulate: (NSString *) input;
+- (bool)simulate: (NSArray *) input;
 - (NSString *) getInitialState;
 - (NSArray *) getFinalStates;
 - (NSArray *) getStates;

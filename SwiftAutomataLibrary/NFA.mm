@@ -4,7 +4,7 @@
 #import "AutomatonRunResult.h"
 
 #include "automaton/FSM/NFA.h"
-#include "automaton/run/Run.h"
+#include "automaton/run/Accept.h"
 
 @implementation NFA_objc {
     automaton::NFA<NSString*, NSString*>* automaton;
@@ -25,11 +25,10 @@
     delete automaton;
 }
 
-- (AutomatonRunResult *)simulate: (NSString *) input {
-    ext::vector<NSString*> inputVector = {input};
+- (bool)simulate: (NSArray *) input {
+    ext::vector<NSString*> inputVector = [self vector: input];
     auto linearString = string::LinearString(automaton->getInputAlphabet(), inputVector);
-    auto result = automaton::run::Run::calculateStates(*automaton, linearString);
-    return [[AutomatonRunResult alloc] initWithSucceeded:std::get<0>(result) endStates:[self array: std::get<1>(result)]];
+    return automaton::run::Accept::accept(*automaton, linearString);
 }
 
 - (void)setTransitions: (NSArray *) transitions {

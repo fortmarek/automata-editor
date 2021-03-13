@@ -25,16 +25,10 @@ public struct NFA {
         )
     }
     
-    public func simulate(input: String) -> AutomatonRunResult {
-        guard
-            let result = automaton.simulate(input),
-            let endStates = result.endStates as? [String]
-        else { return .failed([]) }
-        if result.succeeded {
-            return .succeeded(endStates)
-        } else {
-            return .failed(endStates)
-        }
+    public func simulate(input: String) -> Bool {
+        automaton.simulate(
+            Array(input).map(String.init)
+        )
     }
 }
 

@@ -53,6 +53,8 @@ struct EditorState: Equatable {
     }
 }
 
+struct Empty: Equatable {}
+
 enum EditorAction: Equatable {
     case clear
     case selectedEraser
@@ -62,7 +64,7 @@ enum EditorAction: Equatable {
     case removedAlphabetSymbol(String)
     case inputChanged(String)
     case simulateInput(String)
-    case simulateInputResult(Result<[AutomatonState], AutomataLibraryError>)
+    case simulateInputResult(Result<Empty, AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState.ID, String)
     case transitionSymbolChanged(AutomatonTransition, String)
     case transitionSymbolAdded(AutomatonTransition)
@@ -129,13 +131,14 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.transitions
         )
         .receive(on: env.mainQueue)
+        .map { Empty() }
         .catchToEffect()
         .map(EditorAction.simulateInputResult)
         .eraseToEffect()
-    case let .simulateInputResult(.success(endStates)):
-        state.outputString = "✅ with states: \(endStates)"
-    case let .simulateInputResult(.failure(endStates)):
-        state.outputString = "❌ with states: \(endStates)"
+    case .simulateInputResult(.success):
+        state.outputString = "✅"
+    case .simulateInputResult(.failure):
+        state.outputString = "❌"
     case let .stateSymbolChanged(automatonStateID, symbol):
         guard
             let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID })
