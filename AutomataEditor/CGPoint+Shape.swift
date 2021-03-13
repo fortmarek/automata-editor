@@ -65,7 +65,7 @@ extension Array where Element == CGPoint {
 }
 
 /// Inspired from: https://github.com/nicklockwood/VectorMath/blob/master/VectorMath/VectorMath.swift
-private struct Vector: Hashable {
+struct Vector: Hashable {
     var x: CGFloat
     var y: CGFloat
     

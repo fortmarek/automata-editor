@@ -195,6 +195,48 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     radius: controlPoints.radius(with: center) * 0.7
                 )
             )
+        } else if let transitionIndex = state.transitionsWithoutEndState
+                    .firstIndex(
+                        where: {
+                            sqrt(controlPoints.closestPoint(from: $0.stroke.controlPoints[1]).distance(from: $0.stroke.controlPoints[1])) < 40
+                        }
+                    ) {
+            var transition = state.transitions[transitionIndex]
+            let vector = Vector(transition.stroke.controlPoints[0], transition.stroke.controlPoints[1])
+            let center = vector.point(distance: radius, other: transition.stroke.controlPoints[1])
+            
+            let automatonState = AutomatonState(
+                scribblePosition: center,
+                stroke: Stroke(
+                    controlPoints: .circle(center: center, radius: radius)
+                )
+            )
+            
+            transition.endState = automatonState.id
+            state.transitions[transitionIndex] = transition
+            
+            state.automatonStates.append(automatonState)
+        } else if let transitionIndex = state.transitionsWithoutStartState
+                    .firstIndex(
+                        where: {
+                            sqrt(controlPoints.closestPoint(from: $0.stroke.controlPoints[0]).distance(from: $0.stroke.controlPoints[0])) < 40
+                        }
+                    ) {
+            var transition = state.transitions[transitionIndex]
+            let vector = Vector(transition.stroke.controlPoints[1], transition.stroke.controlPoints[0])
+            let center = vector.point(distance: radius, other: transition.stroke.controlPoints[0])
+            
+            let automatonState = AutomatonState(
+                scribblePosition: center,
+                stroke: Stroke(
+                    controlPoints: .circle(center: center, radius: radius)
+                )
+            )
+            
+            transition.startState = automatonState.id
+            state.transitions[transitionIndex] = transition
+            
+            state.automatonStates.append(automatonState)
         } else {
             state.automatonStates.append(
                 AutomatonState(
@@ -286,13 +328,13 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         if strokes.count < state.strokes.count {
             let centerPoints = strokes.map { $0.controlPoints.center() }
             if let transitionIndex = state.transitions.firstIndex(
-                        where: { transition in
-                            !strokes.contains(
-                                where: {
-                                    transition.stroke.controlPoints[0].distance(from: $0.controlPoints[0]) == 0
-                                }
-                            )
+                where: { transition in
+                    !strokes.contains(
+                        where: {
+                            transition.stroke.controlPoints[0].distance(from: $0.controlPoints[0]) == 0
                         }
+                    )
+                }
             ) {
                 state.transitions.remove(at: transitionIndex)
             } else if let automatonStateIndex = state.automatonStates.firstIndex(
