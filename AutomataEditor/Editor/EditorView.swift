@@ -31,7 +31,7 @@ struct EditorView: View {
                             )
                         )
                         .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
-                        .frame(width: 100, height: 30)
+                        .frame(width: 50, height: 30)
                         .position(automatonState.scribblePosition)
                     }
                     ForEach(viewStore.transitions) { transition in
@@ -65,7 +65,7 @@ struct EditorView: View {
                                     )
                                 )
                                 .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
-                                .frame(width: 100, height: 30)
+                                .frame(width: 50, height: 30)
                                 Button(
                                     action: { viewStore.send(.transitionSymbolAdded(transition)) }
                                 ) {

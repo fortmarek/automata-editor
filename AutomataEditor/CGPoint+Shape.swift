@@ -15,15 +15,38 @@ extension Array where Element == CGPoint {
         }
     }
     
+    static func cycle(
+        _ point: CGPoint,
+        center: CGPoint
+    ) -> Self {
+        let vector = Vector(point, center)
+        let topPoint = vector.point(distance: -70, other: point)
+        let startToTopVector = Vector(point, topPoint)
+        let finalPoint = startToTopVector.rotated(by: .pi * 0.4).point(distance: 5, other: point)
+        return [
+            point,
+            startToTopVector.rotated(by: -.pi / 3).point(distance: 10, other: point),
+            startToTopVector.rotated(by: -.pi / 4).point(distance: 40, other: point),
+            topPoint,
+            startToTopVector.rotated(by: .pi / 4).point(distance: 40, other: point),
+            startToTopVector.rotated(by: .pi / 3).point(distance: 10, other: point),
+        ] + .arrow(
+            startPoint: finalPoint,
+            tipPoint: point,
+            arrowSpan: 30
+        )
+    }
+    
     static func arrow(
         startPoint: CGPoint,
-        tipPoint: CGPoint
+        tipPoint: CGPoint,
+        arrowSpan: CGFloat = 60
     ) -> Self {
         let vector = Vector(startPoint, tipPoint)
-        let anchorPoint = vector.point(distance: -20, other: tipPoint)
+        let anchorPoint = vector.point(distance: -arrowSpan / 3, other: tipPoint)
         let perpendicularVector = vector.rotated(by: .pi / 2)
-        let topPoint = perpendicularVector.point(distance: -30, other: anchorPoint)
-        let bottomPoint = perpendicularVector.point(distance: 30, other: anchorPoint)
+        let topPoint = perpendicularVector.point(distance: -arrowSpan / 2, other: anchorPoint)
+        let bottomPoint = perpendicularVector.point(distance: arrowSpan / 2, other: anchorPoint)
         let topVector = Vector(tipPoint, topPoint)
         let bottomVector = Vector(tipPoint, bottomPoint)
         return [

@@ -4,6 +4,7 @@ import ComposableArchitecture
 
 enum AutomatonShape: Equatable {
     case transition(Stroke)
+    case transitionCycle(Stroke)
     case state(Stroke)
 }
 
@@ -44,6 +45,8 @@ extension AutomataClassifierService {
                     automatonShape = .transition(stroke)
                 case .circle:
                     automatonShape = .state(stroke)
+                case .cycle:
+                    automatonShape = .transitionCycle(stroke)
                 }
                 
                 return Just(

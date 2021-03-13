@@ -203,6 +203,25 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 )
             )
         }
+    case let .automataShapeClassified(.success(.transitionCycle(stroke))):
+        guard
+            let strokeStartPoint = stroke.controlPoints.first,
+            let closestStateResult = closestState(from: strokeStartPoint)
+        else { return .none }
+        
+        state.transitions.append(
+            AutomatonTransition(
+                startState: closestStateResult.state.id,
+                endState: closestStateResult.state.id,
+                scribblePosition: .zero,
+                stroke: Stroke(
+                    controlPoints: .cycle(
+                        closestStateResult.point,
+                        center: closestStateResult.state.stroke.controlPoints.center()
+                    )
+                )
+            )
+        )
     case let .automataShapeClassified(.success(.transition(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first

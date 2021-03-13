@@ -8,6 +8,7 @@ import Combine
 enum AutomatonShapeType: String {
     case circle
     case arrow
+    case cycle
 }
 
 extension AutomataClassifierService {
@@ -40,6 +41,8 @@ extension AutomataClassifierService {
                                 promise(.success(.transition(stroke)))
                             case .circle:
                                 promise(.success(.state(stroke)))
+                            case .cycle:
+                                promise(.success(.transitionCycle(stroke)))
                             }
                         } else {
                             promise(.failure(.shapeNotRecognized))
