@@ -207,7 +207,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard
             let strokeStartPoint = stroke.controlPoints.first,
             let closestStateResult = closestState(from: strokeStartPoint)
-        else { return .none }
+        else {
+            state.shouldDeleteLastStroke = true
+            return .none
+        }
         
         let cycleControlPoints: [CGPoint] = .cycle(
             closestStateResult.point,
