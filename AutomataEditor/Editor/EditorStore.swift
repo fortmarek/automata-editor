@@ -209,16 +209,22 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let closestStateResult = closestState(from: strokeStartPoint)
         else { return .none }
         
+        let cycleControlPoints: [CGPoint] = .cycle(
+            closestStateResult.point,
+            center: closestStateResult.state.stroke.controlPoints.center()
+        )
+        let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
+        
         state.transitions.append(
             AutomatonTransition(
                 startState: closestStateResult.state.id,
                 endState: closestStateResult.state.id,
-                scribblePosition: .zero,
+                scribblePosition: CGPoint(
+                    x: highestPoint.x + 20,
+                    y: highestPoint.y - 20
+                ),
                 stroke: Stroke(
-                    controlPoints: .cycle(
-                        closestStateResult.point,
-                        center: closestStateResult.state.stroke.controlPoints.center()
-                    )
+                    controlPoints: cycleControlPoints
                 )
             )
         )
