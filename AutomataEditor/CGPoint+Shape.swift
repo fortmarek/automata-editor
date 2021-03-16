@@ -40,9 +40,10 @@ extension Array where Element == CGPoint {
     static func arrow(
         startPoint: CGPoint,
         tipPoint: CGPoint,
+        flexPoint: CGPoint? = nil,
         arrowSpan: CGFloat = 60
     ) -> Self {
-        let vector = Vector(startPoint, tipPoint)
+        let vector = Vector(flexPoint ?? startPoint, tipPoint)
         let anchorPoint = vector.point(distance: -arrowSpan / 3, other: tipPoint)
         let perpendicularVector = vector.rotated(by: .pi / 2)
         let topPoint = perpendicularVector.point(distance: -arrowSpan / 2, other: anchorPoint)
@@ -51,6 +52,9 @@ extension Array where Element == CGPoint {
         let bottomVector = Vector(tipPoint, bottomPoint)
         return [
             startPoint,
+        ]
+        + (flexPoint.map { [$0, $0] } ?? [])
+        + [
             tipPoint,
             topVector.point(distance: 0.1, other: tipPoint),
             topVector.point(distance: 1, other: tipPoint),

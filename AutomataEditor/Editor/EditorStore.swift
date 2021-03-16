@@ -203,12 +203,25 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         } else if let transitionIndex = state.transitionsWithoutEndState
                     .firstIndex(
                         where: {
-                            sqrt(controlPoints.closestPoint(from: $0.tipPoint).distance(from: $0.tipPoint)) < 40
+                            switch $0.type {
+                            case .cycle:
+                                return false
+                            case let .normal(
+                                startPoint: _,
+                                tipPoint: tipPoint,
+                                flexPoint: _
+                            ):
+                                return sqrt(controlPoints.closestPoint(from: tipPoint).distance(from: tipPoint)) < 40
+                            }
                         }
                     ) {
             var transition = state.transitions[transitionIndex]
-            let vector = Vector(transition.startPoint, transition.tipPoint)
-            let center = vector.point(distance: radius, other: transition.tipPoint)
+            guard
+                let startPoint = transition.startPoint,
+                let tipPoint = transition.tipPoint
+            else { return .none }
+            let vector = Vector(startPoint, tipPoint)
+            let center = vector.point(distance: radius, other: tipPoint)
             
             let automatonState = AutomatonState(
                 scribblePosition: center,
@@ -224,12 +237,25 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         } else if let transitionIndex = state.transitionsWithoutStartState
                     .firstIndex(
                         where: {
-                            sqrt(controlPoints.closestPoint(from: $0.startPoint).distance(from: $0.tipPoint)) < 40
+                            switch $0.type {
+                            case .cycle:
+                                return false
+                            case let .normal(
+                                startPoint: startPoint,
+                                tipPoint: _,
+                                flexPoint: _
+                            ):
+                                return sqrt(controlPoints.closestPoint(from: startPoint).distance(from: startPoint)) < 40
+                            }
                         }
                     ) {
             var transition = state.transitions[transitionIndex]
-            let vector = Vector(transition.tipPoint, transition.startPoint)
-            let center = vector.point(distance: radius, other: transition.startPoint)
+            guard
+                let startPoint = transition.startPoint,
+                let tipPoint = transition.tipPoint
+            else { return .none }
+            let vector = Vector(tipPoint, startPoint)
+            let center = vector.point(distance: radius, other: startPoint)
             
             let automatonState = AutomatonState(
                 scribblePosition: center,
@@ -256,7 +282,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitions[transitionIndex].currentFlexPoint = finalFlexPoint
         state.transitions[transitionIndex].scribblePosition = CGPoint(x: finalFlexPoint.x, y: finalFlexPoint.y - 50)
     case let .transitionFlexPointChanged(transitionID, flexPoint):
-        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
+        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { print("upsss"); return .none }
+        print(flexPoint)
         state.transitions[transitionIndex].flexPoint = flexPoint
         state.transitions[transitionIndex].scribblePosition = CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
@@ -282,8 +309,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     x: highestPoint.x + 20,
                     y: highestPoint.y - 20
                 ),
-                type: .cycle,
-                controlPoints: cycleControlPoints
+                type: .cycle(closestStateResult.point, center: closestStateResult.state.stroke.controlPoints.center())
             )
         )
     case let .automataShapeClassified(.success(.transition(stroke))):
@@ -332,13 +358,11 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     y: flexPoint.y - 50
                 ),
                 type: .normal(
-                    flexPoint
-                ),
-                currentFlexPoint: flexPoint,
-                controlPoints: .arrow(
                     startPoint: startPoint,
-                    tipPoint: tipPoint
-                )
+                    tipPoint: tipPoint,
+                    flexPoint: flexPoint
+                ),
+                currentFlexPoint: flexPoint
             )
         )
     case .automataShapeClassified(.failure):
@@ -346,39 +370,40 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .strokesChanged(strokes):
         // A stroke was deleted
         if strokes.count < state.strokes.count {
-            let centerPoints = strokes.map { $0.controlPoints.center() }
-            if let transitionIndex = state.transitions.firstIndex(
-                where: { transition in
-                    !strokes.contains(
-                        where: {
-                            transition.startPoint.distance(from: $0.controlPoints[0]) == 0
-                        }
-                    )
-                }
-            ) {
-                state.transitions.remove(at: transitionIndex)
-            } else if let automatonStateIndex = state.automatonStates.firstIndex(
-                where: { state in
-                    !centerPoints.contains(
-                        where: {
-                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
-                        }
-                    )
-                }
-            ) {
-                let automatonState = state.automatonStates[automatonStateIndex]
-                state.automatonStates.remove(at: automatonStateIndex)
-                state.transitions = state.transitions.map { transition in
-                    var transition = transition
-                    if transition.startState == automatonState.id {
-                        transition.startState = nil
-                    }
-                    if transition.endState == automatonState.id {
-                        transition.endState = nil
-                    }
-                    return transition
-                }
-            }
+            // TODO: Fix
+//            let centerPoints = strokes.map { $0.controlPoints.center() }
+//            if let transitionIndex = state.transitions.firstIndex(
+//                where: { transition in
+//                    !strokes.contains(
+//                        where: {
+//                            transition.startPoint.distance(from: $0.controlPoints[0]) == 0
+//                        }
+//                    )
+//                }
+//            ) {
+//                state.transitions.remove(at: transitionIndex)
+//            } else if let automatonStateIndex = state.automatonStates.firstIndex(
+//                where: { state in
+//                    !centerPoints.contains(
+//                        where: {
+//                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
+//                        }
+//                    )
+//                }
+//            ) {
+//                let automatonState = state.automatonStates[automatonStateIndex]
+//                state.automatonStates.remove(at: automatonStateIndex)
+//                state.transitions = state.transitions.map { transition in
+//                    var transition = transition
+//                    if transition.startState == automatonState.id {
+//                        transition.startState = nil
+//                    }
+//                    if transition.endState == automatonState.id {
+//                        transition.endState = nil
+//                    }
+//                    return transition
+//                }
+//            }
         } else {
             guard let stroke = strokes.last else { return .none }
             return env.automataClassifierService

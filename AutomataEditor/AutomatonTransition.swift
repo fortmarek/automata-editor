@@ -1,10 +1,9 @@
 import UIKit
 
 struct AutomatonTransition: Equatable, Identifiable {
-    enum TransitionType: Equatable {
-        case cycle
-        /// Associated value is flex point for changing shape of the transition
-        case normal(CGPoint)
+    enum TransitionType: Equatable, Hashable {
+        case cycle(CGPoint, center: CGPoint)
+        case normal(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
     }
     
     var startState: AutomatonState.ID?
@@ -18,32 +17,60 @@ struct AutomatonTransition: Equatable, Identifiable {
     /// Needed for gesture
     /// Might not always correspond to the value if a gesture is currently underway
     var currentFlexPoint: CGPoint? = nil
-    let controlPoints: [CGPoint]
     
     var stroke: Stroke {
         switch type {
-        case .cycle:
+        case let .cycle(point, center: center):
             return Stroke(
-                controlPoints: [startPoint, tipPoint]
+                controlPoints: .cycle(point, center: center)
             )
-        case let .normal(flexPoint):
+        case let .normal(
+            startPoint: startPoint,
+            tipPoint: tipPoint,
+            flexPoint: flexPoint
+        ):
             return Stroke(
-                controlPoints: [
-                    startPoint,
-                    flexPoint,
-                    flexPoint,
-                    tipPoint,
-                ]
+                controlPoints: .arrow(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint)
             )
         }
     }
-
+    
+    var startPoint: CGPoint? {
+        switch type {
+        case .cycle:
+            return nil
+        case let .normal(
+            startPoint: startPoint,
+            tipPoint: _,
+            flexPoint: _
+        ):
+            return startPoint
+        }
+    }
+    
+    var tipPoint: CGPoint? {
+        switch type {
+        case .cycle:
+            return nil
+        case let .normal(
+            startPoint: _,
+            tipPoint: tipPoint,
+            flexPoint: _
+        ):
+            return tipPoint
+        }
+    }
+    
     var flexPoint: CGPoint? {
         get {
             switch type {
             case .cycle:
                 return nil
-            case let .normal(flexPoint):
+            case let .normal(
+                startPoint: _,
+                tipPoint: _,
+                flexPoint: flexPoint
+            ):
                 return flexPoint
             }
         }
@@ -52,21 +79,30 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 break
-            case .normal:
-                type = .normal(newValue)
+            case let .normal(
+                startPoint: startPoint,
+                tipPoint: tipPoint,
+                flexPoint: _
+            ):
+                type = .normal(
+                    startPoint: startPoint,
+                    tipPoint: tipPoint,
+                    flexPoint: newValue
+                )
             }
         }
     }
     
-    var startPoint: CGPoint {
-        controlPoints[0]
-    }
-    
-    var tipPoint: CGPoint {
-        controlPoints[1]
-    }
-    
-    var id: [CGPoint] {
-        controlPoints
+    var id: CGPoint {
+        switch type {
+        case let .cycle(point, center: _):
+            return point
+        case let .normal(
+            startPoint: startPoint,
+            tipPoint: _,
+            flexPoint: _
+        ):
+            return startPoint
+        }
     }
 }
