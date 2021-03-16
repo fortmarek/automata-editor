@@ -78,36 +78,40 @@ struct EditorView: View {
                     ForEach(viewStore.transitions) { transition in
                         if let currentFlexPoint = transition.currentFlexPoint,
                            let flexPoint = transition.flexPoint {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 30)
-                                .position(currentFlexPoint)
-                                .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            viewStore.send(
-                                                .transitionFlexPointChanged(
-                                                    transition.id,
-                                                    CGPoint(
-                                                        x: currentFlexPoint.x + value.translation.width,
-                                                        y: currentFlexPoint.y + value.translation.height
-                                                    )
+                            ZStack {
+                                Circle()
+                                    .fill(Color.blue)
+                                    .frame(width: 30)
+                                Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                                    .frame(width: 25)
+                            }
+                            .position(currentFlexPoint)
+                            .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        viewStore.send(
+                                            .transitionFlexPointChanged(
+                                                transition.id,
+                                                CGPoint(
+                                                    x: currentFlexPoint.x + value.translation.width,
+                                                    y: currentFlexPoint.y + value.translation.height
                                                 )
                                             )
-                                        }
-                                        .onEnded { value in
-                                            viewStore.send(
-                                                .transitionFlexPointFinishedDragging(
-                                                    transition.id,
-                                                    CGPoint(
-                                                        x: currentFlexPoint.x + value.translation.width,
-                                                        y: currentFlexPoint.y + value.translation.height
-                                                    )
+                                        )
+                                    }
+                                    .onEnded { value in
+                                        viewStore.send(
+                                            .transitionFlexPointFinishedDragging(
+                                                transition.id,
+                                                CGPoint(
+                                                    x: currentFlexPoint.x + value.translation.width,
+                                                    y: currentFlexPoint.y + value.translation.height
                                                 )
                                             )
-                                        }
-                                )
+                                        )
+                                    }
+                            )
                         }
                     }
                     VStack(alignment: .center) {

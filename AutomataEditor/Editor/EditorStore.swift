@@ -282,8 +282,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitions[transitionIndex].currentFlexPoint = finalFlexPoint
         state.transitions[transitionIndex].scribblePosition = CGPoint(x: finalFlexPoint.x, y: finalFlexPoint.y - 50)
     case let .transitionFlexPointChanged(transitionID, flexPoint):
-        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { print("upsss"); return .none }
-        print(flexPoint)
+        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
         state.transitions[transitionIndex].flexPoint = flexPoint
         state.transitions[transitionIndex].scribblePosition = CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
