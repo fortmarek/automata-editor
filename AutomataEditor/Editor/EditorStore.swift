@@ -66,6 +66,8 @@ enum EditorAction: Equatable {
     case simulateInput(String)
     case simulateInputResult(Result<Empty, AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState.ID, String)
+    case transitionFlexPointFinishedDragging(AutomatonTransition.ID, CGPoint)
+    case transitionFlexPointChanged(AutomatonTransition.ID, CGPoint)
     case transitionSymbolChanged(AutomatonTransition, String)
     case transitionSymbolAdded(AutomatonTransition)
     case transitionSymbolRemoved(AutomatonTransition, String)
@@ -248,6 +250,15 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 )
             )
         }
+    case let .transitionFlexPointFinishedDragging(transitionID, finalFlexPoint):
+        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
+        state.transitions[transitionIndex].flexPoint = finalFlexPoint
+        state.transitions[transitionIndex].currentFlexPoint = finalFlexPoint
+        state.transitions[transitionIndex].scribblePosition = CGPoint(x: finalFlexPoint.x, y: finalFlexPoint.y - 50)
+    case let .transitionFlexPointChanged(transitionID, flexPoint):
+        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
+        state.transitions[transitionIndex].flexPoint = flexPoint
+        state.transitions[transitionIndex].scribblePosition = CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first,
@@ -262,7 +273,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             center: closestStateResult.state.stroke.controlPoints.center()
         )
         let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
-        
+
         state.transitions.append(
             AutomatonTransition(
                 startState: closestStateResult.state.id,
@@ -271,9 +282,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     x: highestPoint.x + 20,
                     y: highestPoint.y - 20
                 ),
-                stroke: Stroke(
-                    controlPoints: cycleControlPoints
-                )
+                type: .cycle,
+                controlPoints: cycleControlPoints
             )
         )
     case let .automataShapeClassified(.success(.transition(stroke))):
@@ -308,19 +318,26 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             endState = closestEndStateResult?.state
         }
         
+        let flexPoint = CGPoint(
+            x: (startPoint.x + tipPoint.x) / 2,
+            y: (startPoint.y + tipPoint.y) / 2
+        )
+        
         state.transitions.append(
             AutomatonTransition(
                 startState: startState?.id,
                 endState: endState?.id,
                 scribblePosition: CGPoint(
-                    x: (startPoint.x + tipPoint.x) / 2,
-                    y: (startPoint.y + tipPoint.y) / 2 - 50
+                    x: flexPoint.x,
+                    y: flexPoint.y - 50
                 ),
-                stroke: Stroke(
-                    controlPoints: .arrow(
-                        startPoint: startPoint,
-                        tipPoint: tipPoint
-                    )
+                type: .normal(
+                    flexPoint
+                ),
+                currentFlexPoint: flexPoint,
+                controlPoints: .arrow(
+                    startPoint: startPoint,
+                    tipPoint: tipPoint
                 )
             )
         )

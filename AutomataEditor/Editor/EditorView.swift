@@ -75,6 +75,41 @@ struct EditorView: View {
                         }
                         .position(transition.scribblePosition)
                     }
+                    ForEach(viewStore.transitions) { transition in
+                        if let currentFlexPoint = transition.currentFlexPoint,
+                           let flexPoint = transition.flexPoint {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 30)
+                                .position(currentFlexPoint)
+                                .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { value in
+                                            viewStore.send(
+                                                .transitionFlexPointChanged(
+                                                    transition.id,
+                                                    CGPoint(
+                                                        x: currentFlexPoint.x + value.translation.width,
+                                                        y: currentFlexPoint.y + value.translation.height
+                                                    )
+                                                )
+                                            )
+                                        }
+                                        .onEnded { value in
+                                            viewStore.send(
+                                                .transitionFlexPointFinishedDragging(
+                                                    transition.id,
+                                                    CGPoint(
+                                                        x: currentFlexPoint.x + value.translation.width,
+                                                        y: currentFlexPoint.y + value.translation.height
+                                                    )
+                                                )
+                                            )
+                                        }
+                                )
+                        }
+                    }
                     VStack(alignment: .center) {
                         Text("Alphabet")
                         HStack {
@@ -169,40 +204,40 @@ extension CGPoint: Hashable {
     }
 }
 
-struct EditorView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditorView(
-            store: EditorStore(
-                initialState: .init(
-                    outputString: "✅ with states A, B, C",
-                    alphabetSymbols: [
-                        "A",
-                        "B",
-                    ],
-                    transitions: [
-                        AutomatonTransition(
-                            startState: nil,
-                            endState: nil,
-                            currentSymbol: "A",
-                            symbols: ["B", "C"],
-                            scribblePosition: CGPoint(x: 400, y: 200),
-                            stroke: Stroke(
-                                controlPoints: .arrow(
-                                    startPoint: CGPoint(x: 380, y: 200),
-                                    tipPoint: CGPoint(x: 420, y: 200)
-                                )
-                            )
-                        )
-                    ]
-                ),
-                reducer: editorReducer,
-                environment: EditorEnvironment(
-                    automataClassifierService: .successfulTransition,
-                    automataLibraryService: .successful(),
-                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
-                )
-            )
-        )
-    }
-}
+//struct EditorView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EditorView(
+//            store: EditorStore(
+//                initialState: .init(
+//                    outputString: "✅ with states A, B, C",
+//                    alphabetSymbols: [
+//                        "A",
+//                        "B",
+//                    ],
+//                    transitions: [
+//                        AutomatonTransition(
+//                            startState: nil,
+//                            endState: nil,
+//                            currentSymbol: "A",
+//                            symbols: ["B", "C"],
+//                            scribblePosition: CGPoint(x: 400, y: 200),
+//                            stroke: Stroke(
+//                                controlPoints: .arrow(
+//                                    startPoint: CGPoint(x: 380, y: 200),
+//                                    tipPoint: CGPoint(x: 420, y: 200)
+//                                )
+//                            )
+//                        )
+//                    ]
+//                ),
+//                reducer: editorReducer,
+//                environment: EditorEnvironment(
+//                    automataClassifierService: .successfulTransition,
+//                    automataLibraryService: .successful(),
+//                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+//                )
+//            )
+//        )
+//    }
+//}
 
