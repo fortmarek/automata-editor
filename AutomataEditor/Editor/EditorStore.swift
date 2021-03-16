@@ -188,18 +188,13 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     .contains($0.stroke.controlPoints.center())
                 }
             ) {
-            guard state.automatonStates[stateIndex].endStroke == nil else {
+            guard !state.automatonStates[stateIndex].isEndState else {
                 state.shouldDeleteLastStroke = true
                 return .none
             }
             let controlPoints = state.automatonStates[stateIndex].stroke.controlPoints
             let center = controlPoints.center()
-            state.automatonStates[stateIndex].endStroke = Stroke(
-                controlPoints: .circle(
-                    center: center,
-                    radius: controlPoints.radius(with: center) * 0.7
-                )
-            )
+            state.automatonStates[stateIndex].isEndState = true
         } else if let transitionIndex = state.transitionsWithoutEndState
                     .firstIndex(
                         where: {
@@ -224,10 +219,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let center = vector.point(distance: radius, other: tipPoint)
             
             let automatonState = AutomatonState(
-                scribblePosition: center,
-                stroke: Stroke(
-                    controlPoints: .circle(center: center, radius: radius)
-                )
+                center: center,
+                radius: radius
             )
             
             transition.endState = automatonState.id
@@ -258,10 +251,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let center = vector.point(distance: radius, other: startPoint)
             
             let automatonState = AutomatonState(
-                scribblePosition: center,
-                stroke: Stroke(
-                    controlPoints: .circle(center: center, radius: radius)
-                )
+                center: center,
+                radius: radius
             )
             
             transition.startState = automatonState.id
@@ -271,8 +262,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         } else {
             state.automatonStates.append(
                 AutomatonState(
-                    scribblePosition: center,
-                    stroke: Stroke(controlPoints: controlPoints)
+                    center: center,
+                    radius: radius
                 )
             )
         }

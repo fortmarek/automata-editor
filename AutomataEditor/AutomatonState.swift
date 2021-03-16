@@ -2,12 +2,34 @@ import UIKit
 
 struct AutomatonState: Equatable, Identifiable {
     var name: String = ""
-    let scribblePosition: CGPoint
-    let stroke: Stroke
-    /// Stroke for second circle around `stroke` to indicate this state is one of the end states
-    var endStroke: Stroke?
+    var isEndState: Bool = false
+    var center: CGPoint
+    let radius: CGFloat
     
-    var id: Stroke {
-        stroke
+    var stroke: Stroke {
+        Stroke(
+            controlPoints: .circle(
+                center: center,
+                radius: radius
+            )
+        )
+    }
+    
+    var endStroke: Stroke? {
+        guard isEndState else { return nil }
+        return Stroke(
+            controlPoints: .circle(
+                center: center,
+                radius: radius * 0.7
+            )
+        )
+    }
+    
+    var scribblePosition: CGPoint {
+        center
+    }
+
+    var id: CGPoint {
+        center
     }
 }
