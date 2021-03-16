@@ -9,6 +9,14 @@ struct AutomatonTransition: Equatable, Identifiable {
     let scribblePosition: CGPoint
     let stroke: Stroke
     
+    var startPoint: CGPoint {
+        stroke.controlPoints[0]
+    }
+    
+    var tipPoint: CGPoint {
+        stroke.controlPoints[1]
+    }
+    
     var id: Stroke {
         stroke
     }
