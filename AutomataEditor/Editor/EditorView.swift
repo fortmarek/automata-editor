@@ -24,7 +24,7 @@ struct EditorView: View {
                         tool: viewStore.state.tool
                     )
                     ForEach(viewStore.automatonStates) { automatonState in
-                        TextEditor(
+                        TextView(
                             text: viewStore.binding(
                                 get: { $0.automatonStates.first(where: { $0.id == automatonState.id })?.name ?? "" },
                                 send: { .stateSymbolChanged(automatonState.id, $0) }
@@ -58,7 +58,7 @@ struct EditorView: View {
                             )
                             .frame(width: 200)
                             HStack {
-                                TextEditor(
+                                TextView(
                                     text: viewStore.binding(
                                         get: { _ in transition.currentSymbol },
                                         send: { .transitionSymbolChanged(transition, $0) }
@@ -117,7 +117,7 @@ struct EditorView: View {
                     VStack(alignment: .center) {
                         Text("Alphabet")
                         HStack {
-                            TextEditor(
+                            TextView(
                                 text: viewStore.binding(
                                     get: \.currentAlphabetSymbol,
                                     send: { .currentAlphabetSymbolChanged($0) }
@@ -151,7 +151,7 @@ struct EditorView: View {
                         Button("Simulate") {
                             viewStore.send(.simulateInput(viewStore.state.input))
                         }
-                        TextEditor(
+                        TextView(
                             text: viewStore.binding(
                                 get: \.input,
                                 send: { .inputChanged($0) }
