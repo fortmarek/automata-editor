@@ -66,6 +66,8 @@ enum EditorAction: Equatable {
     case simulateInput(String)
     case simulateInputResult(Result<Empty, AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState.ID, String)
+    case stateDragPointFinishedDragging(AutomatonState.ID, CGPoint)
+    case stateDragPointChanged(AutomatonState.ID, CGPoint)
     case transitionFlexPointFinishedDragging(AutomatonTransition.ID, CGPoint)
     case transitionFlexPointChanged(AutomatonTransition.ID, CGPoint)
     case transitionSymbolChanged(AutomatonTransition, String)
@@ -276,6 +278,13 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
         state.transitions[transitionIndex].flexPoint = flexPoint
         state.transitions[transitionIndex].scribblePosition = CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
+    case let .stateDragPointChanged(automatonStateID, dragPoint):
+        guard let stateIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID }) else { return .none }
+        state.automatonStates[stateIndex].dragPoint = dragPoint
+    case let .stateDragPointFinishedDragging(automatonStateID, dragPoint):
+        guard let stateIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID }) else { return .none }
+        state.automatonStates[stateIndex].dragPoint = dragPoint
+        state.automatonStates[stateIndex].currentDragPoint = dragPoint
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first,

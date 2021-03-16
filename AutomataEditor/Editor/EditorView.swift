@@ -33,6 +33,44 @@ struct EditorView: View {
                         .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
                         .frame(width: 50, height: 30)
                         .position(automatonState.scribblePosition)
+                        
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 30)
+                            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                                .frame(width: 25)
+                        }
+                        .position(automatonState.currentDragPoint)
+                        .offset(
+                            x: automatonState.dragPoint.x - automatonState.currentDragPoint.x,
+                            y: automatonState.dragPoint.y - automatonState.currentDragPoint.y
+                        )
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    viewStore.send(
+                                        .stateDragPointChanged(
+                                            automatonState.id,
+                                            CGPoint(
+                                                x: automatonState.currentDragPoint.x + value.translation.width,
+                                                y: automatonState.currentDragPoint.y + value.translation.height
+                                            )
+                                        )
+                                    )
+                                }
+                                .onEnded { value in
+                                    viewStore.send(
+                                        .stateDragPointFinishedDragging(
+                                            automatonState.id,
+                                            CGPoint(
+                                                x: automatonState.currentDragPoint.x + value.translation.width,
+                                                y: automatonState.currentDragPoint.y + value.translation.height
+                                            )
+                                        )
+                                    )
+                                }
+                        )
                     }
                     ForEach(viewStore.transitions) { transition in
                         VStack(alignment: .center) {
