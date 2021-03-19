@@ -42,37 +42,14 @@ struct EditorView: View {
                         automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
                         automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) }
                     )
-                    VStack(alignment: .center) {
-                        Text("Alphabet")
-                        HStack {
-                            TextView(
-                                text: viewStore.binding(
-                                    get: \.currentAlphabetSymbol,
-                                    send: { .currentAlphabetSymbolChanged($0) }
-                                )
-                            )
-                            .border(colorScheme == .dark ? Color.white : Color.black)
-                            .frame(width: 100, height: 30)
-                            Button(
-                                action: { viewStore.send(.addedCurrentAlphabetSymbol) }
-                            ) {
-                                Image(systemName: "plus.circle.fill")
-                            }
-                        }
-                        ForEach(viewStore.state.alphabetSymbols, id: \.self) { symbol in
-                            HStack {
-                                Text(symbol)
-                                Button(
-                                    action: { viewStore.send(.removedAlphabetSymbol(symbol)) }
-                                ) {
-                                    Image(systemName: "trash.fill")
-                                }
-                            }
-                        }
-                        Text("Output: \(viewStore.state.outputString)")
-                            .frame(width: 150)
-                    }
-                    .position(x: 70, y: 100)
+                    AlphabetView(
+                        currentAlphabetSymbol: viewStore.currentAlphabetSymbol,
+                        currentAlphabetSymbolChanged: { viewStore.send(.currentAlphabetSymbolChanged($0)) },
+                        alphabetSymbols: viewStore.alphabetSymbols,
+                        addedCurrentAlphabetSymbol: { viewStore.send(.addedCurrentAlphabetSymbol) },
+                        removedAlphabetSymbol: { viewStore.send(.removedAlphabetSymbol($0)) },
+                        outputString: viewStore.outputString
+                    )
                 }
                 HStack(alignment: .top) {
                     VStack {
@@ -112,27 +89,6 @@ struct EditorView: View {
                 }
             }
         }
-    }
-    
-    private func strokePoint(
-        _ location: CGPoint
-    ) -> PKStrokePoint {
-        PKStrokePoint(
-            location: location,
-            timeOffset: 0,
-            size: CGSize(width: 4, height: 4),
-            opacity: 1,
-            force: 1,
-            azimuth: 0,
-            altitude: 0
-        )
-    }
-}
-
-extension CGPoint: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(x)
-        hasher.combine(y)
     }
 }
 
