@@ -3,7 +3,7 @@ import UIKit
 struct AutomatonTransition: Equatable, Identifiable {
     enum TransitionType: Equatable, Hashable {
         case cycle(CGPoint, center: CGPoint)
-        case normal(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
+        case regular(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
     }
     
     var startState: AutomatonState.ID?
@@ -20,7 +20,7 @@ struct AutomatonTransition: Equatable, Identifiable {
                 x: highestPoint.x + 20,
                 y: highestPoint.y - 20
             )
-        case let .normal(startPoint: _, tipPoint: _, flexPoint: flexPoint):
+        case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
             return CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
         }
     }
@@ -36,7 +36,7 @@ struct AutomatonTransition: Equatable, Identifiable {
             return Stroke(
                 controlPoints: .cycle(point, center: center)
             )
-        case let .normal(
+        case let .regular(
             startPoint: startPoint,
             tipPoint: tipPoint,
             flexPoint: flexPoint
@@ -52,7 +52,7 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 return nil
-            case let .normal(
+            case let .regular(
                 startPoint: startPoint,
                 tipPoint: _,
                 flexPoint: _
@@ -65,12 +65,12 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 break
-            case let .normal(
+            case let .regular(
                 startPoint: _,
                 tipPoint: tipPoint,
                 flexPoint: flexPoint
             ):
-                type = .normal(
+                type = .regular(
                     startPoint: newValue,
                     tipPoint: tipPoint,
                     flexPoint: flexPoint
@@ -84,7 +84,7 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 return nil
-            case let .normal(
+            case let .regular(
                 startPoint: _,
                 tipPoint: tipPoint,
                 flexPoint: _
@@ -97,12 +97,12 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 break
-            case let .normal(
+            case let .regular(
                 startPoint: startPoint,
                 tipPoint: _,
                 flexPoint: flexPoint
             ):
-                type = .normal(
+                type = .regular(
                     startPoint: startPoint,
                     tipPoint: newValue,
                     flexPoint: flexPoint
@@ -116,7 +116,7 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 return nil
-            case let .normal(
+            case let .regular(
                 startPoint: _,
                 tipPoint: _,
                 flexPoint: flexPoint
@@ -129,12 +129,12 @@ struct AutomatonTransition: Equatable, Identifiable {
             switch type {
             case .cycle:
                 break
-            case let .normal(
+            case let .regular(
                 startPoint: startPoint,
                 tipPoint: tipPoint,
                 flexPoint: _
             ):
-                type = .normal(
+                type = .regular(
                     startPoint: startPoint,
                     tipPoint: tipPoint,
                     flexPoint: newValue

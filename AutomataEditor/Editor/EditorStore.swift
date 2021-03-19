@@ -138,7 +138,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 switch $0.type {
                 case .cycle:
                     return false
-                case let .normal(
+                case let .regular(
                     startPoint: _,
                     tipPoint: tipPoint,
                     flexPoint: _
@@ -158,7 +158,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     switch $0.type {
                     case .cycle:
                         return false
-                    case let .normal(
+                    case let .regular(
                         startPoint: startPoint,
                         tipPoint: _,
                         flexPoint: _
@@ -327,7 +327,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                         vector.point(distance: endState.radius, other: endState.center),
                         center: endState.center
                     )
-                case .normal:
+                case .regular:
                     break
                 }
             }
@@ -418,7 +418,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         let transition = AutomatonTransition(
             startState: startState?.id,
             endState: endState?.id,
-            type: .normal(
+            type: .regular(
                 startPoint: startPoint,
                 tipPoint: tipPoint,
                 flexPoint: flexPoint
