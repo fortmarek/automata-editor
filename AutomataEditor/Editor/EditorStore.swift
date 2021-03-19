@@ -413,40 +413,51 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .strokesChanged(strokes):
         // A stroke was deleted
         if strokes.count < state.strokes.count {
-            // TODO: Fix
-//            let centerPoints = strokes.map { $0.controlPoints.center() }
-//            if let transitionIndex = state.transitions.firstIndex(
-//                where: { transition in
-//                    !strokes.contains(
-//                        where: {
-//                            transition.startPoint.distance(from: $0.controlPoints[0]) == 0
-//                        }
-//                    )
-//                }
-//            ) {
-//                state.transitions.remove(at: transitionIndex)
-//            } else if let automatonStateIndex = state.automatonStates.firstIndex(
-//                where: { state in
-//                    !centerPoints.contains(
-//                        where: {
-//                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
-//                        }
-//                    )
-//                }
-//            ) {
-//                let automatonState = state.automatonStates[automatonStateIndex]
-//                state.automatonStates.remove(at: automatonStateIndex)
-//                state.transitions = state.transitions.map { transition in
-//                    var transition = transition
-//                    if transition.startState == automatonState.id {
-//                        transition.startState = nil
-//                    }
-//                    if transition.endState == automatonState.id {
-//                        transition.endState = nil
-//                    }
-//                    return transition
-//                }
-//            }
+            let centerPoints = strokes.map { $0.controlPoints.center() }
+            if let transition = state.transitions.first(
+                where: { transition in
+                    !strokes.contains(
+                        where: { stroke in
+                            switch transition.type {
+                            case let .cycle(point, center: _):
+                                return point.distance(from: stroke.controlPoints[0]) <= 0.1
+                            case let .regular(startPoint, tipPoint, flexPoint):
+                                return startPoint.distance(from: stroke.controlPoints[0]) <= 0.1
+                            }
+                        }
+                    )
+                }
+            ) {
+                state.transitionsDict.removeValue(forKey: transition.id)
+            } else if let automatonState = state.automatonStates.first(
+                where: { state in
+                    !centerPoints.contains(
+                        where: {
+                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
+                        }
+                    )
+                }
+            ) {
+                state.automatonStatesDict.removeValue(forKey: automatonState.id)
+                state.transitions.forEach { transition in
+                    var transition = transition
+                    switch transition.type {
+                    case .cycle:
+                        if let transitionStartState = transition.startState,
+                           transitionStartState == automatonState.id {
+                            state.transitionsDict.removeValue(forKey: transition.id)
+                        }
+                    case .regular:
+                        if transition.startState == automatonState.id {
+                            transition.startState = nil
+                        }
+                        if transition.endState == automatonState.id {
+                            transition.endState = nil
+                        }
+                        state.transitionsDict[transition.id] = transition
+                    }
+                }
+            }
         } else {
             guard let stroke = strokes.last else { return .none }
             return env.automataClassifierService
