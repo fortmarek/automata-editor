@@ -108,6 +108,28 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         }
     }
     
+    
+    /// - Returns: State that encapsulates `controlPoints`
+    func enclosingState(for controlPoints: [CGPoint]) -> AutomatonState? {
+        guard
+            let minX = controlPoints.min(by: { $0.x < $1.x })?.x,
+            let maxX = controlPoints.max(by: { $0.x < $1.x })?.x,
+            let minY = controlPoints.min(by: { $0.y < $1.y })?.y,
+            let maxY = controlPoints.max(by: { $0.y < $1.y })?.y
+        else { return nil }
+        return state.automatonStates.first(
+            where: {
+                CGRect(
+                    x: minX,
+                    y: minY,
+                    width: maxX - minX,
+                    height: maxY - minY
+                )
+                .contains($0.stroke.controlPoints.center())
+            }
+        )
+    }
+    
     switch action {
     case .selectedEraser:
         state.tool = .eraser
@@ -173,22 +195,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             radius: radius
         )
         
-        if
-            let minX = controlPoints.min(by: { $0.x < $1.x })?.x,
-            let maxX = controlPoints.max(by: { $0.x < $1.x })?.x,
-            let minY = controlPoints.min(by: { $0.y < $1.y })?.y,
-            let maxY = controlPoints.max(by: { $0.y < $1.y })?.y,
-            let automatonState = state.automatonStates.first(
-                where: {
-                    CGRect(
-                        x: minX,
-                        y: minY,
-                        width: maxX - minX,
-                        height: maxY - minY
-                    )
-                    .contains($0.stroke.controlPoints.center())
-                }
-            ) {
+        if let automatonState = enclosingState(for: controlPoints) {
             guard !automatonState.isEndState else {
                 state.shouldDeleteLastStroke = true
                 return .none
