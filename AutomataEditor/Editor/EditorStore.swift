@@ -273,11 +273,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
         state.transitions[transitionIndex].flexPoint = finalFlexPoint
         state.transitions[transitionIndex].currentFlexPoint = finalFlexPoint
-        state.transitions[transitionIndex].scribblePosition = CGPoint(x: finalFlexPoint.x, y: finalFlexPoint.y - 50)
     case let .transitionFlexPointChanged(transitionID, flexPoint):
         guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
         state.transitions[transitionIndex].flexPoint = flexPoint
-        state.transitions[transitionIndex].scribblePosition = CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
     case let .stateDragPointChanged(automatonStateID, dragPoint):
         guard let stateIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID }) else { return .none }
         state.automatonStates[stateIndex].dragPoint = dragPoint
@@ -304,6 +302,24 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 else { return }
                 let vector = Vector(startState.center, flexPoint)
                 state.transitions[transitionIndex].startPoint = vector.point(distance: startState.radius, other: startState.center)
+            }
+        state.transitions
+            .forEach { transition in
+                switch transition.type {
+                case let .cycle(point, center: center):
+                    guard
+                        let endStateID = transition.endState,
+                        let endState = state.automatonStates.first(where: { $0.id == endStateID }),
+                        let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                    else { return }
+                    let vector = Vector(endState.center, point)
+                    state.transitions[transitionIndex].type = .cycle(
+                        vector.point(distance: endState.radius, other: endState.center),
+                        center: endState.center
+                    )
+                case .normal:
+                    break
+                }
             }
         
     case let .stateDragPointFinishedDragging(automatonStateID, dragPoint):
@@ -353,10 +369,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             AutomatonTransition(
                 startState: closestStateResult.state.id,
                 endState: closestStateResult.state.id,
-                scribblePosition: CGPoint(
-                    x: highestPoint.x + 20,
-                    y: highestPoint.y - 20
-                ),
                 type: .cycle(closestStateResult.point, center: closestStateResult.state.stroke.controlPoints.center())
             )
         )
@@ -401,10 +413,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             AutomatonTransition(
                 startState: startState?.id,
                 endState: endState?.id,
-                scribblePosition: CGPoint(
-                    x: flexPoint.x,
-                    y: flexPoint.y - 50
-                ),
                 type: .normal(
                     startPoint: startPoint,
                     tipPoint: tipPoint,

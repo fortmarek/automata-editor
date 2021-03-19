@@ -11,7 +11,18 @@ struct AutomatonTransition: Equatable, Identifiable {
     /// Symbol currently being written
     var currentSymbol: String = ""
     var symbols: [String] = []
-    var scribblePosition: CGPoint
+    var scribblePosition: CGPoint {
+        switch type {
+        case let .cycle(point, center: center):
+            let highestPoint = stroke.controlPoints.min(by: { $0.y < $1.y }) ?? .zero
+            return CGPoint(
+                x: highestPoint.x + 20,
+                y: highestPoint.y - 20
+            )
+        case let .normal(startPoint: _, tipPoint: _, flexPoint: flexPoint):
+            return CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
+        }
+    }
     var type: TransitionType
     /// Current flex point
     /// Needed for gesture
