@@ -57,6 +57,7 @@
 		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
 		F8FC48A52604A2EE00A27DC5 /* AutomatonStatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */; };
 		F8FC48A82604C58600A27DC5 /* AlphabetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A72604C58600A27DC5 /* AlphabetView.swift */; };
+		F8FC48AB2604D18F00A27DC5 /* CGPoint+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -167,6 +168,7 @@
 		F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionsView.swift; sourceTree = "<group>"; };
 		F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonStatesView.swift; sourceTree = "<group>"; };
 		F8FC48A72604C58600A27DC5 /* AlphabetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphabetView.swift; sourceTree = "<group>"; };
+		F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extra.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,6 +275,7 @@
 				F815A40625EB99C2002C44DE /* Editor */,
 				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
 				F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */,
+				F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */,
 				F815A41525EBA827002C44DE /* AutomatonTransition.swift */,
 				F815A41925EBA844002C44DE /* AutomatonState.swift */,
 				F81641CF25E9419800F49800 /* UIImage+Extra.swift */,
@@ -519,6 +522,7 @@
 				F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
 				F8FC48A52604A2EE00A27DC5 /* AutomatonStatesView.swift in Sources */,
+				F8FC48AB2604D18F00A27DC5 /* CGPoint+Extra.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

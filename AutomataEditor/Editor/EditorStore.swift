@@ -22,8 +22,14 @@ struct EditorState: Equatable {
     var input: String = ""
     var currentAlphabetSymbol: String = ""
     var alphabetSymbols: [String] = []
-    var automatonStates: [AutomatonState] = []
-    var transitions: [AutomatonTransition] = []
+    fileprivate var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
+    var automatonStates: [AutomatonState] {
+        automatonStatesDict.map(\.value)
+    }
+    var transitions: [AutomatonTransition] {
+        transitionsDict.map(\.value)
+    }
+    fileprivate var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
     var strokes: [Stroke] {
         automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
@@ -119,8 +125,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.alphabetSymbols.append(state.currentAlphabetSymbol)
         state.currentAlphabetSymbol = ""
     case .clear:
-        state.automatonStates = []
-        state.transitions = []
+        state.automatonStatesDict = [:]
+        state.transitionsDict = [:]
     case let .inputChanged(input):
         state.input = input
     case let .simulateInput(input):
@@ -144,28 +150,19 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .simulateInputResult(.failure):
         state.outputString = "❌"
     case let .stateSymbolChanged(automatonStateID, symbol):
-        guard
-            let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID })
-        else { return .none }
-        state.automatonStates[automatonIndex].name = symbol
+        state.automatonStatesDict[automatonStateID]?.name = symbol
     case let .transitionSymbolChanged(transitionID, symbol):
-        guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
-        else { return .none }
-        state.transitions[transitionIndex].currentSymbol = symbol
+        state.transitionsDict[transitionID]?.currentSymbol = symbol
     case let .transitionSymbolAdded(transitionID):
         guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
+            let transition = state.transitionsDict[transitionID]
         else { return .none }
-        state.transitions[transitionIndex].symbols.append(
-            state.transitions[transitionIndex].currentSymbol
+        state.transitionsDict[transitionID]?.symbols.append(
+            transition.currentSymbol
         )
-        state.transitions[transitionIndex].currentSymbol = ""
+        state.transitionsDict[transitionID]?.currentSymbol = ""
     case let .transitionSymbolRemoved(transitionID, symbol):
-        guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
-        else { return .none }
-        state.transitions[transitionIndex].symbols.removeAll(where: { $0 == symbol })
+        state.transitionsDict[transitionID]?.symbols.removeAll(where: { $0 == symbol })
     case let .automataShapeClassified(.success(.state(stroke))):
         let center = stroke.controlPoints.center()
         
@@ -181,7 +178,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let maxX = controlPoints.max(by: { $0.x < $1.x })?.x,
             let minY = controlPoints.min(by: { $0.y < $1.y })?.y,
             let maxY = controlPoints.max(by: { $0.y < $1.y })?.y,
-            let stateIndex = state.automatonStates.firstIndex(
+            let automatonState = state.automatonStates.first(
                 where: {
                     CGRect(
                         x: minX,
@@ -192,15 +189,15 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     .contains($0.stroke.controlPoints.center())
                 }
             ) {
-            guard !state.automatonStates[stateIndex].isEndState else {
+            guard !automatonState.isEndState else {
                 state.shouldDeleteLastStroke = true
                 return .none
             }
-            let controlPoints = state.automatonStates[stateIndex].stroke.controlPoints
+            let controlPoints = automatonState.stroke.controlPoints
             let center = controlPoints.center()
-            state.automatonStates[stateIndex].isEndState = true
-        } else if let transitionIndex = state.transitionsWithoutEndState
-                    .firstIndex(
+            state.automatonStatesDict[automatonState.id]?.isEndState = true
+        } else if var transition = state.transitionsWithoutEndState
+                    .first(
                         where: {
                             switch $0.type {
                             case .cycle:
@@ -214,7 +211,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                             }
                         }
                     ) {
-            var transition = state.transitions[transitionIndex]
             guard
                 let startPoint = transition.startPoint,
                 let tipPoint = transition.tipPoint
@@ -228,11 +224,11 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             )
             
             transition.endState = automatonState.id
-            state.transitions[transitionIndex] = transition
+            state.transitionsDict[transition.id] = transition
             
-            state.automatonStates.append(automatonState)
-        } else if let transitionIndex = state.transitionsWithoutStartState
-                    .firstIndex(
+            state.automatonStatesDict[automatonState.id] = automatonState
+        } else if var transition = state.transitionsWithoutStartState
+                    .first(
                         where: {
                             switch $0.type {
                             case .cycle:
@@ -246,7 +242,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                             }
                         }
                     ) {
-            var transition = state.transitions[transitionIndex]
             guard
                 let startPoint = transition.startPoint,
                 let tipPoint = transition.tipPoint
@@ -260,38 +255,35 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             )
             
             transition.startState = automatonState.id
-            state.transitions[transitionIndex] = transition
+            state.transitionsDict[transition.id] = transition
             
-            state.automatonStates.append(automatonState)
+            state.automatonStatesDict[automatonState.id] = automatonState
         } else {
-            state.automatonStates.append(
-                AutomatonState(
-                    center: center,
-                    radius: radius
-                )
+            let automatonState = AutomatonState(
+                center: center,
+                radius: radius
             )
+            state.automatonStatesDict[automatonState.id] = automatonState
         }
     case let .transitionFlexPointFinishedDragging(transitionID, finalFlexPoint):
-        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
-        state.transitions[transitionIndex].flexPoint = finalFlexPoint
-        state.transitions[transitionIndex].currentFlexPoint = finalFlexPoint
+        guard var transition = state.transitionsDict[transitionID] else { return .none }
+        transition.flexPoint = finalFlexPoint
+        transition.currentFlexPoint = finalFlexPoint
+        state.transitionsDict[transition.id] = transition
     case let .transitionFlexPointChanged(transitionID, flexPoint):
-        guard let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID }) else { return .none }
-        state.transitions[transitionIndex].flexPoint = flexPoint
+        state.transitionsDict[transitionID]?.flexPoint = flexPoint
     case let .stateDragPointChanged(automatonStateID, dragPoint):
-        guard let stateIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID }) else { return .none }
-        state.automatonStates[stateIndex].dragPoint = dragPoint
+        state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
         state.transitions
             .filter { $0.endState == automatonStateID && $0.endState != $0.startState }
             .forEach { transition in
                 guard
                     let flexPoint = transition.flexPoint,
                     let endStateID = transition.endState,
-                    let endState = state.automatonStates.first(where: { $0.id == endStateID }),
-                    let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                    let endState = state.automatonStatesDict[endStateID]
                 else { return }
                 let vector = Vector(endState.center, flexPoint)
-                state.transitions[transitionIndex].tipPoint = vector.point(distance: endState.radius, other: endState.center)
+                state.transitionsDict[transition.id]?.tipPoint = vector.point(distance: endState.radius, other: endState.center)
             }
         state.transitions
             .filter { $0.startState == automatonStateID && $0.endState != $0.startState }
@@ -299,11 +291,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 guard
                     let flexPoint = transition.flexPoint,
                     let startStateID = transition.startState,
-                    let startState = state.automatonStates.first(where: { $0.id == startStateID }),
-                    let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                    let startState = state.automatonStatesDict[startStateID]
                 else { return }
                 let vector = Vector(startState.center, flexPoint)
-                state.transitions[transitionIndex].startPoint = vector.point(distance: startState.radius, other: startState.center)
+                state.transitionsDict[transition.id]?.startPoint = vector.point(distance: startState.radius, other: startState.center)
             }
         state.transitions
             .forEach { transition in
@@ -311,11 +302,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 case let .cycle(point, center: center):
                     guard
                         let endStateID = transition.endState,
-                        let endState = state.automatonStates.first(where: { $0.id == endStateID }),
-                        let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                        let endState = state.automatonStatesDict[endStateID]
                     else { return }
                     let vector = Vector(endState.center, point)
-                    state.transitions[transitionIndex].type = .cycle(
+                    state.transitionsDict[transition.id]?.type = .cycle(
                         vector.point(distance: endState.radius, other: endState.center),
                         center: endState.center
                     )
@@ -325,20 +315,18 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             }
         
     case let .stateDragPointFinishedDragging(automatonStateID, dragPoint):
-        guard let stateIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID }) else { return .none }
-        state.automatonStates[stateIndex].dragPoint = dragPoint
-        state.automatonStates[stateIndex].currentDragPoint = dragPoint
+        state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
+        state.automatonStatesDict[automatonStateID]?.currentDragPoint = dragPoint
         state.transitions
             .filter { $0.endState == automatonStateID && $0.endState != $0.startState }
             .forEach { transition in
                 guard
                     let flexPoint = transition.flexPoint,
                     let endStateID = transition.endState,
-                    let endState = state.automatonStates.first(where: { $0.id == endStateID }),
-                    let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                    let endState = state.automatonStatesDict[endStateID]
                 else { return }
                 let vector = Vector(endState.center, flexPoint)
-                state.transitions[transitionIndex].tipPoint = vector.point(distance: endState.radius, other: endState.center)
+                state.transitionsDict[transition.id]?.tipPoint = vector.point(distance: endState.radius, other: endState.center)
             }
         state.transitions
             .filter { $0.startState == automatonStateID && $0.endState != $0.startState }
@@ -346,11 +334,10 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 guard
                     let flexPoint = transition.flexPoint,
                     let startStateID = transition.startState,
-                    let startState = state.automatonStates.first(where: { $0.id == startStateID }),
-                    let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+                    let startState = state.automatonStatesDict[startStateID]
                 else { return }
                 let vector = Vector(startState.center, flexPoint)
-                state.transitions[transitionIndex].startPoint = vector.point(distance: startState.radius, other: startState.center)
+                state.transitionsDict[transition.id]?.startPoint = vector.point(distance: startState.radius, other: startState.center)
             }
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
         guard
@@ -367,13 +354,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
         let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
-        state.transitions.append(
-            AutomatonTransition(
-                startState: closestStateResult.state.id,
-                endState: closestStateResult.state.id,
-                type: .cycle(closestStateResult.point, center: closestStateResult.state.stroke.controlPoints.center())
-            )
+        let transition = AutomatonTransition(
+            startState: closestStateResult.state.id,
+            endState: closestStateResult.state.id,
+            type: .cycle(closestStateResult.point, center: closestStateResult.state.stroke.controlPoints.center())
         )
+        state.transitionsDict[transition.id] = transition
     case let .automataShapeClassified(.success(.transition(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first
@@ -411,18 +397,17 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             y: (startPoint.y + tipPoint.y) / 2
         )
         
-        state.transitions.append(
-            AutomatonTransition(
-                startState: startState?.id,
-                endState: endState?.id,
-                type: .normal(
-                    startPoint: startPoint,
-                    tipPoint: tipPoint,
-                    flexPoint: flexPoint
-                ),
-                currentFlexPoint: flexPoint
-            )
+        let transition = AutomatonTransition(
+            startState: startState?.id,
+            endState: endState?.id,
+            type: .normal(
+                startPoint: startPoint,
+                tipPoint: tipPoint,
+                flexPoint: flexPoint
+            ),
+            currentFlexPoint: flexPoint
         )
+        state.transitionsDict[transition.id] = transition
     case .automataShapeClassified(.failure):
         state.shouldDeleteLastStroke = true
     case let .strokesChanged(strokes):
@@ -476,42 +461,4 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     }
     
     return .none
-}
-
-extension CGPoint {
-    func distance(from other: CGPoint) -> CGFloat {
-        pow(other.x - x, 2) + pow(other.y - y, 2)
-    }
-}
-
-extension Array where Element == CGPoint {
-    func closestPoint(from point: CGPoint) -> CGPoint {
-        reduce((CGPoint.zero, CGFloat.infinity)) { acc, current in
-            let currentDistance = current.distance(from: point)
-            return currentDistance < acc.1 ? (current, currentDistance) : acc
-        }
-        .0
-    }
-    
-    func furthestPoint(from point: CGPoint) -> CGPoint {
-        reduce((CGPoint.zero, -CGFloat.infinity)) { acc, current in
-            let currentDistance = current.distance(from: point)
-            return currentDistance > acc.1 ? (current, currentDistance) : acc
-        }
-        .0
-    }
-    
-    func center() -> CGPoint {
-        let (sumX, sumY, count): (CGFloat, CGFloat, CGFloat) = reduce((CGFloat(0), CGFloat(0), CGFloat(0))) { acc, current in
-            (acc.0 + current.x, acc.1 + current.y, acc.2 + 1)
-        }
-        return CGPoint(x: sumX / count, y: sumY / count)
-    }
-    
-    func radius(with center: CGPoint) -> CGFloat {
-        let sumDistance = reduce(0) { acc, current in
-            acc + abs(center.x - current.x) + abs(center.y - current.y)
-        }
-        return sumDistance / CGFloat(count)
-    }
 }

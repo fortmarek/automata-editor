@@ -11,6 +11,7 @@ struct AutomatonTransition: Equatable, Identifiable {
     /// Symbol currently being written
     var currentSymbol: String = ""
     var symbols: [String] = []
+    let id = UUID()
     var scribblePosition: CGPoint {
         switch type {
         case let .cycle(point, center: center):
@@ -139,19 +140,6 @@ struct AutomatonTransition: Equatable, Identifiable {
                     flexPoint: newValue
                 )
             }
-        }
-    }
-    
-    var id: CGPoint {
-        switch type {
-        case let .cycle(point, center: _):
-            return point
-        case let .normal(
-            startPoint: startPoint,
-            tipPoint: _,
-            flexPoint: _
-        ):
-            return startPoint
         }
     }
 }

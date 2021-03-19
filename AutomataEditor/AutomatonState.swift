@@ -7,7 +7,7 @@ struct AutomatonState: Equatable, Identifiable {
     let radius: CGFloat
     var currentDragPoint: CGPoint
     let id = UUID()
-    
+
     init(
         center: CGPoint,
         radius: CGFloat
