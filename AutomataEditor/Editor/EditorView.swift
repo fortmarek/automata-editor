@@ -5,6 +5,7 @@ import ComposableArchitecture
 
 struct EditorView: View {
     @Environment(\.colorScheme) var colorScheme
+    @State var counter = 0
     
     let store: EditorStore
     
@@ -49,6 +50,8 @@ struct EditorView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
+                                    counter += 1
+                                    guard counter % 3 == 1 else { return }
                                     viewStore.send(
                                         .stateDragPointChanged(
                                             automatonState.id,
@@ -128,6 +131,8 @@ struct EditorView: View {
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
+                                        counter += 1
+                                        guard counter % 3 == 1 else { return }
                                         viewStore.send(
                                             .transitionFlexPointChanged(
                                                 transition.id,

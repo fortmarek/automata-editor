@@ -36,28 +36,66 @@ struct AutomatonTransition: Equatable, Identifiable {
     }
     
     var startPoint: CGPoint? {
-        switch type {
-        case .cycle:
-            return nil
-        case let .normal(
-            startPoint: startPoint,
-            tipPoint: _,
-            flexPoint: _
-        ):
-            return startPoint
+        get {
+            switch type {
+            case .cycle:
+                return nil
+            case let .normal(
+                startPoint: startPoint,
+                tipPoint: _,
+                flexPoint: _
+            ):
+                return startPoint
+            }
+        }
+        set {
+            guard let newValue = newValue else { return }
+            switch type {
+            case .cycle:
+                break
+            case let .normal(
+                startPoint: _,
+                tipPoint: tipPoint,
+                flexPoint: flexPoint
+            ):
+                type = .normal(
+                    startPoint: newValue,
+                    tipPoint: tipPoint,
+                    flexPoint: flexPoint
+                )
+            }
         }
     }
     
     var tipPoint: CGPoint? {
-        switch type {
-        case .cycle:
-            return nil
-        case let .normal(
-            startPoint: _,
-            tipPoint: tipPoint,
-            flexPoint: _
-        ):
-            return tipPoint
+        get {
+            switch type {
+            case .cycle:
+                return nil
+            case let .normal(
+                startPoint: _,
+                tipPoint: tipPoint,
+                flexPoint: _
+            ):
+                return tipPoint
+            }
+        }
+        set {
+            guard let newValue = newValue else { return }
+            switch type {
+            case .cycle:
+                break
+            case let .normal(
+                startPoint: startPoint,
+                tipPoint: _,
+                flexPoint: flexPoint
+            ):
+                type = .normal(
+                    startPoint: startPoint,
+                    tipPoint: newValue,
+                    flexPoint: flexPoint
+                )
+            }
         }
     }
     
