@@ -37,7 +37,7 @@ struct AlphabetView: View {
                 }
             }
             Text("Output: \(outputString)")
-                .frame(width: 150)
+                .frame(width: 140)
         }
         .position(x: 70, y: 100)
     }

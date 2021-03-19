@@ -15,7 +15,7 @@ enum AutomataLibraryError: Error, Equatable {
 
 struct AutomataLibraryService {
     let simulateInput: (
-        _ input: String,
+        _ input: [String],
         _ states: [AutomatonState],
         _ initialState: AutomatonState,
         _ finalStates: [AutomatonState],

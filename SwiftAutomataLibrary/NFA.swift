@@ -25,9 +25,9 @@ public struct NFA {
         )
     }
     
-    public func simulate(input: String) -> Bool {
+    public func simulate(input: [String]) -> Bool {
         automaton.simulate(
-            Array(input).map(String.init)
+            input
         )
     }
 }

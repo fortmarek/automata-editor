@@ -47,7 +47,7 @@ struct AutomatonState: Equatable, Identifiable {
         return Stroke(
             controlPoints: .circle(
                 center: center,
-                radius: radius * 0.7
+                radius: radius * 0.9
             )
         )
     }

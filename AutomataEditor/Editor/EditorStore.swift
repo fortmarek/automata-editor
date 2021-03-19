@@ -233,12 +233,27 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .inputChanged(input):
         state.input = input
     case let .simulateInput(input):
-        // TODO: Handle no or multiple initial states
-        guard let initialStates = state.initialStates.first else { return .none }
+        guard
+            let initialState = state.initialStates.first
+        else {
+            state.outputString = "❌ No initial state"
+            return .none
+        }
+        guard state.initialStates.count == 1 else {
+            state.outputString = "❌ Multiple initial states"
+            return .none
+        }
+        let input = Array(input).map(String.init)
+        guard
+            input.allSatisfy(state.alphabetSymbols.contains)
+        else {
+            state.outputString = "❌ Missing input symbols in alphabet"
+            return .none
+        }
         return env.automataLibraryService.simulateInput(
             input,
             state.automatonStates,
-            initialStates,
+            initialState,
             state.finalStates,
             state.alphabetSymbols,
             state.transitions
