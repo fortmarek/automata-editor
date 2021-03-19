@@ -24,139 +24,24 @@ struct EditorView: View {
                         ),
                         tool: viewStore.state.tool
                     )
-                    ForEach(viewStore.automatonStates) { automatonState in
-                        TextView(
-                            text: viewStore.binding(
-                                get: { $0.automatonStates.first(where: { $0.id == automatonState.id })?.name ?? "" },
-                                send: { .stateSymbolChanged(automatonState.id, $0) }
-                            )
-                        )
-                        .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
-                        .frame(width: 50, height: 30)
-                        .position(automatonState.scribblePosition)
-                        
-                        ZStack {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 30)
-                            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                                .frame(width: 25)
+                    TransitionsView(
+                        transitions: viewStore.transitions,
+                        transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
+                        transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
+                        transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
+                        transitionDragged: {
+                            viewStore.send(.transitionFlexPointChanged($0, $1))
+                        },
+                        transitionFinishedDragging: {
+                            viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
                         }
-                        .position(automatonState.currentDragPoint)
-                        .offset(
-                            x: automatonState.dragPoint.x - automatonState.currentDragPoint.x,
-                            y: automatonState.dragPoint.y - automatonState.currentDragPoint.y
-                        )
-                        .gesture(
-                            DragGesture()
-                                .onChanged { value in
-                                    counter += 1
-                                    guard counter % 3 == 1 else { return }
-                                    viewStore.send(
-                                        .stateDragPointChanged(
-                                            automatonState.id,
-                                            CGPoint(
-                                                x: automatonState.currentDragPoint.x + value.translation.width,
-                                                y: automatonState.currentDragPoint.y + value.translation.height
-                                            )
-                                        )
-                                    )
-                                }
-                                .onEnded { value in
-                                    viewStore.send(
-                                        .stateDragPointFinishedDragging(
-                                            automatonState.id,
-                                            CGPoint(
-                                                x: automatonState.currentDragPoint.x + value.translation.width,
-                                                y: automatonState.currentDragPoint.y + value.translation.height
-                                            )
-                                        )
-                                    )
-                                }
-                        )
-                    }
-                    ForEach(viewStore.transitions) { transition in
-                        VStack(alignment: .center) {
-                            FlexibleView(
-                                data: transition.symbols,
-                                spacing: 3,
-                                alignment: .leading,
-                                content: { symbol in
-                                    Button(
-                                        action: { viewStore.send(.transitionSymbolRemoved(transition, symbol)) }
-                                    ) {
-                                        HStack {
-                                            Text(symbol)
-                                                .foregroundColor(Color.black)
-                                            Image(systemName: "xmark")
-                                                .foregroundColor(Color.black)
-                                        }
-                                        .padding(.all, 5)
-                                        .background(Color.white)
-                                        .cornerRadius(10)
-                                    }
-                                }
-                            )
-                            .frame(width: 200)
-                            HStack {
-                                TextView(
-                                    text: viewStore.binding(
-                                        get: { _ in transition.currentSymbol },
-                                        send: { .transitionSymbolChanged(transition, $0) }
-                                    )
-                                )
-                                .border(colorScheme == .dark ? Color.white : Color.black, width: 2)
-                                .frame(width: 50, height: 30)
-                                Button(
-                                    action: { viewStore.send(.transitionSymbolAdded(transition)) }
-                                ) {
-                                    Image(systemName: "plus.circle.fill")
-                                }
-                            }
-                        }
-                        .position(transition.scribblePosition)
-                    }
-                    ForEach(viewStore.transitions) { transition in
-                        if let currentFlexPoint = transition.currentFlexPoint,
-                           let flexPoint = transition.flexPoint {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.blue)
-                                    .frame(width: 30)
-                                Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                                    .frame(width: 25)
-                            }
-                            .position(currentFlexPoint)
-                            .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        counter += 1
-                                        guard counter % 3 == 1 else { return }
-                                        viewStore.send(
-                                            .transitionFlexPointChanged(
-                                                transition.id,
-                                                CGPoint(
-                                                    x: currentFlexPoint.x + value.translation.width,
-                                                    y: currentFlexPoint.y + value.translation.height
-                                                )
-                                            )
-                                        )
-                                    }
-                                    .onEnded { value in
-                                        viewStore.send(
-                                            .transitionFlexPointFinishedDragging(
-                                                transition.id,
-                                                CGPoint(
-                                                    x: currentFlexPoint.x + value.translation.width,
-                                                    y: currentFlexPoint.y + value.translation.height
-                                                )
-                                            )
-                                        )
-                                    }
-                            )
-                        }
-                    }
+                    )
+                    AutomatonStatesView(
+                        automatonStates: viewStore.automatonStates,
+                        stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
+                        automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
+                        automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) }
+                    )
                     VStack(alignment: .center) {
                         Text("Alphabet")
                         HStack {

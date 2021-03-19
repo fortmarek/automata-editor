@@ -54,6 +54,8 @@
 		F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C873125F7BFA20000BCA9 /* SizeReader.swift */; };
 		F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DA926010C390054BBFF /* TextView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
+		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
+		F8FC48A52604A2EE00A27DC5 /* AutomatonStatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +163,8 @@
 		F8933DA926010C390054BBFF /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
 		F8CF054C25F01D2C00077209 /* NFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFA.swift; sourceTree = "<group>"; };
+		F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionsView.swift; sourceTree = "<group>"; };
+		F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonStatesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +206,8 @@
 			isa = PBXGroup;
 			children = (
 				F85184E225DD1C0800791701 /* EditorView.swift */,
+				F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */,
+				F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */,
 				F81641D725E9425F00F49800 /* EditorStore.swift */,
 			);
 			path = Editor;
@@ -491,6 +497,7 @@
 			files = (
 				F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */,
 				F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */,
+				F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */,
 				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
 				F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
@@ -507,6 +514,7 @@
 				F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */,
 				F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */,
 				F81641DD25EAAA6C00F49800 /* Stroke.swift in Sources */,
+				F8FC48A52604A2EE00A27DC5 /* AutomatonStatesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

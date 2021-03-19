@@ -70,9 +70,9 @@ enum EditorAction: Equatable {
     case stateDragPointChanged(AutomatonState.ID, CGPoint)
     case transitionFlexPointFinishedDragging(AutomatonTransition.ID, CGPoint)
     case transitionFlexPointChanged(AutomatonTransition.ID, CGPoint)
-    case transitionSymbolChanged(AutomatonTransition, String)
-    case transitionSymbolAdded(AutomatonTransition)
-    case transitionSymbolRemoved(AutomatonTransition, String)
+    case transitionSymbolChanged(AutomatonTransition.ID, String)
+    case transitionSymbolAdded(AutomatonTransition.ID)
+    case transitionSymbolRemoved(AutomatonTransition.ID, String)
     case strokesChanged([Stroke])
     case shouldDeleteLastStrokeChanged(Bool)
     case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
@@ -148,20 +148,22 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let automatonIndex = state.automatonStates.firstIndex(where: { $0.id == automatonStateID })
         else { return .none }
         state.automatonStates[automatonIndex].name = symbol
-    case let .transitionSymbolChanged(transition, symbol):
+    case let .transitionSymbolChanged(transitionID, symbol):
         guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
         else { return .none }
         state.transitions[transitionIndex].currentSymbol = symbol
-    case let .transitionSymbolAdded(transition):
+    case let .transitionSymbolAdded(transitionID):
         guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
         else { return .none }
+        state.transitions[transitionIndex].symbols.append(
+            state.transitions[transitionIndex].currentSymbol
+        )
         state.transitions[transitionIndex].currentSymbol = ""
-        state.transitions[transitionIndex].symbols.append(transition.currentSymbol)
-    case let .transitionSymbolRemoved(transition, symbol):
+    case let .transitionSymbolRemoved(transitionID, symbol):
         guard
-            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transition.id })
+            let transitionIndex = state.transitions.firstIndex(where: { $0.id == transitionID })
         else { return .none }
         state.transitions[transitionIndex].symbols.removeAll(where: { $0 == symbol })
     case let .automataShapeClassified(.success(.state(stroke))):
