@@ -130,6 +130,45 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
     }
     
+    func closestTransitionWithoutEndState(
+        for controlPoints: [CGPoint]
+    ) -> AutomatonTransition? {
+        state.transitionsWithoutEndState.first(
+            where: {
+                switch $0.type {
+                case .cycle:
+                    return false
+                case let .normal(
+                    startPoint: _,
+                    tipPoint: tipPoint,
+                    flexPoint: _
+                ):
+                    return sqrt(controlPoints.closestPoint(from: tipPoint).distance(from: tipPoint)) < 40
+                }
+            }
+        )
+    }
+    
+    func closestTransitionWithoutStartState(
+        for controlPoints: [CGPoint]
+    ) -> AutomatonTransition? {
+        state.transitionsWithoutStartState
+            .first(
+                where: {
+                    switch $0.type {
+                    case .cycle:
+                        return false
+                    case let .normal(
+                        startPoint: startPoint,
+                        tipPoint: _,
+                        flexPoint: _
+                    ):
+                        return sqrt(controlPoints.closestPoint(from: startPoint).distance(from: startPoint)) < 40
+                    }
+                }
+            )
+    }
+    
     switch action {
     case .selectedEraser:
         state.tool = .eraser
@@ -203,21 +242,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let controlPoints = automatonState.stroke.controlPoints
             let center = controlPoints.center()
             state.automatonStatesDict[automatonState.id]?.isEndState = true
-        } else if var transition = state.transitionsWithoutEndState
-                    .first(
-                        where: {
-                            switch $0.type {
-                            case .cycle:
-                                return false
-                            case let .normal(
-                                startPoint: _,
-                                tipPoint: tipPoint,
-                                flexPoint: _
-                            ):
-                                return sqrt(controlPoints.closestPoint(from: tipPoint).distance(from: tipPoint)) < 40
-                            }
-                        }
-                    ) {
+        } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
             guard
                 let startPoint = transition.startPoint,
                 let tipPoint = transition.tipPoint
@@ -234,21 +259,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.transitionsDict[transition.id] = transition
             
             state.automatonStatesDict[automatonState.id] = automatonState
-        } else if var transition = state.transitionsWithoutStartState
-                    .first(
-                        where: {
-                            switch $0.type {
-                            case .cycle:
-                                return false
-                            case let .normal(
-                                startPoint: startPoint,
-                                tipPoint: _,
-                                flexPoint: _
-                            ):
-                                return sqrt(controlPoints.closestPoint(from: startPoint).distance(from: startPoint)) < 40
-                            }
-                        }
-                    ) {
+        } else if var transition = closestTransitionWithoutStartState(for: controlPoints) {
             guard
                 let startPoint = transition.startPoint,
                 let tipPoint = transition.tipPoint
