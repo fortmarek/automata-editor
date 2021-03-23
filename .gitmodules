@@ -1,0 +1,3 @@
+[submodule "bachelor-thesis"]
+	path = bachelor-thesis
+	url = https://github.com/fortmarek/bachelor_thesis
