@@ -20,8 +20,6 @@ struct EditorState: Equatable {
     var penImage: Image = Image(systemName: "pencil.circle.fill")
     var outputString: String = ""
     var input: String = ""
-    var currentAlphabetSymbol: String = ""
-    var alphabetSymbols: [String] = []
     fileprivate var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
     var automatonStates: [AutomatonState] {
         automatonStatesDict.map(\.value)
@@ -62,9 +60,6 @@ enum EditorAction: Equatable {
     case clear
     case selectedEraser
     case selectedPen
-    case currentAlphabetSymbolChanged(String)
-    case addedCurrentAlphabetSymbol
-    case removedAlphabetSymbol(String)
     case inputChanged(String)
     case simulateInput(String)
     case simulateInputResult(Result<Empty, AutomataLibraryError>)
@@ -217,13 +212,6 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.tool = .pen
         state.eraserImage = Image(systemName: "minus.square")
         state.penImage = Image(systemName: "pencil.circle.fill")
-    case let .currentAlphabetSymbolChanged(symbol):
-        state.currentAlphabetSymbol = symbol
-    case let .removedAlphabetSymbol(symbol):
-        state.alphabetSymbols.removeAll(where: { $0 == symbol })
-    case .addedCurrentAlphabetSymbol:
-        state.alphabetSymbols.append(state.currentAlphabetSymbol)
-        state.currentAlphabetSymbol = ""
     case .clear:
         state.automatonStatesDict = [:]
         state.transitionsDict = [:]
@@ -241,10 +229,18 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             return .none
         }
         let input = Array(input).map(String.init)
+        let alphabetSymbols: [String] = Array(
+            Set(
+                state.transitions
+                    .flatMap {
+                        $0.symbols + ($0.currentSymbol.isEmpty ? [] : [$0.currentSymbol])
+                    }
+            )
+        )
         guard
-            input.allSatisfy(state.alphabetSymbols.contains)
+            input.allSatisfy(alphabetSymbols.contains)
         else {
-            state.outputString = "❌ Missing input symbols in alphabet"
+            state.outputString = "❌ Input symbols are not accepted by the automaton"
             return .none
         }
         return env.automataLibraryService.simulateInput(
@@ -252,7 +248,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.automatonStates,
             initialState,
             state.finalStates,
-            state.alphabetSymbols,
+            alphabetSymbols,
             state.transitions
         )
         .receive(on: env.mainQueue)

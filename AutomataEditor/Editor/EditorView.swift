@@ -42,14 +42,9 @@ struct EditorView: View {
                         automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
                         automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) }
                     )
-                    AlphabetView(
-                        currentAlphabetSymbol: viewStore.currentAlphabetSymbol,
-                        currentAlphabetSymbolChanged: { viewStore.send(.currentAlphabetSymbolChanged($0)) },
-                        alphabetSymbols: viewStore.alphabetSymbols,
-                        addedCurrentAlphabetSymbol: { viewStore.send(.addedCurrentAlphabetSymbol) },
-                        removedAlphabetSymbol: { viewStore.send(.removedAlphabetSymbol($0)) },
-                        outputString: viewStore.outputString
-                    )
+                    Text("Output: \(viewStore.outputString)")
+                        .frame(width: 140)
+                        .position(x: 30, y: 100)
                 }
                 HStack(alignment: .top) {
                     VStack {
