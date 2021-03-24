@@ -228,6 +228,14 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.outputString = "❌ Multiple initial states"
             return .none
         }
+        guard
+            state.automatonStates
+                .map(\.name)
+                .allSatisfy ({ !$0.isEmpty })
+        else {
+            state.outputString = "❌ Unnamed states"
+            return .none
+        }
         let input = Array(input).map(String.init)
         let alphabetSymbols: [String] = Array(
             Set(

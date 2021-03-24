@@ -44,7 +44,7 @@ struct EditorView: View {
                     )
                     Text("Output: \(viewStore.outputString)")
                         .frame(width: 140)
-                        .position(x: 30, y: 100)
+                        .position(x: 70, y: 50)
                 }
                 HStack(alignment: .top) {
                     VStack {
