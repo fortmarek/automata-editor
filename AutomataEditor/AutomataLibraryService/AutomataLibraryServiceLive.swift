@@ -29,6 +29,7 @@ extension AutomataLibraryService {
                                     fromState: startState.name,
                                     toState: endState.name,
                                     symbols: transition.symbols
+                                        + (transition.currentSymbol.isEmpty ? [] : [transition.currentSymbol])
                                 )
                             }
                     )
