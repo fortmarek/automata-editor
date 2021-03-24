@@ -51,12 +51,22 @@ struct EditorView: View {
                         Button("Simulate") {
                             viewStore.send(.simulateInput(viewStore.state.input))
                         }
-                        TextView(
-                            text: viewStore.binding(
-                                get: \.input,
-                                send: { .inputChanged($0) }
+                        ZStack {
+                            TextView(
+                                text: viewStore.binding(
+                                    get: \.input,
+                                    send: { .inputChanged($0) }
+                                )
                             )
-                        )
+                            Button(
+                                action: {
+                                    viewStore.send(.removeLastInputSymbol)
+                                }
+                            ) {
+                                Image(systemName: "delete.left")
+                            }
+                            .position(x: 180, y: 15)
+                        }
                         .border(colorScheme == .dark ? Color.white : Color.black)
                         .frame(width: 200, height: 30)
                     }

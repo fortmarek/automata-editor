@@ -25,6 +25,7 @@ struct TextView: UIViewRepresentable {
             UIScribbleInteraction(delegate: context.coordinator)
         )
         textView.delegate = context.coordinator
+        textView.alwaysBounceVertical = false
         
         return textView
     }
@@ -49,6 +50,8 @@ final class TextViewCoordinator: NSObject, UIScribbleInteractionDelegate, UIText
     
     func textViewDidChange(_ textView: UITextView) {
         parent.$text.wrappedValue = textView.text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
     }
     
     func scribbleInteraction(_ interaction: UIScribbleInteraction, shouldBeginAt location: CGPoint) -> Bool {

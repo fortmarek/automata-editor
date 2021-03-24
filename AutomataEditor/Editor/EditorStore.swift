@@ -60,6 +60,7 @@ enum EditorAction: Equatable {
     case clear
     case selectedEraser
     case selectedPen
+    case removeLastInputSymbol
     case inputChanged(String)
     case simulateInput(String)
     case simulateInputResult(Result<Empty, AutomataLibraryError>)
@@ -217,6 +218,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitionsDict = [:]
     case let .inputChanged(input):
         state.input = input
+    case .removeLastInputSymbol:
+        guard !state.input.isEmpty else { return .none }
+        state.input.removeLast()
     case let .simulateInput(input):
         guard
             let initialState = state.initialStates.first
