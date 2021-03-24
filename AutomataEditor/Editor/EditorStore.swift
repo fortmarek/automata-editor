@@ -33,9 +33,6 @@ struct EditorState: Equatable {
     var strokes: [Stroke] {
         automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
-    var scribblePositions: [CGPoint] {
-        automatonStates.map(\.scribblePosition) + transitions.map(\.scribblePosition)
-    }
     var shouldDeleteLastStroke = false
     
     fileprivate var transitionsWithoutEndState: [AutomatonTransition] {

@@ -12,9 +12,11 @@ struct AutomatonTransition: Equatable, Identifiable {
     var currentSymbol: String = ""
     var symbols: [String] = []
     let id = UUID()
-    var scribblePosition: CGPoint {
+    var scribblePosition: CGPoint? {
+        /// Do not show editor for initial transition
+        if endState != nil, startState == nil { return nil }
         switch type {
-        case let .cycle(point, center: center):
+        case .cycle(_, center: _):
             let highestPoint = stroke.controlPoints.min(by: { $0.y < $1.y }) ?? .zero
             return CGPoint(
                 x: highestPoint.x + 20,

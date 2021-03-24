@@ -12,45 +12,47 @@ struct TransitionsView: View {
     
     var body: some View {
         ForEach(transitions) { transition in
-            VStack(alignment: .center) {
-                FlexibleView(
-                    data: transition.symbols,
-                    spacing: 3,
-                    alignment: .leading,
-                    content: { symbol in
-                        Button(
-                            action: { transitionSymbolRemoved(transition.id, symbol) }
-                        ) {
-                            HStack {
-                                Text(symbol)
-                                    .foregroundColor(Color.black)
-                                Image(systemName: "xmark")
-                                    .foregroundColor(Color.black)
+            if let scribblePosition = transition.scribblePosition {
+                VStack(alignment: .center) {
+                    FlexibleView(
+                        data: transition.symbols,
+                        spacing: 3,
+                        alignment: .leading,
+                        content: { symbol in
+                            Button(
+                                action: { transitionSymbolRemoved(transition.id, symbol) }
+                            ) {
+                                HStack {
+                                    Text(symbol)
+                                        .foregroundColor(Color.black)
+                                    Image(systemName: "xmark")
+                                        .foregroundColor(Color.black)
+                                }
+                                .padding(.all, 5)
+                                .background(Color.white)
+                                .cornerRadius(10)
                             }
-                            .padding(.all, 5)
-                            .background(Color.white)
-                            .cornerRadius(10)
+                        }
+                    )
+                    .frame(width: 200)
+                    HStack {
+                        TextView(
+                            text: Binding(
+                                get: { transition.currentSymbol },
+                                set: { transitionSymbolChanged(transition.id, $0) }
+                            )
+                        )
+                        .border(Color.white, width: 2)
+                        .frame(width: 50, height: 30)
+                        Button(
+                            action: { transitionSymbolAdded(transition.id) }
+                        ) {
+                            Image(systemName: "plus.circle.fill")
                         }
                     }
-                )
-                .frame(width: 200)
-                HStack {
-                    TextView(
-                        text: Binding(
-                            get: { transition.currentSymbol },
-                            set: { transitionSymbolChanged(transition.id, $0) }
-                        )
-                    )
-                    .border(Color.white, width: 2)
-                    .frame(width: 50, height: 30)
-                    Button(
-                        action: { transitionSymbolAdded(transition.id) }
-                    ) {
-                        Image(systemName: "plus.circle.fill")
-                    }
                 }
+                .position(scribblePosition)
             }
-            .position(transition.scribblePosition)
             if let currentFlexPoint = transition.currentFlexPoint,
                let flexPoint = transition.flexPoint {
                 ZStack {
