@@ -8,10 +8,6 @@
 
 - (instancetype)init: (NSArray *) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString *) initialState finalStates:(NSArray *) finalStates transitions: (NSArray *) transitions;
 - (bool)simulate: (NSArray *) input;
-- (NSString *) getInitialState;
-- (NSArray *) getFinalStates;
-- (NSArray *) getStates;
-- (NSArray *) getInputAlphabet;
 
 @end
 

@@ -7,14 +7,14 @@
 #include "automaton/run/Accept.h"
 
 @implementation NFA_objc {
-    automaton::EpsilonNFA<NSString*, NSString*>* automaton;
+    automaton::EpsilonNFA<std::string, std::string>* automaton;
 }
 - (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates transitions: (NSArray *) transitions {
     self = [super init];
     auto statesSet = [self set: states];
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
-    automaton = new automaton::EpsilonNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
+    automaton = new automaton::EpsilonNFA(statesSet, inputAlphabetSet, [self stdString: initialState], finalStatesSet);
 
     [self setTransitions: transitions];
 
@@ -25,8 +25,12 @@
     delete automaton;
 }
 
+- (std::string)stdString: (NSString *) string {
+    return std::string([string UTF8String]);
+}
+
 - (bool)simulate: (NSArray *) input {
-    ext::vector<NSString*> inputVector = [self vector: input];
+    ext::vector<std::string> inputVector = [self vector: input];
     auto linearString = string::LinearString(automaton->getInputAlphabet(), inputVector);
     
     std::cout << *automaton << std::endl;
@@ -37,27 +41,27 @@
 - (void)setTransitions: (NSArray *) transitions {
     for (Transition_objc * transition in transitions) {
         for (NSString * symbolString in transition.symbols) {
-            automaton->addTransition(transition.fromState, symbolString, transition.toState);
+            automaton->addTransition([self stdString: transition.fromState], [self stdString: symbolString], [self stdString: transition.toState]);
         }
         
         if (transition.isEpsilonIncluded) {
-            automaton->addTransition(transition.fromState, common::symbol_or_epsilon<NSString *>(), transition.toState);
+            automaton->addTransition([self stdString: transition.fromState], common::symbol_or_epsilon<std::string>(), [self stdString: transition.toState]);
         }
     }
 }
 
-- (ext::set<NSString *>)set: (NSArray*) array {
-    std::vector<NSString*> vector = {};
+- (ext::set<std::string>)set: (NSArray*) array {
+    std::vector<std::string> vector = {};
     for (NSString * str in array) {
-       vector.push_back(str);
+       vector.push_back([self stdString: str]);
     }
-    return ext::set<NSString *>(ext::make_iterator_range(vector.begin(), vector.end()));
+    return ext::set<std::string>(ext::make_iterator_range(vector.begin(), vector.end()));
 }
 
-- (ext::vector<NSString *>)vector: (NSArray*) array {
-    ext::vector<NSString*> vector = {};
+- (ext::vector<std::string>)vector: (NSArray*) array {
+    ext::vector<std::string> vector = {};
     for (NSString * str in array) {
-       vector.push_back(str);
+       vector.push_back([self stdString: str]);
     }
     return vector;
 }
@@ -70,22 +74,6 @@
         iterator++;
     }
     return array;
-}
-
-- (NSArray *) getFinalStates {
-    return [self array: automaton->getFinalStates()];
-}
-
-- (NSArray *) getInputAlphabet {
-    return [self array: automaton->getInputAlphabet()];
-}
-
-- (NSArray *) getStates {
-    return [self array: automaton->getStates()];
-}
-
-- (NSString *)getInitialState {
-    return automaton->getInitialState();
 }
 
 @end
