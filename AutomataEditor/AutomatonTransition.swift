@@ -2,7 +2,7 @@ import UIKit
 
 struct AutomatonTransition: Equatable, Identifiable {
     enum TransitionType: Equatable, Hashable {
-        case cycle(CGPoint, center: CGPoint)
+        case cycle(CGPoint, center: CGPoint, radians: CGFloat)
         case regular(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
     }
     
@@ -16,7 +16,7 @@ struct AutomatonTransition: Equatable, Identifiable {
         /// Do not show editor for initial transition
         if endState != nil, startState == nil { return nil }
         switch type {
-        case .cycle(_, center: _):
+        case .cycle:
             let highestPoint = stroke.controlPoints.min(by: { $0.y < $1.y }) ?? .zero
             return CGPoint(
                 x: highestPoint.x + 20,
@@ -34,7 +34,7 @@ struct AutomatonTransition: Equatable, Identifiable {
     
     var stroke: Stroke {
         switch type {
-        case let .cycle(point, center: center):
+        case let .cycle(point, center: center, radians: _):
             return Stroke(
                 controlPoints: .cycle(point, center: center)
             )

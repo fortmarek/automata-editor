@@ -188,15 +188,23 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitions
             .forEach { transition in
                 switch transition.type {
-                case let .cycle(point, center: center):
+                case let .cycle(_, center: center, radians: radians):
                     guard
                         let endStateID = transition.endState,
                         let endState = state.automatonStatesDict[endStateID]
                     else { return }
-                    let vector = Vector(endState.center, point)
+                    let vector = Vector(
+                        endState.center,
+                        CGPoint(
+                            x: endState.center.x,
+                            y: endState.center.y + endState.radius
+                        )
+                    )
+                    .rotated(by: radians)
                     state.transitionsDict[transition.id]?.type = .cycle(
                         vector.point(distance: endState.radius, other: endState.center),
-                        center: endState.center
+                        center: endState.center,
+                        radians: radians
                     )
                 case .regular:
                     break
@@ -374,10 +382,30 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
         let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
+        
+        let center = closestStateResult.state.stroke.controlPoints.center()
+        let radians = Vector(
+            center,
+            CGPoint(
+                x: center.x,
+                y: center.y + closestStateResult.state.radius
+            )
+        )
+        .angle(
+            with: Vector(
+                center,
+                closestStateResult.point
+            )
+        )
+        
         let transition = AutomatonTransition(
             startState: closestStateResult.state.id,
             endState: closestStateResult.state.id,
-            type: .cycle(closestStateResult.point, center: closestStateResult.state.stroke.controlPoints.center())
+            type: .cycle(
+                closestStateResult.point,
+                center: center,
+                radians: radians
+            )
         )
         state.transitionsDict[transition.id] = transition
     case let .automataShapeClassified(.success(.transition(stroke))):
@@ -439,7 +467,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     !strokes.contains(
                         where: { stroke in
                             switch transition.type {
-                            case let .cycle(point, center: _):
+                            case let .cycle(point, center: _, radians: _):
                                 return point.distance(from: stroke.controlPoints[0]) <= 0.1
                             case let .regular(startPoint, tipPoint, flexPoint):
                                 return startPoint.distance(from: stroke.controlPoints[0]) <= 0.1

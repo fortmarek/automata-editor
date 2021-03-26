@@ -113,6 +113,27 @@ struct Vector: Hashable {
         return self / sqrt(lengthSquared)
     }
     
+    func angle(with v: Vector) -> Scalar {
+        if self == v {
+            return 0
+        }
+
+        let t1 = normalized()
+        let t2 = v.normalized()
+        let cross = t1.cross(t2)
+        let dot = max(-1, min(1, t1.dot(t2)))
+
+        return atan2(cross, dot)
+    }
+    
+    func dot(_ v: Vector) -> Scalar {
+        return x * v.x + y * v.y
+    }
+
+    func cross(_ v: Vector) -> Scalar {
+        return x * v.y - y * v.x
+    }
+    
     static func / (lhs: Vector, rhs: Vector) -> Vector {
         return Vector(lhs.x / rhs.x, lhs.y / rhs.y)
     }
