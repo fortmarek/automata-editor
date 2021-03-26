@@ -3,18 +3,18 @@
 #import "NFA.h"
 #import "AutomatonRunResult.h"
 
-#include "automaton/FSM/NFA.h"
+#include "automaton/FSM/EpsilonNFA.h"
 #include "automaton/run/Accept.h"
 
 @implementation NFA_objc {
-    automaton::NFA<NSString*, NSString*>* automaton;
+    automaton::EpsilonNFA<NSString*, NSString*>* automaton;
 }
 - (instancetype)init: (NSArray*) states inputAlphabet:(NSArray *) inputAlphabet initialState:(NSString*) initialState finalStates:(NSArray*) finalStates transitions: (NSArray *) transitions {
     self = [super init];
     auto statesSet = [self set: states];
     auto inputAlphabetSet = [self set: inputAlphabet];
     auto finalStatesSet = [self set: finalStates];
-    automaton = new automaton::NFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
+    automaton = new automaton::EpsilonNFA(statesSet, inputAlphabetSet, initialState, finalStatesSet);
 
     [self setTransitions: transitions];
 
@@ -28,6 +28,9 @@
 - (bool)simulate: (NSArray *) input {
     ext::vector<NSString*> inputVector = [self vector: input];
     auto linearString = string::LinearString(automaton->getInputAlphabet(), inputVector);
+    
+    std::cout << *automaton << std::endl;
+    
     return automaton::run::Accept::accept(*automaton, linearString);
 }
 
@@ -35,6 +38,10 @@
     for (Transition_objc * transition in transitions) {
         for (NSString * symbolString in transition.symbols) {
             automaton->addTransition(transition.fromState, symbolString, transition.toState);
+        }
+        
+        if (transition.isEpsilonIncluded) {
+            automaton->addTransition(transition.fromState, common::symbol_or_epsilon<NSString *>(), transition.toState);
         }
     }
 }

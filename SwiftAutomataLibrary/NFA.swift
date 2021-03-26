@@ -13,7 +13,8 @@ public struct NFA {
                 Transition_objc(
                     $0.fromState,
                     toState: $0.toState,
-                    symbols: $0.symbols
+                    symbols: $0.symbols,
+                    isEpsilonIncluded: $0.isEpsilonIncluded
                 )
             }
         automaton = NFA_objc(

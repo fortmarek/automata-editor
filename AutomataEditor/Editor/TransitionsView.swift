@@ -107,15 +107,3 @@ struct TransitionsView: View {
         }
     }
 }
-
-//struct OutlineButton: ButtonStyle {
-//
-//    var color: Color
-//
-//    func makeBody(configuration: Self.Configuration) -> some View {
-//        configuration.label
-//            .padding(10)
-//            .foregroundColor(.white)
-//            .border(Circle())
-//    }
-//}
