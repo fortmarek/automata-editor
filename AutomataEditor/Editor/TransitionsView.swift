@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct TransitionsView: View {
-    var transitions: [AutomatonTransition]
+    let transitions: [AutomatonTransition]
+    let toggleEpsilonInclusion: ((AutomatonState.ID) -> Void)
     let transitionSymbolRemoved: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolChanged: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolAdded: ((AutomatonTransition.ID) -> Void)
@@ -36,6 +37,21 @@ struct TransitionsView: View {
                     )
                     .frame(width: 200)
                     HStack {
+                        Button(
+                            action: {
+                                toggleEpsilonInclusion(transition.id)
+                            }
+                        ) {
+                            Text("ε")
+                                .foregroundColor(transition.includesEpsilon ? Color.white : Color.blue)
+                                .padding(7)
+                                .background(transition.includesEpsilon ? Color.blue : Color.clear)
+                                .clipShape(Circle())
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.blue, lineWidth: 2)
+                                )
+                        }
                         TextView(
                             text: Binding(
                                 get: { transition.currentSymbol },
@@ -91,3 +107,15 @@ struct TransitionsView: View {
         }
     }
 }
+
+//struct OutlineButton: ButtonStyle {
+//
+//    var color: Color
+//
+//    func makeBody(configuration: Self.Configuration) -> some View {
+//        configuration.label
+//            .padding(10)
+//            .foregroundColor(.white)
+//            .border(Circle())
+//    }
+//}

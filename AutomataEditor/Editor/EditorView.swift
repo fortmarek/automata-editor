@@ -26,6 +26,7 @@ struct EditorView: View {
                     )
                     TransitionsView(
                         transitions: viewStore.transitions,
+                        toggleEpsilonInclusion: { viewStore.send(.toggleEpsilonInclusion($0)) },
                         transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
                         transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
                         transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },

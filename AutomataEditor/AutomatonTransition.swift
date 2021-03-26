@@ -11,6 +11,7 @@ struct AutomatonTransition: Equatable, Identifiable {
     /// Symbol currently being written
     var currentSymbol: String = ""
     var symbols: [String] = []
+    var includesEpsilon: Bool = false
     let id = UUID()
     var scribblePosition: CGPoint? {
         /// Do not show editor for initial transition

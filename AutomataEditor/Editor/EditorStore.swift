@@ -67,6 +67,7 @@ enum EditorAction: Equatable {
     case stateSymbolChanged(AutomatonState.ID, String)
     case stateDragPointFinishedDragging(AutomatonState.ID, CGPoint)
     case stateDragPointChanged(AutomatonState.ID, CGPoint)
+    case toggleEpsilonInclusion(AutomatonTransition.ID)
     case transitionFlexPointFinishedDragging(AutomatonTransition.ID, CGPoint)
     case transitionFlexPointChanged(AutomatonTransition.ID, CGPoint)
     case transitionSymbolChanged(AutomatonTransition.ID, String)
@@ -367,6 +368,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
         state.automatonStatesDict[automatonStateID]?.currentDragPoint = dragPoint
         updateTransitionsAfterStateDragged(automatonStateID)
+    case let .toggleEpsilonInclusion(transitionID):
+        state.transitionsDict[transitionID]?.includesEpsilon.toggle()
     case let .automataShapeClassified(.success(.transitionCycle(stroke))):
         guard
             let strokeStartPoint = stroke.controlPoints.first,
