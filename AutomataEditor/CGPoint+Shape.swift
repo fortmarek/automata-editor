@@ -1,4 +1,5 @@
 import CoreGraphics
+import SwiftSplines
 
 extension Array where Element == CGPoint {
     static func circle(
@@ -50,10 +51,18 @@ extension Array where Element == CGPoint {
         let bottomPoint = perpendicularVector.point(distance: arrowSpan / 2, other: anchorPoint)
         let topVector = Vector(tipPoint, topPoint)
         let bottomVector = Vector(tipPoint, bottomPoint)
-        return [
-            startPoint,
-        ]
-        + (flexPoint.map { [$0, $0] } ?? [])
+        let points = [startPoint, flexPoint, tipPoint].compactMap { $0 }
+        let spline = Spline(
+            values: points
+        )
+        
+        let resolution = 100
+        let splinePoints: [CGPoint] = (0...(points.count - 1) * resolution).map { offset in
+            let argument = CGFloat(offset)/CGFloat(resolution)
+            return spline.f(t: argument)
+        }
+        
+        return splinePoints
         + [
             tipPoint,
             topVector.point(distance: 0.1, other: tipPoint),

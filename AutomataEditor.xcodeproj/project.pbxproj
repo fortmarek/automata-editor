@@ -52,6 +52,7 @@
 		F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872A25F7BF480000BCA9 /* _FlexibleView.swift */; };
 		F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872E25F7BF630000BCA9 /* FlexibleView.swift */; };
 		F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C873125F7BFA20000BCA9 /* SizeReader.swift */; };
+		F87A49ED260E34D7001653A8 /* SwiftSplines in Frameworks */ = {isa = PBXBuildFile; productRef = F87A49EC260E34D7001653A8 /* SwiftSplines */; };
 		F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DA926010C390054BBFF /* TextView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
@@ -178,6 +179,7 @@
 			files = (
 				F856E06425F27AB200905BED /* SwiftAutomataLibrary.framework in Frameworks */,
 				F81641CB25E940BE00F49800 /* ComposableArchitecture in Frameworks */,
+				F87A49ED260E34D7001653A8 /* SwiftSplines in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +384,7 @@
 			name = AutomataEditor;
 			packageProductDependencies = (
 				F81641CA25E940BE00F49800 /* ComposableArchitecture */,
+				F87A49EC260E34D7001653A8 /* SwiftSplines */,
 			);
 			productName = AutomataEditor;
 			productReference = F85184DD25DD1C0700791701 /* AutomataEditor.app */;
@@ -458,6 +461,7 @@
 			mainGroup = F85184D425DD1C0600791701;
 			packageReferences = (
 				F81641C925E940BD00F49800 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				F87A49EB260E34D5001653A8 /* XCRemoteSwiftPackageReference "SwiftSplines" */,
 			);
 			productRefGroup = F85184DE25DD1C0700791701 /* Products */;
 			projectDirPath = "";
@@ -961,6 +965,14 @@
 				minimumVersion = 0.15.0;
 			};
 		};
+		F87A49EB260E34D5001653A8 /* XCRemoteSwiftPackageReference "SwiftSplines" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Bersaelor/SwiftSplines";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -968,6 +980,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F81641C925E940BD00F49800 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		F87A49EC260E34D7001653A8 /* SwiftSplines */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F87A49EB260E34D5001653A8 /* XCRemoteSwiftPackageReference "SwiftSplines" */;
+			productName = SwiftSplines;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
