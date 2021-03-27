@@ -16,8 +16,8 @@ struct EditorEnvironment {
 
 struct EditorState: Equatable {
     var tool: Tool = .pen
-    var eraserImage: Image = Image(systemName: "minus.square")
-    var penImage: Image = Image(systemName: "pencil.circle.fill")
+    var isEraserSelected: Bool = false
+    var isPenSelected: Bool = true
     var outputString: String = ""
     var input: String = ""
     fileprivate var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
@@ -216,12 +216,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     switch action {
     case .selectedEraser:
         state.tool = .eraser
-        state.eraserImage = Image(systemName: "minus.square.fill")
-        state.penImage = Image(systemName: "pencil.circle")
+        state.isEraserSelected = true
+        state.isPenSelected = false
     case .selectedPen:
         state.tool = .pen
-        state.eraserImage = Image(systemName: "minus.square")
-        state.penImage = Image(systemName: "pencil.circle.fill")
+        state.isEraserSelected = false
+        state.isPenSelected = true
     case .clear:
         state.automatonStatesDict = [:]
         state.transitionsDict = [:]

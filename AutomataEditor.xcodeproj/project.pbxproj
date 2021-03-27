@@ -53,6 +53,7 @@
 		F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872E25F7BF630000BCA9 /* FlexibleView.swift */; };
 		F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C873125F7BFA20000BCA9 /* SizeReader.swift */; };
 		F87A49ED260E34D7001653A8 /* SwiftSplines in Frameworks */ = {isa = PBXBuildFile; productRef = F87A49EC260E34D7001653A8 /* SwiftSplines */; };
+		F87A49F1260F7D21001653A8 /* EditorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A49F0260F7D21001653A8 /* EditorButton.swift */; };
 		F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DA926010C390054BBFF /* TextView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
@@ -163,6 +164,7 @@
 		F876CCB925F2360100AE92FC /* Transition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transition.m; sourceTree = "<group>"; };
 		F876CCCB25F26A8200AE92FC /* AutomatonRunResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomatonRunResult.h; sourceTree = "<group>"; };
 		F876CCCC25F26B4C00AE92FC /* AutomatonRunResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AutomatonRunResult.m; sourceTree = "<group>"; };
+		F87A49F0260F7D21001653A8 /* EditorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorButton.swift; sourceTree = "<group>"; };
 		F8933DA926010C390054BBFF /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
 		F8CF054C25F01D2C00077209 /* NFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFA.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				F815A40625EB99C2002C44DE /* Editor */,
 				F81641DC25EAAA6B00F49800 /* Stroke.swift */,
 				F815A41D25EBCE9A002C44DE /* CGPoint+Shape.swift */,
+				F87A49F0260F7D21001653A8 /* EditorButton.swift */,
 				F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */,
 				F815A41525EBA827002C44DE /* AutomatonTransition.swift */,
 				F815A41925EBA844002C44DE /* AutomatonState.swift */,
@@ -521,6 +524,7 @@
 				F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */,
 				F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */,
 				F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */,
+				F87A49F1260F7D21001653A8 /* EditorButton.swift in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
 				F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */,
 				F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */,

@@ -47,10 +47,31 @@ struct EditorView: View {
                         .frame(width: 140)
                         .position(x: 70, y: 50)
                 }
-                HStack(alignment: .top) {
+                HStack(alignment: .center, spacing: 10) {
+                    Button(
+                        action: {
+                            viewStore.send(.clear)
+                        }
+                    ) {
+                        Text("Clear")
+                            .padding(5)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.blue, lineWidth: 2)
+                            )
+                    }
                     VStack {
-                        Button("Simulate") {
-                            viewStore.send(.simulateInput(viewStore.state.input))
+                        Button(
+                            action: {
+                                viewStore.send(.simulateInput(viewStore.state.input))
+                            }
+                        ) {
+                            Text("Simulate")
+                                .padding(5)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.blue, lineWidth: 2)
+                                )
                         }
                         ZStack {
                             TextView(
@@ -71,26 +92,17 @@ struct EditorView: View {
                         .border(colorScheme == .dark ? Color.white : Color.black)
                         .frame(width: 200, height: 30)
                     }
-                    Button("Clear") {
-                        viewStore.send(.clear)
-                    }
-                    Button(
-                        action: {
-                            viewStore.send(.selectedPen)
-                        }
+                    EditorButton(
+                        isSelected: viewStore.state.isPenSelected,
+                        image: Image(systemName: "pencil")
                     ) {
-                        viewStore.state.penImage
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                        viewStore.send(.selectedPen)
                     }
-                    Button(
-                        action: {
-                            viewStore.send(.selectedEraser)
-                        }
+                    EditorButton(
+                        isSelected: viewStore.state.isEraserSelected,
+                        image: Image(systemName: "pencil.slash")
                     ) {
-                        viewStore.state.eraserImage
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                        viewStore.send(.selectedEraser)
                     }
                 }
             }
