@@ -11,6 +11,7 @@ typealias EditorViewStore = ViewStore<EditorState, EditorAction>
 struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
     let automataLibraryService: AutomataLibraryService
+    let idFactory: IDFactory
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
@@ -20,14 +21,14 @@ struct EditorState: Equatable {
     var isPenSelected: Bool = true
     var outputString: String = ""
     var input: String = ""
-    fileprivate var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
+    var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
     var automatonStates: [AutomatonState] {
         automatonStatesDict.map(\.value)
     }
     var transitions: [AutomatonTransition] {
         transitionsDict.map(\.value)
     }
-    fileprivate var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
+    var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
     var strokes: [Stroke] {
         automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
@@ -322,6 +323,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let center = vector.point(distance: radius, other: tipPoint)
             
             let automatonState = AutomatonState(
+                id: env.idFactory.generateID(),
                 center: center,
                 radius: radius
             )
@@ -339,6 +341,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let center = vector.point(distance: radius, other: startPoint)
             
             let automatonState = AutomatonState(
+                id: env.idFactory.generateID(),
                 center: center,
                 radius: radius
             )
@@ -349,6 +352,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.automatonStatesDict[automatonState.id] = automatonState
         } else {
             let automatonState = AutomatonState(
+                id: env.idFactory.generateID(),
                 center: center,
                 radius: radius
             )
@@ -402,6 +406,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
         
         let transition = AutomatonTransition(
+            id: env.idFactory.generateID(),
             startState: closestStateResult.state.id,
             endState: closestStateResult.state.id,
             type: .cycle(
@@ -449,6 +454,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
         
         let transition = AutomatonTransition(
+            id: env.idFactory.generateID(),
             startState: startState?.id,
             endState: endState?.id,
             type: .regular(

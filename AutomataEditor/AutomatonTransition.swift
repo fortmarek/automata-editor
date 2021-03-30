@@ -6,13 +6,13 @@ struct AutomatonTransition: Equatable, Identifiable {
         case regular(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
     }
     
+    let id: String
     var startState: AutomatonState.ID?
     var endState: AutomatonState.ID?
     /// Symbol currently being written
     var currentSymbol: String = ""
     var symbols: [String] = []
     var includesEpsilon: Bool = false
-    let id = UUID()
     var scribblePosition: CGPoint? {
         /// Do not show editor for initial transition
         if endState != nil, startState == nil { return nil }

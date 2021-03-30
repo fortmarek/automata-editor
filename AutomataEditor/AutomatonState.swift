@@ -6,12 +6,14 @@ struct AutomatonState: Equatable, Identifiable {
     var center: CGPoint
     let radius: CGFloat
     var currentDragPoint: CGPoint
-    let id = UUID()
+    let id: String
 
     init(
+        id: String,
         center: CGPoint,
         radius: CGFloat
     ) {
+        self.id = id
         self.center = center
         self.radius = radius
         self.currentDragPoint = CGPoint(
