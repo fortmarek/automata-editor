@@ -31,7 +31,9 @@ struct EditorState: Equatable {
     }
     var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
     var strokes: [Stroke] {
-        automatonStates.map(\.stroke) + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
+        automatonStates.map {
+            Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
+        } + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
     }
     var shouldDeleteLastStroke = false
     
@@ -88,7 +90,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     }
     func closestState(from point: CGPoint) -> ClosestStateResult? {
         let result: (AutomatonState?, CGPoint, CGFloat) = state.automatonStates.reduce((nil, .zero, CGFloat.infinity)) { acc, currentState in
-            let closestPoint = currentState.stroke.controlPoints.closestPoint(from: point)
+            let closestPoint: CGPoint = stroke(for: currentState).controlPoints.closestPoint(from: point)
             let currentDistance = closestPoint.distance(from: point)
             return currentDistance < acc.2 ? (currentState, closestPoint, currentDistance) : acc
         }
@@ -104,6 +106,14 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         }
     }
     
+    func stroke(for automatonState: AutomatonState) -> Stroke {
+        return Stroke(
+            controlPoints: env.shapeService.circle(
+                automatonState.center,
+                automatonState.radius
+            )
+        )
+    }
     
     /// - Returns: State that encapsulates `controlPoints`
     func enclosingState(for controlPoints: [CGPoint]) -> AutomatonState? {
@@ -121,7 +131,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     width: maxX - minX,
                     height: maxY - minY
                 )
-                .contains($0.stroke.controlPoints.center())
+                .contains($0.center)
             }
         )
     }
@@ -297,9 +307,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.transitionsDict[transitionID]?.currentSymbol = ""
     case let .transitionSymbolRemoved(transitionID, symbol):
         state.transitionsDict[transitionID]?.symbols.removeAll(where: { $0 == symbol })
-    case let .automataShapeClassified(.success(.state(stroke))):
-        let center = env.shapeService.center(stroke.controlPoints)
-        let radius = env.shapeService.radius(stroke.controlPoints, center)
+    case let .automataShapeClassified(.success(.state(stateStroke))):
+        let center = env.shapeService.center(stateStroke.controlPoints)
+        let radius = env.shapeService.radius(stateStroke.controlPoints, center)
         
         let controlPoints: [CGPoint] = env.shapeService.circle(
             center,
@@ -311,7 +321,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 state.shouldDeleteLastStroke = true
                 return .none
             }
-            let controlPoints = automatonState.stroke.controlPoints
+            let controlPoints = stroke(for: automatonState).controlPoints
             let center = env.shapeService.center(controlPoints)
             state.automatonStatesDict[automatonState.id]?.isEndState = true
         } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
@@ -374,9 +384,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         updateTransitionsAfterStateDragged(automatonStateID)
     case let .toggleEpsilonInclusion(transitionID):
         state.transitionsDict[transitionID]?.includesEpsilon.toggle()
-    case let .automataShapeClassified(.success(.transitionCycle(stroke))):
+    case let .automataShapeClassified(.success(.transitionCycle(cycleStroke))):
         guard
-            let strokeStartPoint = stroke.controlPoints.first,
+            let strokeStartPoint = cycleStroke.controlPoints.first,
             let closestStateResult = closestState(from: strokeStartPoint)
         else {
             state.shouldDeleteLastStroke = true
@@ -385,12 +395,11 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         
         let cycleControlPoints: [CGPoint] = .cycle(
             closestStateResult.point,
-            center: closestStateResult.state.stroke.controlPoints.center()
+            center: closestStateResult.state.center
         )
         let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
-        
-        let center = closestStateResult.state.stroke.controlPoints.center()
+        let center = closestStateResult.state.center
         let radians = Vector(
             center,
             CGPoint(
@@ -492,7 +501,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 where: { state in
                     !centerPoints.contains(
                         where: {
-                            sqrt(state.stroke.controlPoints.center().distance(from: $0)) < 20
+                            sqrt(state.center.distance(from: $0)) < 20
                         }
                     )
                 }

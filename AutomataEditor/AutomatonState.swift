@@ -35,15 +35,6 @@ struct AutomatonState: Equatable, Identifiable {
         }
     }
     
-    var stroke: Stroke {
-        Stroke(
-            controlPoints: .circle(
-                center: center,
-                radius: radius
-            )
-        )
-    }
-    
     var endStroke: Stroke? {
         guard isEndState else { return nil }
         return Stroke(

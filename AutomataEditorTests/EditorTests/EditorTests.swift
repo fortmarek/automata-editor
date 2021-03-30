@@ -60,8 +60,9 @@ final class EditorTests: XCTestCase {
     func testSimpleAutomatonIsDrawn() {
         var stubShapeType: AutomatonShapeType = .circle
         var stubID: String = "1"
-        var stubCenter: CGPoint = .zero
-        var stubRadius: CGFloat = 1
+        let stubCenter: CGPoint = .zero
+        let stubRadius: CGFloat = 1
+        var currentStrokes: [Stroke] = []
         let store = TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
@@ -69,7 +70,7 @@ final class EditorTests: XCTestCase {
                 automataClassifierService: .successfulShape { stubShapeType },
                 automataLibraryService: .successful(),
                 shapeService: .mock(
-                    center: { _ in stubCenter },
+                    center: { $0.first ?? .zero },
                     radius: { _, _ in stubRadius }
                 ),
                 idFactory: .mock { stubID },
@@ -80,7 +81,8 @@ final class EditorTests: XCTestCase {
             store: store,
             id: stubID,
             center: stubCenter,
-            radius: stubRadius
+            radius: stubRadius,
+            currentStrokes: &currentStrokes
         )
         
         store.send(.stateSymbolChanged("1", "A")) {
@@ -89,53 +91,32 @@ final class EditorTests: XCTestCase {
         
         stubShapeType = .arrow
         
+        stubID = "2"
+        createTransition(
+            store: store,
+            startPoint: .zero,
+            tipPoint: CGPoint(x: 2, y: 0),
+            transitionID: stubID,
+            startStateID: "1",
+            currentStrokes: &currentStrokes
+        )
         
+        store.send(.transitionSymbolChanged("2", "A")) {
+            $0.transitionsDict["2"]?.currentSymbol = "A"
+        }
+        
+        stubShapeType = .circle
+        stubID = "3"
+        
+        createState(
+            store: store,
+            id: "3",
+            center: CGPoint(x: 3, y: 0),
+            radius: 1,
+            transitionEndID: "2",
+            currentStrokes: &currentStrokes
+        )
     }
-//        .assert(
-//            createState(center: .zero) +
-//                [
-//                    .send(
-//                        .stateSymbolChanged(
-//                            Stroke(
-//                                controlPoints: .circle(
-//                                    center: .zero,
-//                                    radius: 1
-//                                )
-//                            ),
-//                            "A"
-//                        )
-//                    ) {
-//                        $0.automatonStates[0].name = "A"
-//                    },
-//                    .do {
-//                        stubShapeType = .arrow
-//                    }
-//                ]
-//                + createTransition(
-//                    startAutomatonIndex: 0
-//                )
-//                + [
-//                    .send(
-//                        .transitionSymbolChanged(
-//                            AutomatonTransition(
-//                                startState: nil,
-//                                endState: nil,
-//                                scribblePosition: CGPoint(
-//                                    x: 2,
-//                                    y: -50
-//                                ),
-//                                stroke: Stroke(
-//                                    controlPoints: .arrow(
-//                                        startPoint: CGPoint(x: 1, y: 0),
-//                                        tipPoint: CGPoint(x: 3, y: 0)
-//                                    )
-//                                )
-//                            ),
-//                            "A"
-//                        )
-//                    ) {
-//                        $0.transitions[0].currentSymbol = "A"
-//                    },
 //                    .do {
 //                        stubShapeType = .circle
 //                    },
@@ -192,11 +173,13 @@ final class EditorTests: XCTestCase {
         store: TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>,
         id: String,
         center: CGPoint,
-        radius: CGFloat
+        radius: CGFloat,
+        transitionEndID: AutomatonTransition.ID? = nil,
+        currentStrokes: inout [Stroke]
     ) {
         store.send(
             .strokesChanged(
-                [
+                currentStrokes + [
                     Stroke(controlPoints: [center])
                 ]
             )
@@ -214,41 +197,82 @@ final class EditorTests: XCTestCase {
                 )
             )
         ) {
-            $0.automatonStatesDict = [
-                id: AutomatonState(
-                    id: id,
-                    center: center,
-                    radius: radius
-                ),
-            ]
+            $0.automatonStatesDict[id] = AutomatonState(
+                id: id,
+                center: center,
+                radius: radius
+            )
+            
+            if let transitionEndID = transitionEndID {
+                $0.transitionsDict[transitionEndID]?.endState = id
+            }
         }
+        
+        currentStrokes.append(
+            Stroke(
+                controlPoints: [center]
+            )
+        )
     }
-//            .receive(
-//                .automataShapeClassified(
-//                    .success(
-//                        .state(
-//                            Stroke(
-//                                controlPoints: .circle
-//                            )
-//                        )
-//                    )
-//                )
-//            ) {
-//                $0.automatonStates = [
-//                    AutomatonState(
-//                        scribblePosition: CGPoint(x: 0, y: 0),
-//                        stroke: Stroke(
-//                            controlPoints: .circle(
-//                                center: CGPoint(x: 0, y: 0),
-//                                radius: 1
-//                            )
-//                        )
-//                    ),
-//                ]
-//            },
-//        ]
-//    }
+
     
+    private func createTransition(
+        store: TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>,
+        startPoint: CGPoint,
+        tipPoint: CGPoint,
+        transitionID: String,
+        startStateID: AutomatonState.ID? = nil,
+        endStateID: AutomatonState.ID? = nil,
+        currentStrokes: inout [Stroke]
+    ) {
+        let stroke = Stroke(
+            controlPoints: [
+                startPoint,
+                tipPoint,
+            ]
+        )
+        store.send(
+            .strokesChanged(
+                currentStrokes + [
+                    stroke,
+                ]
+            )
+        )
+        
+        scheduler.advance()
+        
+        store.receive(
+            .automataShapeClassified(
+                .success(
+                    .transition(stroke)
+                )
+            )
+        ) {
+            $0.transitionsDict[transitionID] = AutomatonTransition(
+                id: transitionID,
+                startState: startStateID,
+                endState: endStateID,
+                type: .regular(
+                    startPoint: startPoint,
+                    tipPoint: tipPoint,
+                    flexPoint: CGPoint(
+                        x: (startPoint.x + tipPoint.x) / 2,
+                        y: (startPoint.y + tipPoint.y) / 2
+                    )
+                ),
+                currentFlexPoint: CGPoint(
+                    x: (startPoint.x + tipPoint.x) / 2,
+                    y: (startPoint.y + tipPoint.y) / 2
+                )
+            )
+        }
+        
+        currentStrokes.append(
+            Stroke(
+                controlPoints: [startPoint, tipPoint]
+            )
+        )
+    }
 //    private func createTransition(
 //        startAutomatonIndex: Int? = nil,
 //        endAutomatonIndex: Int? = nil
