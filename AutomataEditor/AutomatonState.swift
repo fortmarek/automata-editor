@@ -35,16 +35,6 @@ struct AutomatonState: Equatable, Identifiable {
         }
     }
     
-    var endStroke: Stroke? {
-        guard isEndState else { return nil }
-        return Stroke(
-            controlPoints: .circle(
-                center: center,
-                radius: radius * 0.9
-            )
-        )
-    }
-    
     var scribblePosition: CGPoint {
         center
     }

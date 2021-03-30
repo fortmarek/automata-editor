@@ -33,7 +33,17 @@ struct EditorState: Equatable {
     var strokes: [Stroke] {
         automatonStates.map {
             Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
-        } + automatonStates.compactMap(\.endStroke) + transitions.map(\.stroke)
+        }
+        + automatonStates.compactMap {
+            guard $0.isEndState else { return nil }
+            return Stroke(
+                controlPoints: .circle(
+                    center: $0.center,
+                    radius: $0.radius * 0.9
+                )
+            )
+        }
+        + transitions.map(\.stroke)
     }
     var shouldDeleteLastStroke = false
     
@@ -54,7 +64,7 @@ struct EditorState: Equatable {
     }
     
     fileprivate var finalStates: [AutomatonState] {
-        automatonStates.filter { $0.endStroke != nil }
+        automatonStates.filter(\.isEndState)
     }
 }
 
@@ -131,7 +141,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     width: maxX - minX,
                     height: maxY - minY
                 )
-                .contains($0.center)
+                .contains($0.center) || CGPoint(x: minX, y: minY) == $0.center
             }
         )
     }

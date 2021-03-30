@@ -3,59 +3,7 @@ import ComposableArchitecture
 @testable import AutomataEditor
 
 final class EditorTests: XCTestCase {
-    let scheduler = DispatchQueue.testScheduler
-    
-//    func testEraseAutomatonAndTransition() {
-//        var stubShapeType: AutomatonShapeType = .circle
-//        var stubID: String = "1"
-//        let store = TestStore(
-//            initialState: EditorState(),
-//            reducer: editorReducer,
-//            environment: EditorEnvironment(
-//                automataClassifierService: .successfulShape { stubShapeType },
-//                automataLibraryService: .successful(),
-//                idFactory: .mock { stubID },
-//                mainQueue: scheduler.eraseToAnyScheduler()
-//            )
-//        )
-//
-//        createState(store: store, center: .zero, radius: 2)
-//        .assert(
-//            createState(center: .zero)
-//                + [
-//                    .do { stubShapeType = .arrow }
-//                ]
-//                + createTransition(
-//                    startAutomatonIndex: 0
-//                )
-//                + [
-//                    // the computation of center is not good enough
-//                    .send(
-//                        // Automaton state is missing signalling it has been erased
-//                        .strokesChanged(
-//                            [
-//                                Stroke(
-//                                    controlPoints: .arrow(
-//                                        startPoint: CGPoint(x: 1, y: 0),
-//                                        tipPoint: CGPoint(x: 3, y: 0)
-//                                    )
-//                                )
-//                            ]
-//                        )
-//                    ) {
-//                        $0.automatonStates = []
-//                        $0.transitions[0].startState = nil
-//                    },
-//                    .send(
-//                        // Automaton state is missing signalling it has been erased
-//                        .strokesChanged([])
-//                    ) {
-//                        $0.automatonStates = []
-//                        $0.transitions = []
-//                    },
-//                ]
-//        )
-//    }
+    let scheduler = DispatchQueue.test
     
     func testSimpleAutomatonIsDrawn() {
         var stubShapeType: AutomatonShapeType = .circle
@@ -116,58 +64,33 @@ final class EditorTests: XCTestCase {
             transitionEndID: "2",
             currentStrokes: &currentStrokes
         )
+        
+        store.send(
+            .strokesChanged(
+                currentStrokes + [
+                    Stroke(
+                        controlPoints: [CGPoint(x: 3, y: 0)]
+                    )
+                ]
+            )
+        )
+        
+        scheduler.advance()
+        
+        store.receive(
+            .automataShapeClassified(
+                .success(
+                    .state(
+                        Stroke(
+                            controlPoints: [CGPoint(x: 3, y: 0)]
+                        )
+                    )
+                )
+            )
+        ) {
+            $0.automatonStatesDict["3"]?.isEndState = true
+        }
     }
-//                    .do {
-//                        stubShapeType = .circle
-//                    },
-//                    .send(
-//                        .strokesChanged(
-//                            [
-//                                Stroke(
-//                                    controlPoints: .circle(
-//                                        center: .zero,
-//                                        radius: 1
-//                                    )
-//                                ),
-//                                Stroke(
-//                                    controlPoints: [
-//                                        CGPoint(x: 0, y: -2),
-//                                        CGPoint(x: 2, y: 0),
-//                                        CGPoint(x: 0, y: 2),
-//                                        CGPoint(x: -2, y: 0),
-//                                    ]
-//                                )
-//                            ]
-//                        )
-//                    ),
-//                    .do { self.scheduler.advance() },
-//                    .receive(
-//                        .automataShapeClassified(
-//                            .success(
-//                                .state(
-//                                    Stroke(
-//                                        controlPoints: [
-//                                            CGPoint(x: 0, y: -2),
-//                                            CGPoint(x: 2, y: 0),
-//                                            CGPoint(x: 0, y: 2),
-//                                            CGPoint(x: -2, y: 0),
-//                                        ]
-//                                    )
-//                                )
-//                            )
-//                        )
-//                    ) {
-//                        let center = $0.automatonStates[0].stroke.controlPoints.center()
-//                        $0.automatonStates[0].endStroke = Stroke(
-//                            controlPoints: .circle(
-//                                center: center,
-//                                radius: $0.automatonStates[0].stroke.controlPoints.radius(with: center) * 0.7
-//                            )
-//                        )
-//                    }
-//                ]
-//        )
-//    }
     
     private func createState(
         store: TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>,
