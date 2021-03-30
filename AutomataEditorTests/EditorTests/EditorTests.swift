@@ -5,7 +5,132 @@ import ComposableArchitecture
 final class EditorTests: XCTestCase {
     let scheduler = DispatchQueue.test
     
-    func testSimpleAutomatonIsDrawn() {
+    func testSimulateWithoutInitialState() {
+        let stubShapeType: AutomatonShapeType = .circle
+        let stubID: String = "1"
+        let stubCenter: CGPoint = .zero
+        let stubRadius: CGFloat = 1
+        var currentStrokes: [Stroke] = []
+        let store = TestStore(
+            initialState: EditorState(),
+            reducer: editorReducer,
+            environment: EditorEnvironment(
+                automataClassifierService: .successfulShape { stubShapeType },
+                automataLibraryService: .successful(),
+                shapeService: .mock(
+                    center: { $0.first ?? .zero },
+                    radius: { _, _ in stubRadius }
+                ),
+                idFactory: .mock { stubID },
+                mainQueue: scheduler.eraseToAnyScheduler()
+            )
+        )
+        createState(
+            store: store,
+            id: stubID,
+            center: stubCenter,
+            radius: stubRadius,
+            currentStrokes: &currentStrokes
+        )
+        
+        store.send(.stateSymbolChanged("1", "A")) {
+            $0.automatonStatesDict["1"]?.name = "A"
+        }
+        
+        createEndStateStroke(
+            store: store,
+            stateID: "1",
+            controlPoints: [.zero],
+            currentStrokes: &currentStrokes
+        )
+        
+        store.send(.inputChanged("A")) {
+            $0.input = "A"
+        }
+        store.send(.simulateInput) {
+            $0.outputString = "❌ No initial state"
+        }
+    }
+    
+    func testSimulateWithMultipleInitialStates() {
+        var stubShapeType: AutomatonShapeType = .circle
+        var stubID: String = "1"
+        let stubCenter: CGPoint = .zero
+        let stubRadius: CGFloat = 1
+        var currentStrokes: [Stroke] = []
+        let store = TestStore(
+            initialState: EditorState(),
+            reducer: editorReducer,
+            environment: EditorEnvironment(
+                automataClassifierService: .successfulShape { stubShapeType },
+                automataLibraryService: .successful(),
+                shapeService: .mock(
+                    center: { $0.first ?? .zero },
+                    radius: { _, _ in stubRadius }
+                ),
+                idFactory: .mock { stubID },
+                mainQueue: scheduler.eraseToAnyScheduler()
+            )
+        )
+        createState(
+            store: store,
+            id: stubID,
+            center: stubCenter,
+            radius: stubRadius,
+            currentStrokes: &currentStrokes
+        )
+        
+        store.send(.stateSymbolChanged("1", "A")) {
+            $0.automatonStatesDict["1"]?.name = "A"
+        }
+        
+        createEndStateStroke(
+            store: store,
+            stateID: "1",
+            controlPoints: [.zero],
+            currentStrokes: &currentStrokes
+        )
+        
+        stubID = "2"
+        createState(
+            store: store,
+            id: stubID,
+            center: CGPoint(x: 10, y: 0),
+            radius: stubRadius,
+            currentStrokes: &currentStrokes
+        )
+        store.send(.stateSymbolChanged("2", "B")) {
+            $0.automatonStatesDict["2"]?.name = "B"
+        }
+        
+        stubShapeType = .arrow
+        
+        stubID = "1"
+        createTransition(
+            store: store,
+            startPoint: CGPoint(x: -2, y: 0),
+            tipPoint: CGPoint(x: 0, y: 0),
+            transitionID: stubID,
+            endStateID: "1",
+            currentStrokes: &currentStrokes
+        )
+        
+        stubID = "2"
+        createTransition(
+            store: store,
+            startPoint: CGPoint(x: 8, y: 0),
+            tipPoint: CGPoint(x: 10, y: 0),
+            transitionID: stubID,
+            endStateID: "2",
+            currentStrokes: &currentStrokes
+        )
+        
+        store.send(.simulateInput) {
+            $0.outputString = "❌ Multiple initial states"
+        }
+    }
+    
+    func testSimpleAutomatonIsDrawnAndSimulated() {
         var stubShapeType: AutomatonShapeType = .circle
         var stubID: String = "1"
         let stubCenter: CGPoint = .zero
@@ -48,7 +173,7 @@ final class EditorTests: XCTestCase {
             startStateID: "1",
             currentStrokes: &currentStrokes
         )
-        
+
         store.send(.transitionSymbolChanged("2", "A")) {
             $0.transitionsDict["2"]?.currentSymbol = "A"
         }
@@ -64,14 +189,18 @@ final class EditorTests: XCTestCase {
             transitionEndID: "2",
             currentStrokes: &currentStrokes
         )
+        store.send(.stateSymbolChanged("3", "3")) {
+            $0.automatonStatesDict["3"]?.name = "3"
+        }
         
+        currentStrokes.append(
+            Stroke(
+                controlPoints: [CGPoint(x: 3, y: 0)]
+            )
+        )
         store.send(
             .strokesChanged(
-                currentStrokes + [
-                    Stroke(
-                        controlPoints: [CGPoint(x: 3, y: 0)]
-                    )
-                ]
+                currentStrokes
             )
         )
         
@@ -89,6 +218,60 @@ final class EditorTests: XCTestCase {
             )
         ) {
             $0.automatonStatesDict["3"]?.isEndState = true
+        }
+        
+        stubShapeType = .arrow
+        stubID = "4"
+        createTransition(
+            store: store,
+            startPoint: CGPoint(x: -2, y: 0),
+            tipPoint: .zero,
+            transitionID: stubID,
+            endStateID: "1",
+            currentStrokes: &currentStrokes
+        )
+        
+        store.send(.inputChanged("A")) {
+            $0.input = "A"
+        }
+        store.send(.simulateInput)
+        scheduler.advance()
+        store.receive(.simulateInputResult(.success(Empty()))) {
+            $0.outputString = "✅"
+        }
+    }
+    
+    private func createEndStateStroke(
+        store: TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>,
+        stateID: AutomatonState.ID,
+        controlPoints: [CGPoint],
+        currentStrokes: inout [Stroke]
+    ) {
+        currentStrokes.append(
+            Stroke(
+                controlPoints: controlPoints
+            )
+        )
+        store.send(
+            .strokesChanged(
+                currentStrokes
+            )
+        )
+        
+        scheduler.advance()
+        
+        store.receive(
+            .automataShapeClassified(
+                .success(
+                    .state(
+                        Stroke(
+                            controlPoints: controlPoints
+                        )
+                    )
+                )
+            )
+        ) {
+            $0.automatonStatesDict[stateID]?.isEndState = true
         }
     }
     
@@ -196,66 +379,4 @@ final class EditorTests: XCTestCase {
             )
         )
     }
-//    private func createTransition(
-//        startAutomatonIndex: Int? = nil,
-//        endAutomatonIndex: Int? = nil
-//    ) -> [TestStore<EditorState, EditorState, EditorAction, EditorAction, EditorEnvironment>.Step] {
-//        [
-//            .send(
-//                .strokesChanged(
-//                    [
-//                        Stroke(
-//                            controlPoints: [
-//                                CGPoint(x: 2, y: 0),
-//                                CGPoint(x: 3, y: 0),
-//                            ]
-//                        )
-//                    ]
-//                )
-//            ),
-//            .do {
-//                self.scheduler.advance()
-//            },
-//            .receive(
-//                .automataShapeClassified(
-//                    .success(
-//                        .transition(
-//                            Stroke(
-//                                controlPoints: [
-//                                    CGPoint(x: 2, y: 0),
-//                                    CGPoint(x: 3, y: 0),
-//                                ]
-//                            )
-//                        )
-//                    )
-//                )
-//            ) { state in
-//                state.transitions = [
-//                    AutomatonTransition(
-//                        startState: startAutomatonIndex.map { state.automatonStates[$0].id },
-//                        endState: endAutomatonIndex.map { state.automatonStates[$0].id },
-//                        scribblePosition: CGPoint(
-//                            x: 2,
-//                            y: -50
-//                        ),
-//                        stroke: Stroke(
-//                            controlPoints: .arrow(
-//                                startPoint: CGPoint(x: 1, y: 0),
-//                                tipPoint: CGPoint(x: 3, y: 0)
-//                            )
-//                        )
-//                    )
-//                ]
-//            }
-//        ]
-//    }
-}
-
-extension Array where Element == CGPoint {
-    static let circle: Self = [
-        CGPoint(x: 0, y: -1),
-        CGPoint(x: 1, y: 0),
-        CGPoint(x: 0, y: 1),
-        CGPoint(x: -1, y: 0),
-    ]
 }

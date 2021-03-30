@@ -63,7 +63,7 @@ struct EditorView: View {
                     VStack {
                         Button(
                             action: {
-                                viewStore.send(.simulateInput(viewStore.state.input))
+                                viewStore.send(.simulateInput)
                             }
                         ) {
                             Text("Simulate")
@@ -109,41 +109,3 @@ struct EditorView: View {
         }
     }
 }
-
-//struct EditorView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EditorView(
-//            store: EditorStore(
-//                initialState: .init(
-//                    outputString: "✅ with states A, B, C",
-//                    alphabetSymbols: [
-//                        "A",
-//                        "B",
-//                    ],
-//                    transitions: [
-//                        AutomatonTransition(
-//                            startState: nil,
-//                            endState: nil,
-//                            currentSymbol: "A",
-//                            symbols: ["B", "C"],
-//                            scribblePosition: CGPoint(x: 400, y: 200),
-//                            stroke: Stroke(
-//                                controlPoints: .arrow(
-//                                    startPoint: CGPoint(x: 380, y: 200),
-//                                    tipPoint: CGPoint(x: 420, y: 200)
-//                                )
-//                            )
-//                        )
-//                    ]
-//                ),
-//                reducer: editorReducer,
-//                environment: EditorEnvironment(
-//                    automataClassifierService: .successfulTransition,
-//                    automataLibraryService: .successful(),
-//                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
-//                )
-//            )
-//        )
-//    }
-//}
-

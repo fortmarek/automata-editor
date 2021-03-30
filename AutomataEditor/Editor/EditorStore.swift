@@ -76,7 +76,7 @@ enum EditorAction: Equatable {
     case selectedPen
     case removeLastInputSymbol
     case inputChanged(String)
-    case simulateInput(String)
+    case simulateInput
     case simulateInputResult(Result<Empty, AutomataLibraryError>)
     case stateSymbolChanged(AutomatonState.ID, String)
     case stateDragPointFinishedDragging(AutomatonState.ID, CGPoint)
@@ -252,7 +252,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case .removeLastInputSymbol:
         guard !state.input.isEmpty else { return .none }
         state.input.removeLast()
-    case let .simulateInput(input):
+    case .simulateInput:
         guard
             let initialState = state.initialStates.first
         else {
@@ -271,7 +271,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.outputString = "❌ Unnamed states"
             return .none
         }
-        let input = Array(input).map(String.init)
+        let input = Array(state.input).map(String.init)
         let alphabetSymbols: [String] = Array(
             Set(
                 state.transitions

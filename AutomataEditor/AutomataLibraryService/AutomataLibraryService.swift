@@ -25,9 +25,7 @@ struct AutomataLibraryService {
 }
 
 extension AutomataLibraryService {
-    static func successful(
-        with states: [AutomatonState] = []
-    ) -> Self {
+    static func successful() -> Self {
         .init(
             simulateInput: { _, _, _, _, _, _ in
                 Just(())
