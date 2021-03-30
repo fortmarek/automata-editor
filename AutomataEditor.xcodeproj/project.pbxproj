@@ -56,6 +56,8 @@
 		F87A49F1260F7D21001653A8 /* EditorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A49F0260F7D21001653A8 /* EditorButton.swift */; };
 		F87A4A0526130095001653A8 /* IDFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A0426130095001653A8 /* IDFactory.swift */; };
 		F87A4A09261300D6001653A8 /* IDFactoryLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A08261300D6001653A8 /* IDFactoryLive.swift */; };
+		F87A4A0D26130B93001653A8 /* ShapeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A0C26130B93001653A8 /* ShapeService.swift */; };
+		F87A4A1126130C1C001653A8 /* ShapeServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A1026130C1C001653A8 /* ShapeServiceLive.swift */; };
 		F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DA926010C390054BBFF /* TextView.swift */; };
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
@@ -169,6 +171,8 @@
 		F87A49F0260F7D21001653A8 /* EditorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorButton.swift; sourceTree = "<group>"; };
 		F87A4A0426130095001653A8 /* IDFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDFactory.swift; sourceTree = "<group>"; };
 		F87A4A08261300D6001653A8 /* IDFactoryLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDFactoryLive.swift; sourceTree = "<group>"; };
+		F87A4A0C26130B93001653A8 /* ShapeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeService.swift; sourceTree = "<group>"; };
+		F87A4A1026130C1C001653A8 /* ShapeServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeServiceLive.swift; sourceTree = "<group>"; };
 		F8933DA926010C390054BBFF /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AutomataClassifier.mlmodel; path = "automata-editor-model/AutomataClassifier.mlmodel"; sourceTree = SOURCE_ROOT; };
 		F8CF054C25F01D2C00077209 /* NFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFA.swift; sourceTree = "<group>"; };
@@ -275,6 +279,7 @@
 		F85184DF25DD1C0700791701 /* AutomataEditor */ = {
 			isa = PBXGroup;
 			children = (
+				F87A4A0B26130B70001653A8 /* ShapeService */,
 				F87A4A0326130079001653A8 /* IDFactory */,
 				F86C872925F7BF340000BCA9 /* FlexibleView */,
 				F856E0CF25F2839900905BED /* AutomataLibraryService */,
@@ -360,6 +365,15 @@
 				F87A4A08261300D6001653A8 /* IDFactoryLive.swift */,
 			);
 			path = IDFactory;
+			sourceTree = "<group>";
+		};
+		F87A4A0B26130B70001653A8 /* ShapeService */ = {
+			isa = PBXGroup;
+			children = (
+				F87A4A0C26130B93001653A8 /* ShapeService.swift */,
+				F87A4A1026130C1C001653A8 /* ShapeServiceLive.swift */,
+			);
+			path = ShapeService;
 			sourceTree = "<group>";
 		};
 		F8CF050F25F003B900077209 /* Frameworks */ = {
@@ -531,6 +545,7 @@
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
+				F87A4A0D26130B93001653A8 /* ShapeService.swift in Sources */,
 				F86C873225F7BFA20000BCA9 /* SizeReader.swift in Sources */,
 				F81641E325EB8E6400F49800 /* AutomataClassifierService.swift in Sources */,
 				F815A41E25EBCE9A002C44DE /* CGPoint+Shape.swift in Sources */,
@@ -540,6 +555,7 @@
 				F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */,
 				F87A49F1260F7D21001653A8 /* EditorButton.swift in Sources */,
 				F81641EB25EB8F8E00F49800 /* AutomataClassifierServiceLive.swift in Sources */,
+				F87A4A1126130C1C001653A8 /* ShapeServiceLive.swift in Sources */,
 				F8933DAA26010C3A0054BBFF /* TextView.swift in Sources */,
 				F87A4A09261300D6001653A8 /* IDFactoryLive.swift in Sources */,
 				F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */,

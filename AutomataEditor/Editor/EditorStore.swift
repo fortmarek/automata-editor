@@ -11,6 +11,7 @@ typealias EditorViewStore = ViewStore<EditorState, EditorAction>
 struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
     let automataLibraryService: AutomataLibraryService
+    let shapeService: ShapeService
     let idFactory: IDFactory
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
@@ -297,13 +298,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .transitionSymbolRemoved(transitionID, symbol):
         state.transitionsDict[transitionID]?.symbols.removeAll(where: { $0 == symbol })
     case let .automataShapeClassified(.success(.state(stroke))):
-        let center = stroke.controlPoints.center()
+        let center = env.shapeService.center(stroke.controlPoints)
+        let radius = env.shapeService.radius(stroke.controlPoints, center)
         
-        let radius = stroke.controlPoints.radius(with: center)
-        
-        let controlPoints: [CGPoint] = .circle(
-            center: center,
-            radius: radius
+        let controlPoints: [CGPoint] = env.shapeService.circle(
+            center,
+            radius
         )
         
         if let automatonState = enclosingState(for: controlPoints) {
@@ -312,7 +312,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 return .none
             }
             let controlPoints = automatonState.stroke.controlPoints
-            let center = controlPoints.center()
+            let center = env.shapeService.center(controlPoints)
             state.automatonStatesDict[automatonState.id]?.isEndState = true
         } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
             guard
@@ -470,7 +470,9 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .strokesChanged(strokes):
         // A stroke was deleted
         if strokes.count < state.strokes.count {
-            let centerPoints = strokes.map { $0.controlPoints.center() }
+            let centerPoints = strokes
+                .map(\.controlPoints)
+                .map(env.shapeService.center)
             if let transition = state.transitions.first(
                 where: { transition in
                     !strokes.contains(

@@ -60,12 +60,18 @@ final class EditorTests: XCTestCase {
     func testSimpleAutomatonIsDrawn() {
         var stubShapeType: AutomatonShapeType = .circle
         var stubID: String = "1"
+        var stubCenter: CGPoint = .zero
+        var stubRadius: CGFloat = 1
         let store = TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
             environment: EditorEnvironment(
                 automataClassifierService: .successfulShape { stubShapeType },
                 automataLibraryService: .successful(),
+                shapeService: .mock(
+                    center: { _ in stubCenter },
+                    radius: { _, _ in stubRadius }
+                ),
                 idFactory: .mock { stubID },
                 mainQueue: scheduler.eraseToAnyScheduler()
             )
@@ -73,9 +79,17 @@ final class EditorTests: XCTestCase {
         createState(
             store: store,
             id: stubID,
-            center: .zero,
-            radius: 2
+            center: stubCenter,
+            radius: stubRadius
         )
+        
+        store.send(.stateSymbolChanged("1", "A")) {
+            $0.automatonStatesDict["1"]?.name = "A"
+        }
+        
+        stubShapeType = .arrow
+        
+        
     }
 //        .assert(
 //            createState(center: .zero) +
@@ -183,7 +197,7 @@ final class EditorTests: XCTestCase {
         store.send(
             .strokesChanged(
                 [
-                    Stroke(controlPoints: .circle(center: center, radius: radius))
+                    Stroke(controlPoints: [center])
                 ]
             )
         )
@@ -194,7 +208,7 @@ final class EditorTests: XCTestCase {
                 .success(
                     .state(
                         Stroke(
-                            controlPoints: .circle(center: center, radius: radius)
+                            controlPoints: [center]
                         )
                     )
                 )
