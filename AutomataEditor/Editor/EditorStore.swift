@@ -382,9 +382,23 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         guard var transition = state.transitionsDict[transitionID] else { return .none }
         transition.flexPoint = finalFlexPoint
         transition.currentFlexPoint = finalFlexPoint
+        if
+            transition.isInitialTransition,
+            let tipPoint = transition.tipPoint {
+            let vector = Vector(tipPoint, finalFlexPoint)
+            transition.startPoint = vector.point(distance: sqrt(vector.lengthSquared), other: finalFlexPoint)
+        }
         state.transitionsDict[transition.id] = transition
     case let .transitionFlexPointChanged(transitionID, flexPoint):
-        state.transitionsDict[transitionID]?.flexPoint = flexPoint
+        guard var transition = state.transitionsDict[transitionID] else { return .none }
+        transition.flexPoint = flexPoint
+        if
+            transition.isInitialTransition,
+            let tipPoint = transition.tipPoint {
+            let vector = Vector(tipPoint, flexPoint)
+            transition.startPoint = vector.point(distance: sqrt(vector.lengthSquared), other: flexPoint)
+        }
+        state.transitionsDict[transitionID] = transition
     case let .stateDragPointChanged(automatonStateID, dragPoint):
         state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
         updateTransitionsAfterStateDragged(automatonStateID)

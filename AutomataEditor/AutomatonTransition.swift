@@ -33,6 +33,10 @@ struct AutomatonTransition: Equatable, Identifiable {
     /// Might not always correspond to the value if a gesture is currently underway
     var currentFlexPoint: CGPoint? = nil
     
+    var isInitialTransition: Bool {
+        startState == nil && endState != nil
+    }
+    
     var stroke: Stroke {
         switch type {
         case let .cycle(point, center: center, radians: _):
