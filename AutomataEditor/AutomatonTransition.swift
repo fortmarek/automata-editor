@@ -1,9 +1,57 @@
 import UIKit
 
-struct AutomatonTransition: Equatable, Identifiable {
-    enum TransitionType: Equatable, Hashable {
+struct AutomatonTransition: Equatable, Identifiable, Codable {
+    enum TransitionType: Equatable, Hashable, Codable {
         case cycle(CGPoint, center: CGPoint, radians: CGFloat)
         case regular(startPoint: CGPoint, tipPoint: CGPoint, flexPoint: CGPoint)
+        
+        enum CodingKeys: String, CodingKey {
+            case point
+            case center
+            case radians
+            case startPoint
+            case tipPoint
+            case flexPoint
+            case type
+        }
+        
+        private enum CaseType: String, Codable {
+            case cycle
+            case regular
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(CaseType.self, forKey: .type)
+            switch type {
+            case .cycle:
+                let point = try container.decode(CGPoint.self, forKey: .point)
+                let center = try container.decode(CGPoint.self, forKey: .center)
+                let radians = try container.decode(CGFloat.self, forKey: .radians)
+                self = .cycle(point, center: center, radians: radians)
+            case .regular:
+                let startPoint = try container.decode(CGPoint.self, forKey: .startPoint)
+                let tipPoint = try container.decode(CGPoint.self, forKey: .tipPoint)
+                let flexPoint = try container.decode(CGPoint.self, forKey: .flexPoint)
+                self = .regular(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint)
+            }
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = try encoder.container(keyedBy: CodingKeys.self)
+            switch self {
+            case let .cycle(point, center: center, radians: radians):
+                try container.encode(CaseType.cycle, forKey: .type)
+                try container.encode(point, forKey: .point)
+                try container.encode(center, forKey: .center)
+                try container.encode(radians, forKey: .radians)
+            case let .regular(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint):
+                try container.encode(CaseType.regular, forKey: .type)
+                try container.encode(startPoint, forKey: .startPoint)
+                try container.encode(tipPoint, forKey: .tipPoint)
+                try container.encode(flexPoint, forKey: .flexPoint)
+            }
+        }
     }
     
     let id: String

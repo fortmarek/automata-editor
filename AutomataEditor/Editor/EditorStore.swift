@@ -16,7 +16,7 @@ struct EditorEnvironment {
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-struct EditorState: Equatable {
+struct EditorState: Equatable, Codable {
     var tool: Tool = .pen
     var isEraserSelected: Bool = false
     var isPenSelected: Bool = true

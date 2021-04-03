@@ -1,7 +1,7 @@
 import SwiftUI
 import PencilKit
 
-enum Tool {
+enum Tool: String, Codable {
     case pen
     case eraser
     

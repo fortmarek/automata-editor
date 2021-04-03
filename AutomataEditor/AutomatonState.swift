@@ -1,6 +1,6 @@
 import UIKit
 
-struct AutomatonState: Equatable, Identifiable {
+struct AutomatonState: Equatable, Identifiable, Codable {
     var name: String = ""
     var isEndState: Bool = false
     var center: CGPoint
