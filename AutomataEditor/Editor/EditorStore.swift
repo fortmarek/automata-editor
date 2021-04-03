@@ -4,9 +4,14 @@ import PencilKit
 import CoreML
 import SwiftAutomataLibrary
 import SwiftUI
+import UniformTypeIdentifiers
 
 typealias EditorStore = Store<EditorState, EditorAction>
 typealias EditorViewStore = ViewStore<EditorState, EditorAction>
+
+extension UTType {
+  static let automatonDocument = UTType(exportedAs: "marekfort.AutomataEditor.automaton")
+}
 
 struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
@@ -16,7 +21,44 @@ struct EditorEnvironment {
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-struct EditorState: Equatable, Codable {
+struct EditorState: Equatable, Codable, FileDocument {
+    static var readableContentTypes: [UTType] { [.automatonDocument] }
+    
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents else {
+          throw CocoaError(.fileReadCorruptFile)
+        }
+        self = try JSONDecoder().decode(Self.self, from: data)
+    }
+    
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        let data = try JSONEncoder().encode(self)
+        return .init(regularFileWithContents: data)
+    }
+    
+    init(
+        id: UUID = UUID(),
+        tool: Tool = .pen,
+        isEraserSelected: Bool = false,
+        isPenSelected: Bool = true,
+        outputString: String = "",
+        input: String = "",
+        automatonStatesDict: [AutomatonState.ID : AutomatonState] = [:],
+        transitionsDict: [AutomatonTransition.ID : AutomatonTransition] = [:],
+        shouldDeleteLastStroke: Bool = false
+    ) {
+        self.id = id
+        self.tool = tool
+        self.isEraserSelected = isEraserSelected
+        self.isPenSelected = isPenSelected
+        self.outputString = outputString
+        self.input = input
+        self.automatonStatesDict = automatonStatesDict
+        self.transitionsDict = transitionsDict
+        self.shouldDeleteLastStroke = shouldDeleteLastStroke
+    }
+    
+    let id: UUID
     var tool: Tool = .pen
     var isEraserSelected: Bool = false
     var isPenSelected: Bool = true

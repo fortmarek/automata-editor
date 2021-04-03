@@ -6,7 +6,7 @@ import ComposableArchitecture
 struct EditorView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var counter = 0
-    
+    let set: (EditorState) -> Void
     let store: EditorStore
     
     var body: some View {
@@ -106,6 +106,7 @@ struct EditorView: View {
                     }
                 }
             }
+            .onChange(of: viewStore.state, perform: set)
         }
     }
 }
