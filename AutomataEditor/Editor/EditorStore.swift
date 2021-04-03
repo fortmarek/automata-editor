@@ -287,10 +287,15 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.isEraserSelected = false
         state.isPenSelected = true
     case .clear:
+        state.input = ""
+        state.outputString = ""
         state.automatonStatesDict = [:]
         state.transitionsDict = [:]
     case let .inputChanged(input):
         state.input = input
+            .replacingOccurrences(of: " ", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
     case .removeLastInputSymbol:
         guard !state.input.isEmpty else { return .none }
         state.input.removeLast()
