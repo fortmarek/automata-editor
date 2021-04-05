@@ -7,22 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F815822725F4FECE00E11150 /* alib2std.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822625F4FECE00E11150 /* alib2std.xcframework */; };
-		F815822925F4FED800E11150 /* alib2std.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822625F4FECE00E11150 /* alib2std.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823225F5015800E11150 /* alib2abstraction.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822B25F5015700E11150 /* alib2abstraction.xcframework */; };
-		F815823325F5015800E11150 /* alib2measure.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822C25F5015700E11150 /* alib2measure.xcframework */; };
-		F815823425F5015800E11150 /* alib2str.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822D25F5015700E11150 /* alib2str.xcframework */; };
-		F815823525F5015800E11150 /* alib2algo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822E25F5015700E11150 /* alib2algo.xcframework */; };
-		F815823625F5015800E11150 /* alib2data.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822F25F5015800E11150 /* alib2data.xcframework */; };
-		F815823725F5015800E11150 /* alib2xml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815823025F5015800E11150 /* alib2xml.xcframework */; };
-		F815823825F5015800E11150 /* alib2common.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815823125F5015800E11150 /* alib2common.xcframework */; };
-		F815823A25F5019200E11150 /* alib2abstraction.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822B25F5015700E11150 /* alib2abstraction.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823B25F5019200E11150 /* alib2algo.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822E25F5015700E11150 /* alib2algo.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823C25F5019200E11150 /* alib2common.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815823125F5015800E11150 /* alib2common.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823D25F5019200E11150 /* alib2data.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822F25F5015800E11150 /* alib2data.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823E25F5019200E11150 /* alib2measure.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822C25F5015700E11150 /* alib2measure.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815823F25F5019200E11150 /* alib2str.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815822D25F5015700E11150 /* alib2str.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F815824025F5019200E11150 /* alib2xml.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F815823025F5015800E11150 /* alib2xml.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F815A40C25EB9A05002C44DE /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A40B25EB9A05002C44DE /* EditorTests.swift */; };
 		F815A41625EBA827002C44DE /* AutomatonTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41525EBA827002C44DE /* AutomatonTransition.swift */; };
 		F815A41A25EBA844002C44DE /* AutomatonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815A41925EBA844002C44DE /* AutomatonState.swift */; };
@@ -48,6 +32,22 @@
 		F856E0CC25F2826300905BED /* SwiftAutomataLibrary-BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */; };
 		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
 		F856E0D525F2845D00905BED /* AutomataLibraryServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D425F2845D00905BED /* AutomataLibraryServiceLive.swift */; };
+		F86A1153261BA7D900D9FE19 /* alib2xml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815823025F5015800E11150 /* alib2xml.xcframework */; };
+		F86A1154261BA7D900D9FE19 /* alib2xml.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815823025F5015800E11150 /* alib2xml.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A1156261BA7DF00D9FE19 /* alib2str.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822D25F5015700E11150 /* alib2str.xcframework */; };
+		F86A1157261BA7DF00D9FE19 /* alib2str.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822D25F5015700E11150 /* alib2str.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A1159261BA7E300D9FE19 /* alib2std.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822625F4FECE00E11150 /* alib2std.xcframework */; };
+		F86A115A261BA7E300D9FE19 /* alib2std.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822625F4FECE00E11150 /* alib2std.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A115B261BA7E600D9FE19 /* alib2measure.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822C25F5015700E11150 /* alib2measure.xcframework */; };
+		F86A115C261BA7E600D9FE19 /* alib2measure.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822C25F5015700E11150 /* alib2measure.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A115D261BA7E800D9FE19 /* alib2data.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822F25F5015800E11150 /* alib2data.xcframework */; };
+		F86A115E261BA7E800D9FE19 /* alib2data.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822F25F5015800E11150 /* alib2data.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A115F261BA7EA00D9FE19 /* alib2common.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815823125F5015800E11150 /* alib2common.xcframework */; };
+		F86A1160261BA7EA00D9FE19 /* alib2common.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815823125F5015800E11150 /* alib2common.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A1161261BA7EC00D9FE19 /* alib2algo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822E25F5015700E11150 /* alib2algo.xcframework */; };
+		F86A1162261BA7EC00D9FE19 /* alib2algo.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822E25F5015700E11150 /* alib2algo.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F86A1163261BA7EE00D9FE19 /* alib2abstraction.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F815822B25F5015700E11150 /* alib2abstraction.xcframework */; };
+		F86A1164261BA7EE00D9FE19 /* alib2abstraction.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F815822B25F5015700E11150 /* alib2abstraction.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F86C866125F784B20000BCA9 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C866025F784B20000BCA9 /* Transition.swift */; };
 		F86C872B25F7BF480000BCA9 /* _FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872A25F7BF480000BCA9 /* _FlexibleView.swift */; };
 		F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C872E25F7BF630000BCA9 /* FlexibleView.swift */; };
@@ -84,22 +84,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		F856E08A25F27B6A00905BED /* Copy Frameworks */ = {
+		F86A1155261BA7DA00D9FE19 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F815823A25F5019200E11150 /* alib2abstraction.xcframework in Copy Frameworks */,
-				F815823B25F5019200E11150 /* alib2algo.xcframework in Copy Frameworks */,
-				F815823C25F5019200E11150 /* alib2common.xcframework in Copy Frameworks */,
-				F815823D25F5019200E11150 /* alib2data.xcframework in Copy Frameworks */,
-				F815823E25F5019200E11150 /* alib2measure.xcframework in Copy Frameworks */,
-				F815823F25F5019200E11150 /* alib2str.xcframework in Copy Frameworks */,
-				F815824025F5019200E11150 /* alib2xml.xcframework in Copy Frameworks */,
-				F815822925F4FED800E11150 /* alib2std.xcframework in Copy Frameworks */,
+				F86A115E261BA7E800D9FE19 /* alib2data.xcframework in Embed Frameworks */,
+				F86A1157261BA7DF00D9FE19 /* alib2str.xcframework in Embed Frameworks */,
+				F86A115A261BA7E300D9FE19 /* alib2std.xcframework in Embed Frameworks */,
+				F86A1160261BA7EA00D9FE19 /* alib2common.xcframework in Embed Frameworks */,
+				F86A1154261BA7D900D9FE19 /* alib2xml.xcframework in Embed Frameworks */,
+				F86A115C261BA7E600D9FE19 /* alib2measure.xcframework in Embed Frameworks */,
+				F86A1162261BA7EC00D9FE19 /* alib2algo.xcframework in Embed Frameworks */,
+				F86A1164261BA7EE00D9FE19 /* alib2abstraction.xcframework in Embed Frameworks */,
 			);
-			name = "Copy Frameworks";
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8CF055F25F01EB500077209 /* Embed Libraries */ = {
@@ -204,14 +204,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F815822725F4FECE00E11150 /* alib2std.xcframework in Frameworks */,
-				F815823825F5015800E11150 /* alib2common.xcframework in Frameworks */,
-				F815823225F5015800E11150 /* alib2abstraction.xcframework in Frameworks */,
-				F815823625F5015800E11150 /* alib2data.xcframework in Frameworks */,
-				F815823425F5015800E11150 /* alib2str.xcframework in Frameworks */,
-				F815823325F5015800E11150 /* alib2measure.xcframework in Frameworks */,
-				F815823525F5015800E11150 /* alib2algo.xcframework in Frameworks */,
-				F815823725F5015800E11150 /* alib2xml.xcframework in Frameworks */,
+				F86A115D261BA7E800D9FE19 /* alib2data.xcframework in Frameworks */,
+				F86A1161261BA7EC00D9FE19 /* alib2algo.xcframework in Frameworks */,
+				F86A115F261BA7EA00D9FE19 /* alib2common.xcframework in Frameworks */,
+				F86A1159261BA7E300D9FE19 /* alib2std.xcframework in Frameworks */,
+				F86A115B261BA7E600D9FE19 /* alib2measure.xcframework in Frameworks */,
+				F86A1153261BA7D900D9FE19 /* alib2xml.xcframework in Frameworks */,
+				F86A1156261BA7DF00D9FE19 /* alib2str.xcframework in Frameworks */,
+				F86A1163261BA7EE00D9FE19 /* alib2abstraction.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,7 +447,7 @@
 				F856E05925F27AB200905BED /* Sources */,
 				F856E05A25F27AB200905BED /* Frameworks */,
 				F856E05B25F27AB200905BED /* Resources */,
-				F856E08A25F27B6A00905BED /* Copy Frameworks */,
+				F86A1155261BA7DA00D9FE19 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
