@@ -77,7 +77,7 @@ struct EditorState: Equatable, Codable, FileDocument {
             Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
         }
         + automatonStates.compactMap {
-            guard $0.isEndState else { return nil }
+            guard $0.isFinalState else { return nil }
             return Stroke(
                 controlPoints: .circle(
                     center: $0.center,
@@ -106,7 +106,7 @@ struct EditorState: Equatable, Codable, FileDocument {
     }
     
     fileprivate var finalStates: [AutomatonState] {
-        automatonStates.filter(\.isEndState)
+        automatonStates.filter(\.isFinalState)
     }
 }
 
@@ -374,13 +374,13 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
         
         if let automatonState = enclosingState(for: controlPoints) {
-            guard !automatonState.isEndState else {
+            guard !automatonState.isFinalState else {
                 state.shouldDeleteLastStroke = true
                 return .none
             }
             let controlPoints = stroke(for: automatonState).controlPoints
             let center = env.shapeService.center(controlPoints)
-            state.automatonStatesDict[automatonState.id]?.isEndState = true
+            state.automatonStatesDict[automatonState.id]?.isFinalState = true
         } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
             guard
                 let startPoint = transition.startPoint,

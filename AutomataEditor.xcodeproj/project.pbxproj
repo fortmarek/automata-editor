@@ -27,7 +27,6 @@
 		F856E06C25F27AC100905BED /* NFA.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592225EED5D700E9D369 /* NFA.mm */; };
 		F856E06D25F27AC100905BED /* AutomatonRunResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F876CCCC25F26B4C00AE92FC /* AutomatonRunResult.m */; };
 		F856E06E25F27AC100905BED /* Transition.m in Sources */ = {isa = PBXBuildFile; fileRef = F876CCB925F2360100AE92FC /* Transition.m */; };
-		F856E06F25F27AC100905BED /* Hex.mm in Sources */ = {isa = PBXBuildFile; fileRef = F807592025EECC9600E9D369 /* Hex.mm */; };
 		F856E0BA25F280EF00905BED /* NFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF054C25F01D2C00077209 /* NFA.swift */; };
 		F856E0CC25F2826300905BED /* SwiftAutomataLibrary-BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */; };
 		F856E0D125F283AF00905BED /* AutomataLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856E0D025F283AF00905BED /* AutomataLibraryService.swift */; };
@@ -123,8 +122,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F807591E25EECC7E00E9D369 /* Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hex.h; sourceTree = "<group>"; };
-		F807592025EECC9600E9D369 /* Hex.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hex.mm; sourceTree = "<group>"; };
 		F807592225EED5D700E9D369 /* NFA.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NFA.mm; sourceTree = "<group>"; };
 		F807592425EED5EA00E9D369 /* NFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		F815822625F4FECE00E11150 /* alib2std.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = alib2std.xcframework; sourceTree = "<group>"; };
@@ -332,8 +329,6 @@
 				F8CF054C25F01D2C00077209 /* NFA.swift */,
 				F86C866025F784B20000BCA9 /* Transition.swift */,
 				F856E0B225F2805000905BED /* SwiftAutomataLibrary-BridgingHeader.h */,
-				F807591E25EECC7E00E9D369 /* Hex.h */,
-				F807592025EECC9600E9D369 /* Hex.mm */,
 				F807592425EED5EA00E9D369 /* NFA.h */,
 				F807592225EED5D700E9D369 /* NFA.mm */,
 				F876CCCB25F26A8200AE92FC /* AutomatonRunResult.h */,
@@ -588,7 +583,6 @@
 				F856E06C25F27AC100905BED /* NFA.mm in Sources */,
 				F856E0BA25F280EF00905BED /* NFA.swift in Sources */,
 				F856E06D25F27AC100905BED /* AutomatonRunResult.m in Sources */,
-				F856E06F25F27AC100905BED /* Hex.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

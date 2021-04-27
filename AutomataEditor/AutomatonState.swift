@@ -1,12 +1,12 @@
 import UIKit
 
 struct AutomatonState: Equatable, Identifiable, Codable {
+    let id: String
     var name: String = ""
-    var isEndState: Bool = false
+    var isFinalState: Bool = false
     var center: CGPoint
     let radius: CGFloat
     var currentDragPoint: CGPoint
-    let id: String
 
     init(
         id: String,

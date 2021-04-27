@@ -26,26 +26,24 @@ extension AutomataClassifierService {
                             .modelImage(),
                             let cgImage = image.cgImage
                         else {
-                            promise(.failure(.shapeNotRecognized))
-                            return
+                            return promise(.failure(.shapeNotRecognized))
                         }
-                            
 
                         let input = try AutomataClassifierInput(drawingWith: cgImage)
                         let classifier = try AutomataClassifier(configuration: MLModelConfiguration())
                         let prediction = try classifier.prediction(input: input)
-                        print(prediction.labelProbability)
-                        if let automataShapeType = AutomatonShapeType(rawValue: prediction.label) {
-                            switch automataShapeType {
-                            case .arrow:
-                                promise(.success(.transition(stroke)))
-                            case .circle:
-                                promise(.success(.state(stroke)))
-                            case .cycle:
-                                promise(.success(.transitionCycle(stroke)))
-                            }
-                        } else {
-                            promise(.failure(.shapeNotRecognized))
+
+                        guard
+                            let automataShapeType = AutomatonShapeType(rawValue: prediction.label)
+                        else { return promise(.failure(.shapeNotRecognized)) }
+
+                        switch automataShapeType {
+                        case .arrow:
+                            promise(.success(.transition(stroke)))
+                        case .circle:
+                            promise(.success(.state(stroke)))
+                        case .cycle:
+                            promise(.success(.transitionCycle(stroke)))
                         }
                     } catch {
                         promise(.failure(.shapeNotRecognized))

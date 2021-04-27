@@ -77,20 +77,3 @@
 }
 
 @end
-
-template < >
-struct ext::compare < NSString * > {
-
-    /**
-     * \brief
-     * Implementation of the three-way comparison
-     *
-     * \param first the left operand of the comparison
-     * \param second the right operand of the comparison
-     *
-     * \return negative value of left < right, positive value if left > right, zero if left == right
-     */
-    int operator ( ) ( NSString * first, NSString * second ) const {
-        return [first intValue] - [second intValue];
-    }
-};

@@ -38,7 +38,7 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
         }
         
         func encode(to encoder: Encoder) throws {
-            var container = try encoder.container(keyedBy: CodingKeys.self)
+            var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
             case let .cycle(point, center: center, radians: radians):
                 try container.encode(CaseType.cycle, forKey: .type)
@@ -61,6 +61,12 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
     var currentSymbol: String = ""
     var symbols: [String] = []
     var includesEpsilon: Bool = false
+    var type: TransitionType
+    /// Current flex point
+    /// Needed for gesture
+    /// Might not always correspond to the value if a gesture is currently underway
+    var currentFlexPoint: CGPoint? = nil
+
     var scribblePosition: CGPoint? {
         /// Do not show editor for initial transition
         if endState != nil, startState == nil { return nil }
@@ -75,11 +81,6 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
             return CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
         }
     }
-    var type: TransitionType
-    /// Current flex point
-    /// Needed for gesture
-    /// Might not always correspond to the value if a gesture is currently underway
-    var currentFlexPoint: CGPoint? = nil
     
     var isInitialTransition: Bool {
         startState == nil && endState != nil
