@@ -217,7 +217,7 @@ final class EditorTests: XCTestCase {
                 )
             )
         ) {
-            $0.automatonStatesDict["3"]?.isEndState = true
+            $0.automatonStatesDict["3"]?.isFinalState = true
         }
         
         stubShapeType = .arrow
@@ -271,7 +271,7 @@ final class EditorTests: XCTestCase {
                 )
             )
         ) {
-            $0.automatonStatesDict[stateID]?.isEndState = true
+            $0.automatonStatesDict[stateID]?.isFinalState = true
         }
     }
     
