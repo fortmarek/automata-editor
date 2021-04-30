@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import ComposableArchitecture
 
+/// Automaton shapes with their strokes as associated values.
 enum AutomatonShape: Equatable {
     case transition(Stroke)
     case transitionCycle(Stroke)
@@ -12,7 +13,9 @@ enum AutomataClassifierError: Error, Equatable {
     case shapeNotRecognized
 }
 
+/// Service to classify strokes as `AutomatonShape`.
 struct AutomataClassifierService {
+    /// Recognizes stroke and returns it as a case of `AutomatonShape`
     let recognizeStroke: (Stroke) -> Effect<AutomatonShape, AutomataClassifierError>
 }
 

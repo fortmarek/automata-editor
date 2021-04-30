@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// View that holds all automaton states.
 struct AutomatonStatesView: View {
     var automatonStates: [AutomatonState]
     let stateSymbolChanged: ((AutomatonState.ID, String) -> Void)

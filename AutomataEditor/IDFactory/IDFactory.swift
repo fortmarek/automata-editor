@@ -8,6 +8,7 @@
 import Foundation
 import ComposableArchitecture
 
+/// Factory for generating unique IDs
 struct IDFactory {
     let generateID: () -> String
 }

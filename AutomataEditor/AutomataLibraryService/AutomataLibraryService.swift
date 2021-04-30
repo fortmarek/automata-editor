@@ -13,7 +13,10 @@ enum AutomataLibraryError: Error, Equatable {
     case failed
 }
 
+/// Service to interact with ALT frameworks
 struct AutomataLibraryService {
+    /// Simulates input for a given FA.
+    /// Throws `AutomataLibraryError` if the input was rejected.
     let simulateInput: (
         _ input: [String],
         _ states: [AutomatonState],

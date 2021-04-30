@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// View that holds all the transitions.
 struct TransitionsView: View {
     let transitions: [AutomatonTransition]
     let toggleEpsilonInclusion: ((AutomatonState.ID) -> Void)
