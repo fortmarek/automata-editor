@@ -13,6 +13,9 @@ extension UTType {
   static let automatonDocument = UTType(exportedAs: "marekfort.AutomataEditor.automaton")
 }
 
+
+// MARK: - Environment
+
 struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
     let automataLibraryService: AutomataLibraryService
@@ -21,21 +24,9 @@ struct EditorEnvironment {
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-struct EditorState: Equatable, Codable, FileDocument {
-    static var readableContentTypes: [UTType] { [.automatonDocument] }
-    
-    init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents else {
-          throw CocoaError(.fileReadCorruptFile)
-        }
-        self = try JSONDecoder().decode(Self.self, from: data)
-    }
-    
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        let data = try JSONEncoder().encode(self)
-        return .init(regularFileWithContents: data)
-    }
-    
+// MARK: - State
+
+struct EditorState: Equatable, Codable {
     init(
         id: UUID = UUID(),
         tool: Tool = .pen,
@@ -65,13 +56,17 @@ struct EditorState: Equatable, Codable, FileDocument {
     var outputString: String = ""
     var input: String = ""
     var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
+    var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
+    var shouldDeleteLastStroke = false
+}
+
+extension EditorState {
     var automatonStates: [AutomatonState] {
         automatonStatesDict.map(\.value)
     }
     var transitions: [AutomatonTransition] {
         transitionsDict.map(\.value)
     }
-    var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
     var strokes: [Stroke] {
         automatonStates.map {
             Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
@@ -87,7 +82,6 @@ struct EditorState: Equatable, Codable, FileDocument {
         }
         + transitions.map(\.stroke)
     }
-    var shouldDeleteLastStroke = false
     
     fileprivate var transitionsWithoutEndState: [AutomatonTransition] {
         transitions.filter { $0.endState == nil }
@@ -110,7 +104,23 @@ struct EditorState: Equatable, Codable, FileDocument {
     }
 }
 
-struct Empty: Equatable {}
+extension EditorState: FileDocument {
+    static var readableContentTypes: [UTType] { [.automatonDocument] }
+    
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents else {
+          throw CocoaError(.fileReadCorruptFile)
+        }
+        self = try JSONDecoder().decode(Self.self, from: data)
+    }
+    
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        let data = try JSONEncoder().encode(self)
+        return .init(regularFileWithContents: data)
+    }
+}
+
+// MARK: - Action
 
 enum EditorAction: Equatable {
     case clear
@@ -134,12 +144,16 @@ enum EditorAction: Equatable {
     case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
 }
 
+// MARK: - Reducer
+
 let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
+    // MARK: - Helpers
     struct ClosestStateResult {
         let state: AutomatonState
         let point: CGPoint
         let distance: CGFloat
     }
+    /// - Returns: Closest automaton state, if exists, from a given `point`
     func closestState(from point: CGPoint) -> ClosestStateResult? {
         let result: (AutomatonState?, CGPoint, CGFloat) = state.automatonStates.reduce((nil, .zero, CGFloat.infinity)) { acc, currentState in
             let closestPoint: CGPoint = stroke(for: currentState).controlPoints.closestPoint(from: point)
@@ -158,6 +172,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         }
     }
     
+    /// - Returns: Stroke for `automatonState` using `shapeService`
     func stroke(for automatonState: AutomatonState) -> Stroke {
         return Stroke(
             controlPoints: env.shapeService.circle(
@@ -188,6 +203,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
     }
     
+    /// - Returns: Closest transition for array of `controlPoints` that does not have an end state. Nil if none pases a threshold.
     func closestTransitionWithoutEndState(
         for controlPoints: [CGPoint]
     ) -> AutomatonTransition? {
@@ -207,6 +223,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         )
     }
     
+    /// - Returns: Closest transition for array of `controlPoints` that does not have a start state. Nil if none pases a threshold.
     func closestTransitionWithoutStartState(
         for controlPoints: [CGPoint]
     ) -> AutomatonTransition? {
@@ -226,8 +243,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                 }
             )
     }
-    
-    func updateTransitionsAfterStateDragged(_ automatonStateID: AutomatonState.ID) {
+
+    func updateOutcomingTransitionsAfterStateDragged(_ automatonStateID: AutomatonState.ID) {
         state.transitions
             .filter { $0.endState == automatonStateID && $0.endState != $0.startState }
             .forEach { transition in
@@ -237,8 +254,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     let endState = state.automatonStatesDict[endStateID]
                 else { return }
                 let vector = Vector(endState.center, flexPoint)
+                // Closest intersection point between flex point and end state
                 state.transitionsDict[transition.id]?.tipPoint = vector.point(distance: endState.radius, other: endState.center)
             }
+    }
+    
+    func updateIncomingTransitionsAfterStateDragged(_ automatonStateID: AutomatonState.ID) {
         state.transitions
             .filter { $0.startState == automatonStateID && $0.endState != $0.startState }
             .forEach { transition in
@@ -248,8 +269,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     let startState = state.automatonStatesDict[startStateID]
                 else { return }
                 let vector = Vector(startState.center, flexPoint)
+                // Closest intersection point between flex point and start state
                 state.transitionsDict[transition.id]?.startPoint = vector.point(distance: startState.radius, other: startState.center)
             }
+    }
+    
+    func updateCyclesAfterStateDragged(_ automatonStateID: AutomatonState.ID) {
         state.transitions
             .forEach { transition in
                 switch transition.type {
@@ -265,6 +290,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                             y: endState.center.y + endState.radius
                         )
                     )
+                    // We use saved rotation and apply to the new center of a dragged state.
                     .rotated(by: radians)
                     state.transitionsDict[transition.id]?.type = .cycle(
                         vector.point(distance: endState.radius, other: endState.center),
@@ -275,6 +301,79 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
                     break
                 }
             }
+    }
+    
+    /// Transitions must be updated after a state is dragged if they were connected to it.
+    func updateTransitionsAfterStateDragged(_ automatonStateID: AutomatonState.ID) {
+        updateOutcomingTransitionsAfterStateDragged(automatonStateID)
+        updateIncomingTransitionsAfterStateDragged(automatonStateID)
+        updateCyclesAfterStateDragged(automatonStateID)
+    }
+    
+    func deleteStroke(from strokes: [Stroke]) {
+        let centerPoints = strokes
+            .map(\.controlPoints)
+            .map(env.shapeService.center)
+        // Find closest transition and delete it if it passes a given threshold
+        if let transition = state.transitions.first(
+            where: { transition in
+                !strokes.contains(
+                    where: { stroke in
+                        switch transition.type {
+                        case let .cycle(point, center: _, radians: _):
+                            return point.distance(from: stroke.controlPoints[0]) <= 0.1
+                        case let .regular(startPoint, tipPoint, flexPoint):
+                            return startPoint.distance(from: stroke.controlPoints[0]) <= 0.1
+                        }
+                    }
+                )
+            }
+        ) {
+            state.transitionsDict.removeValue(forKey: transition.id)
+        // Find closest automaton state to delete that passes a given threshold
+        } else if let automatonState = state.automatonStates.first(
+            where: { state in
+                !centerPoints.contains(
+                    where: {
+                        sqrt(state.center.distance(from: $0)) < 20
+                    }
+                )
+            }
+        ) {
+            state.automatonStatesDict.removeValue(forKey: automatonState.id)
+            state.transitions.forEach { transition in
+                var transition = transition
+                switch transition.type {
+                case .cycle:
+                    if let transitionStartState = transition.startState,
+                       transitionStartState == automatonState.id {
+                        state.transitionsDict.removeValue(forKey: transition.id)
+                    }
+                case .regular:
+                    if transition.startState == automatonState.id {
+                        transition.startState = nil
+                    }
+                    if transition.endState == automatonState.id {
+                        transition.endState = nil
+                    }
+                    state.transitionsDict[transition.id] = transition
+                }
+            }
+        }
+    }
+    
+    func updateDraggedTransition(_ transition: AutomatonTransition, flexPoint: CGPoint) {
+        var transition = transition
+        transition.flexPoint = flexPoint
+        if
+            transition.isInitialTransition,
+            let tipPoint = transition.tipPoint {
+            let vector = Vector(tipPoint, flexPoint)
+            // Recompute start point for initial transitions.
+            // Otherwise transition's start point can only be changed with a connected state
+            transition.startPoint = vector.point(distance: sqrt(vector.lengthSquared), other: flexPoint)
+        }
+        state.transitionsDict[transition.id] = transition
     }
     
     switch action {
@@ -319,6 +418,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             return .none
         }
         let input = Array(state.input).map(String.init)
+        // Create FA's alphabet based on symbols present in transitions
         let alphabetSymbols: [String] = Array(
             Set(
                 state.transitions
@@ -342,7 +442,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.transitions
         )
         .receive(on: env.mainQueue)
-        .map { Empty() }
+        .map(Empty.init)
         .catchToEffect()
         .map(EditorAction.simulateInputResult)
         .eraseToEffect()
@@ -373,6 +473,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             radius
         )
         
+        // Make a state final if this is a double circle
         if let automatonState = enclosingState(for: controlPoints) {
             guard !automatonState.isFinalState else {
                 state.shouldDeleteLastStroke = true
@@ -381,6 +482,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             let controlPoints = stroke(for: automatonState).controlPoints
             let center = env.shapeService.center(controlPoints)
             state.automatonStatesDict[automatonState.id]?.isFinalState = true
+        // Connect to a transition without end state if one is close enough
         } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
             guard
                 let startPoint = transition.startPoint,
@@ -399,6 +501,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
             state.transitionsDict[transition.id] = transition
             
             state.automatonStatesDict[automatonState.id] = automatonState
+        // Connect to a transition without start state if one is close enough
         } else if var transition = closestTransitionWithoutStartState(for: controlPoints) {
             guard
                 let startPoint = transition.startPoint,
@@ -427,25 +530,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         }
     case let .transitionFlexPointFinishedDragging(transitionID, finalFlexPoint):
         guard var transition = state.transitionsDict[transitionID] else { return .none }
-        transition.flexPoint = finalFlexPoint
+        /// Update `currentFlexPoint` only when dragging has finished
         transition.currentFlexPoint = finalFlexPoint
-        if
-            transition.isInitialTransition,
-            let tipPoint = transition.tipPoint {
-            let vector = Vector(tipPoint, finalFlexPoint)
-            transition.startPoint = vector.point(distance: sqrt(vector.lengthSquared), other: finalFlexPoint)
-        }
-        state.transitionsDict[transition.id] = transition
+        updateDraggedTransition(transition, flexPoint: finalFlexPoint)
     case let .transitionFlexPointChanged(transitionID, flexPoint):
         guard var transition = state.transitionsDict[transitionID] else { return .none }
-        transition.flexPoint = flexPoint
-        if
-            transition.isInitialTransition,
-            let tipPoint = transition.tipPoint {
-            let vector = Vector(tipPoint, flexPoint)
-            transition.startPoint = vector.point(distance: sqrt(vector.lengthSquared), other: flexPoint)
-        }
-        state.transitionsDict[transitionID] = transition
+        updateDraggedTransition(transition, flexPoint: flexPoint)
     case let .stateDragPointChanged(automatonStateID, dragPoint):
         state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
         updateTransitionsAfterStateDragged(automatonStateID)
@@ -471,6 +561,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
         let center = closestStateResult.state.center
+        // Angle between vector of center to topmost state's point and vector from center to the cycle's intersection point with the state.
         let radians = Vector(
             center,
             CGPoint(
@@ -512,6 +603,8 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         let tipPoint: CGPoint
         let startState: AutomatonState?
         let endState: AutomatonState?
+        // Connect transition to start or end state if any exists.
+        // If both exist, then connect it to the closer one.
         if
             let closestStartStateResult = closestStartStateResult,
             let closestEndStateResult = closestEndStateResult,
@@ -550,53 +643,7 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .strokesChanged(strokes):
         // A stroke was deleted
         if strokes.count < state.strokes.count {
-            let centerPoints = strokes
-                .map(\.controlPoints)
-                .map(env.shapeService.center)
-            if let transition = state.transitions.first(
-                where: { transition in
-                    !strokes.contains(
-                        where: { stroke in
-                            switch transition.type {
-                            case let .cycle(point, center: _, radians: _):
-                                return point.distance(from: stroke.controlPoints[0]) <= 0.1
-                            case let .regular(startPoint, tipPoint, flexPoint):
-                                return startPoint.distance(from: stroke.controlPoints[0]) <= 0.1
-                            }
-                        }
-                    )
-                }
-            ) {
-                state.transitionsDict.removeValue(forKey: transition.id)
-            } else if let automatonState = state.automatonStates.first(
-                where: { state in
-                    !centerPoints.contains(
-                        where: {
-                            sqrt(state.center.distance(from: $0)) < 20
-                        }
-                    )
-                }
-            ) {
-                state.automatonStatesDict.removeValue(forKey: automatonState.id)
-                state.transitions.forEach { transition in
-                    var transition = transition
-                    switch transition.type {
-                    case .cycle:
-                        if let transitionStartState = transition.startState,
-                           transitionStartState == automatonState.id {
-                            state.transitionsDict.removeValue(forKey: transition.id)
-                        }
-                    case .regular:
-                        if transition.startState == automatonState.id {
-                            transition.startState = nil
-                        }
-                        if transition.endState == automatonState.id {
-                            transition.endState = nil
-                        }
-                        state.transitionsDict[transition.id] = transition
-                    }
-                }
-            }
+            deleteStroke(from: strokes)
         } else {
             guard let stroke = strokes.last else { return .none }
             return env.automataClassifierService
