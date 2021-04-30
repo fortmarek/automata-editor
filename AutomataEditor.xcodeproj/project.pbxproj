@@ -69,7 +69,6 @@
 		F89C239725E3BE5C0082CA5B /* AutomataClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F89C239625E3BE5C0082CA5B /* AutomataClassifier.mlmodel */; };
 		F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */; };
 		F8FC48A52604A2EE00A27DC5 /* AutomatonStatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */; };
-		F8FC48A82604C58600A27DC5 /* AlphabetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48A72604C58600A27DC5 /* AlphabetView.swift */; };
 		F8FC48AB2604D18F00A27DC5 /* CGPoint+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */; };
 /* End PBXBuildFile section */
 
@@ -173,7 +172,6 @@
 		F8CF054C25F01D2C00077209 /* NFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFA.swift; sourceTree = "<group>"; };
 		F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionsView.swift; sourceTree = "<group>"; };
 		F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatonStatesView.swift; sourceTree = "<group>"; };
-		F8FC48A72604C58600A27DC5 /* AlphabetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphabetView.swift; sourceTree = "<group>"; };
 		F8FC48AA2604D18F00A27DC5 /* CGPoint+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extra.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -227,7 +225,6 @@
 				F85184E225DD1C0800791701 /* EditorView.swift */,
 				F8FC48A42604A2EE00A27DC5 /* AutomatonStatesView.swift */,
 				F8FC48A12604A2CF00A27DC5 /* TransitionsView.swift */,
-				F8FC48A72604C58600A27DC5 /* AlphabetView.swift */,
 				F81641D725E9425F00F49800 /* EditorStore.swift */,
 			);
 			path = Editor;
@@ -541,7 +538,6 @@
 				F8FC48A22604A2CF00A27DC5 /* TransitionsView.swift in Sources */,
 				F85184E325DD1C0800791701 /* EditorView.swift in Sources */,
 				F86C872F25F7BF630000BCA9 /* FlexibleView.swift in Sources */,
-				F8FC48A82604C58600A27DC5 /* AlphabetView.swift in Sources */,
 				F85184E125DD1C0800791701 /* AutomataEditorApp.swift in Sources */,
 				F81641D825E9425F00F49800 /* EditorStore.swift in Sources */,
 				F81641D025E9419800F49800 /* UIImage+Extra.swift in Sources */,
