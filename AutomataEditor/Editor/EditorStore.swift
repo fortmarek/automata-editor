@@ -452,8 +452,14 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
         state.outputString = "❌"
     case let .stateSymbolChanged(automatonStateID, symbol):
         state.automatonStatesDict[automatonStateID]?.name = symbol
+            .replacingOccurrences(of: " ", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
     case let .transitionSymbolChanged(transitionID, symbol):
         state.transitionsDict[transitionID]?.currentSymbol = symbol
+            .replacingOccurrences(of: " ", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
     case let .transitionSymbolAdded(transitionID):
         guard
             let transition = state.transitionsDict[transitionID]
