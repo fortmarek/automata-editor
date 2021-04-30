@@ -4,24 +4,72 @@ import ComposableArchitecture
 
 final class EditorTests: XCTestCase {
     let scheduler = DispatchQueue.test
+    var currentStrokes: [Stroke] = []
+    var stubShapeType: AutomatonShapeType!
+    var stubID: String!
+    var stubCenter: CGPoint!
+    var stubRadius: CGFloat!
+    
+    override func setUp() {
+        super.setUp()
+        
+        stubShapeType = .circle
+        stubID = "1"
+        stubCenter = .zero
+        stubRadius = 1
+    }
+    
+    override func tearDown() {
+        currentStrokes = []
+        stubShapeType = nil
+        stubID = nil
+        stubCenter = nil
+        stubRadius = nil
+        
+        super.tearDown()
+    }
+    
+    func testTransitionSymbolIsTrimmedAndUppercased() {
+        let store = TestStore(
+            initialState: EditorState(),
+            reducer: editorReducer,
+            environment: EditorEnvironment(
+                automataClassifierService: .successfulShape { .arrow },
+                automataLibraryService: .successful(),
+                shapeService: .mock(
+                    center: { $0.first ?? .zero },
+                    radius: { _, _ in 1 }
+                ),
+                idFactory: .mock { self.stubID },
+                mainQueue: scheduler.eraseToAnyScheduler()
+            )
+        )
+
+        createTransition(
+            store: store,
+            startPoint: .zero,
+            tipPoint: CGPoint(x: 1, y: 0),
+            transitionID: stubID,
+            currentStrokes: &currentStrokes
+        )
+        store.send(.transitionSymbolChanged(stubID, "a \n")) { [self] in
+            $0.transitionsDict[stubID]?.currentSymbol = "A"
+        }
+    }
     
     func testSimulateWithoutInitialState() {
-        let stubShapeType: AutomatonShapeType = .circle
-        let stubID: String = "1"
-        let stubCenter: CGPoint = .zero
-        let stubRadius: CGFloat = 1
         var currentStrokes: [Stroke] = []
         let store = TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
             environment: EditorEnvironment(
-                automataClassifierService: .successfulShape { stubShapeType },
+                automataClassifierService: .successfulShape { self.stubShapeType },
                 automataLibraryService: .successful(),
                 shapeService: .mock(
                     center: { $0.first ?? .zero },
-                    radius: { _, _ in stubRadius }
+                    radius: { _, _ in self.stubRadius }
                 ),
-                idFactory: .mock { stubID },
+                idFactory: .mock { self.stubID },
                 mainQueue: scheduler.eraseToAnyScheduler()
             )
         )
@@ -53,22 +101,17 @@ final class EditorTests: XCTestCase {
     }
     
     func testSimulateWithMultipleInitialStates() {
-        var stubShapeType: AutomatonShapeType = .circle
-        var stubID: String = "1"
-        let stubCenter: CGPoint = .zero
-        let stubRadius: CGFloat = 1
-        var currentStrokes: [Stroke] = []
         let store = TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
             environment: EditorEnvironment(
-                automataClassifierService: .successfulShape { stubShapeType },
+                automataClassifierService: .successfulShape { self.stubShapeType },
                 automataLibraryService: .successful(),
                 shapeService: .mock(
                     center: { $0.first ?? .zero },
-                    radius: { _, _ in stubRadius }
+                    radius: { _, _ in self.stubRadius }
                 ),
-                idFactory: .mock { stubID },
+                idFactory: .mock { self.stubID },
                 mainQueue: scheduler.eraseToAnyScheduler()
             )
         )
@@ -131,22 +174,17 @@ final class EditorTests: XCTestCase {
     }
     
     func testSimpleAutomatonIsDrawnAndSimulated() {
-        var stubShapeType: AutomatonShapeType = .circle
-        var stubID: String = "1"
-        let stubCenter: CGPoint = .zero
-        let stubRadius: CGFloat = 1
-        var currentStrokes: [Stroke] = []
         let store = TestStore(
             initialState: EditorState(),
             reducer: editorReducer,
             environment: EditorEnvironment(
-                automataClassifierService: .successfulShape { stubShapeType },
+                automataClassifierService: .successfulShape { self.stubShapeType },
                 automataLibraryService: .successful(),
                 shapeService: .mock(
                     center: { $0.first ?? .zero },
-                    radius: { _, _ in stubRadius }
+                    radius: { _, _ in self.stubRadius }
                 ),
-                idFactory: .mock { stubID },
+                idFactory: .mock { self.stubID },
                 mainQueue: scheduler.eraseToAnyScheduler()
             )
         )
