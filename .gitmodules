@@ -1,3 +1,6 @@
 [submodule "automata-editor-model"]
 	path = automata-editor-model
 	url = https://github.com/fortmarek/automata-editor-model
+[submodule "automata-library"]
+	path = automata-library
+	url = https://gitlab.fit.cvut.cz/fortmare/automata-library

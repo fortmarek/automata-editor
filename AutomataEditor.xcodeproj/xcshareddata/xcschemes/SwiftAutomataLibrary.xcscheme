@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4617F5A23EECA5931AA34CCD"
-               BuildableName = "AutomataEditor.app"
-               BlueprintName = "AutomataEditor"
+               BlueprintIdentifier = "F157C8D004002DD67EDF6525"
+               BuildableName = "SwiftAutomataLibrary.framework"
+               BlueprintName = "SwiftAutomataLibrary"
                ReferencedContainer = "container:AutomataEditor.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,16 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F41BDD16D2F8B8565CE2480"
-               BuildableName = "AutomataEditorTests.xctest"
-               BlueprintName = "AutomataEditorTests"
-               ReferencedContainer = "container:AutomataEditor.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -50,16 +40,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4617F5A23EECA5931AA34CCD"
-            BuildableName = "AutomataEditor.app"
-            BlueprintName = "AutomataEditor"
+            BlueprintIdentifier = "F157C8D004002DD67EDF6525"
+            BuildableName = "SwiftAutomataLibrary.framework"
+            BlueprintName = "SwiftAutomataLibrary"
             ReferencedContainer = "container:AutomataEditor.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -67,16 +56,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4617F5A23EECA5931AA34CCD"
-            BuildableName = "AutomataEditor.app"
-            BlueprintName = "AutomataEditor"
+            BlueprintIdentifier = "F157C8D004002DD67EDF6525"
+            BuildableName = "SwiftAutomataLibrary.framework"
+            BlueprintName = "SwiftAutomataLibrary"
             ReferencedContainer = "container:AutomataEditor.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

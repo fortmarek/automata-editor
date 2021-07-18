@@ -20,6 +20,34 @@
                ReferencedContainer = "container:AutomataEditor.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9F41BDD16D2F8B8565CE2480"
+               BuildableName = "AutomataEditorTests.xctest"
+               BlueprintName = "AutomataEditorTests"
+               ReferencedContainer = "container:AutomataEditor.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F157C8D004002DD67EDF6525"
+               BuildableName = "SwiftAutomataLibrary.framework"
+               BlueprintName = "SwiftAutomataLibrary"
+               ReferencedContainer = "container:AutomataEditor.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
