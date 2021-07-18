@@ -41,3 +41,5 @@ DerivedData/
 
 # Tuist
 **/Derived
+**/*.xcodeproj
+**/*.xcworkspace
