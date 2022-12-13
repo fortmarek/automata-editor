@@ -43,3 +43,6 @@ DerivedData/
 **/Derived
 **/*.xcodeproj
 **/*.xcworkspace
+
+### Tuist managed dependencies ###
+Tuist/Dependencies
