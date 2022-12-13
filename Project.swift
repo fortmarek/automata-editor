@@ -10,7 +10,7 @@ func frameworks() -> [String] {
         "alib2std",
         "alib2str",
         "alib2xml",
-        ]
+    ]
 }
 
 let project = Project(
@@ -26,18 +26,7 @@ let project = Project(
             product: .app,
             bundleId: "marekfort.AutomataEditor",
             deploymentTarget: .iOS(targetVersion: "14.0", devices: .ipad),
-            infoPlist: .extendingDefault(
-                with: [
-                    "CFBundleDisplayName": "Automata Editor",
-                    "UIUserInterfaceStyle": "Dark",
-                    "CFBundleVersion": "3",
-                    "UISupportedInterfaceOrientations": .array([
-                        "UIInterfaceOrientationLandscapeLeft",
-                        "UIInterfaceOrientationLandscapeRight"
-                    ]),
-                    "UIRequiresFullScreen": .boolean(true)
-                ]
-            ),
+            infoPlist: .file(path: "AutomataEditor/Info.plist"),
             sources: [
                 "AutomataEditor/**",
                 "automata-editor-model/AutomataClassifier.mlmodel"
@@ -68,14 +57,14 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "14.0", devices: .ipad),
             infoPlist: .default,
             sources: "SwiftAutomataLibrary/**",
-            headers: Headers(
+            headers: .headers(
                 public: nil,
                 private: "SwiftAutomataLibrary/**",
                 project: nil
             ),
             dependencies: frameworks()
-                .map { .xcFramework(path: Path($0 + ".xcframework")) },
-            settings: Settings(
+                .map { .xcframework(path: Path($0 + ".xcframework")) },
+            settings: .settings(
                 base: [
                     "HEADER_SEARCH_PATHS": .array(
                         frameworks().map {
