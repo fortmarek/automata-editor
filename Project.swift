@@ -26,18 +26,7 @@ let project = Project(
             product: .app,
             bundleId: "marekfort.AutomataEditor",
             deploymentTarget: .iOS(targetVersion: "14.0", devices: .ipad),
-            infoPlist: .extendingDefault(
-                with: [
-                    "CFBundleDisplayName": "Automata Editor",
-                    "UIUserInterfaceStyle": "Dark",
-                    "CFBundleVersion": "3",
-                    "UISupportedInterfaceOrientations": .array([
-                        "UIInterfaceOrientationLandscapeLeft",
-                        "UIInterfaceOrientationLandscapeRight"
-                    ]),
-                    "UIRequiresFullScreen": .boolean(true)
-                ]
-            ),
+            infoPlist: .file(path: "AutomataEditor/Info.plist"),
             sources: [
                 "AutomataEditor/**",
                 "automata-editor-model/AutomataClassifier.mlmodel"
