@@ -15,10 +15,6 @@ func frameworks() -> [String] {
 
 let project = Project(
     name: "AutomataEditor",
-    packages: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.19.0")),
-        .package(url: "https://github.com/Bersaelor/SwiftSplines", .upToNextMajor(from: "0.3.0")),
-    ],
     targets: [
         Target(
             name: "AutomataEditor",
@@ -32,8 +28,8 @@ let project = Project(
                 "automata-editor-model/AutomataClassifier.mlmodel"
             ],
             dependencies: [
-                .package(product: "ComposableArchitecture"),
-                .package(product: "SwiftSplines"),
+                .external(name: "ComposableArchitecture"),
+                .external(name: "SwiftSplines"),
                 .target(name: "SwiftAutomataLibrary"),
             ]
         ),
