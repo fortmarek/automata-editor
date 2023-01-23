@@ -27,6 +27,9 @@ let project = Project(
                 "AutomataEditor/**",
                 "automata-editor-model/AutomataClassifier.mlmodel"
             ],
+            resources: [
+                "AutomataEditor/*.xcassets",
+            ],
             dependencies: [
                 .external(name: "ComposableArchitecture"),
                 .external(name: "SwiftSplines"),
