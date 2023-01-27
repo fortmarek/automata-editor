@@ -1,36 +1,39 @@
 import SwiftUI
 import ComposableArchitecture
-
-private final class DocumentStore {
-    /// Cache of stores, so they are not reinitialized hwne the document changes - this would cancel any currently-running effects.
-    var stores: [UUID: EditorStore] = [:]
-}
+import Foundation
 
 @main
-struct AutomataEditorApp: App {
-    private var documentStore = DocumentStore()
-    
+struct AutomataEditorApp: App {    
     var body: some Scene {
-        DocumentGroup(newDocument: EditorState()) { file -> EditorView in
-            let store = documentStore.stores[file.document.id] ?? EditorStore(
-                initialState: file.document,
-                reducer: editorReducer,
-                environment: EditorEnvironment(
-                    automataClassifierService: .live(),
-                    automataLibraryService: .live(),
-                    shapeService: .live(),
-                    idFactory: .live(),
-                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+        WindowGroup {
+            OverviewView(
+                store: Store(
+                    initialState: OverviewFeature.State(),
+                    reducer: OverviewFeature()
                 )
             )
-            documentStore.stores[file.document.id] = store
-            
-            return EditorView(
-                set: {
-                    file.document = $0
-                },
-                store: store
-            )
         }
+        
+//        DocumentGroup(newDocument: EditorState()) { file -> EditorView in
+//            let store = documentStore.stores[file.document.id] ?? EditorStore(
+//                initialState: file.document,
+//                reducer: editorReducer,
+//                environment: EditorEnvironment(
+//                    automataClassifierService: .live(),
+//                    automataLibraryService: .live(),
+//                    shapeService: .live(),
+//                    idFactory: .live(),
+//                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+//                )
+//            )
+//            documentStore.stores[file.document.id] = store
+//
+//            return EditorView(
+//                set: {
+//                    file.document = $0
+//                },
+//                store: store
+//            )
+//        }
     }
 }

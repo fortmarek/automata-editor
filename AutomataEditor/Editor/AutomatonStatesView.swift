@@ -28,10 +28,10 @@ struct AutomatonStatesView: View {
                 Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
                     .frame(width: 25)
             }
-            .position(automatonState.currentDragPoint)
+            .position(automatonState.dragPoint)
             .offset(
-                x: automatonState.dragPoint.x - automatonState.currentDragPoint.x,
-                y: automatonState.dragPoint.y - automatonState.currentDragPoint.y
+                x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
+                y: automatonState.currentDragPoint.y - automatonState.dragPoint.y
             )
             .gesture(
                 DragGesture()
@@ -41,8 +41,8 @@ struct AutomatonStatesView: View {
                         automatonStateDragged(
                             automatonState.id,
                             CGPoint(
-                                x: automatonState.currentDragPoint.x + value.translation.width,
-                                y: automatonState.currentDragPoint.y + value.translation.height
+                                x: automatonState.dragPoint.x + value.translation.width,
+                                y: automatonState.dragPoint.y + value.translation.height
                             )
                         )
                     }
@@ -50,8 +50,8 @@ struct AutomatonStatesView: View {
                         automatonStateFinishedDragging(
                             automatonState.id,
                             CGPoint(
-                                x: automatonState.currentDragPoint.x + value.translation.width,
-                                y: automatonState.currentDragPoint.y + value.translation.height
+                                x: automatonState.dragPoint.x + value.translation.width,
+                                y: automatonState.dragPoint.y + value.translation.height
                             )
                         )
                     }

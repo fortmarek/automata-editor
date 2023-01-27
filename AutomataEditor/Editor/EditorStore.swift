@@ -13,7 +13,6 @@ extension UTType {
   static let automatonDocument = UTType(exportedAs: "marekfort.AutomataEditor.automaton")
 }
 
-
 // MARK: - Environment
 
 struct EditorEnvironment {
@@ -146,7 +145,7 @@ enum EditorAction: Equatable {
 
 // MARK: - Reducer
 
-let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
+let editorReducer = AnyReducer<EditorState, EditorAction, EditorEnvironment> { state, action, env in
     // MARK: - Helpers
     struct ClosestStateResult {
         let state: AutomatonState
@@ -542,12 +541,12 @@ let editorReducer = Reducer<EditorState, EditorAction, EditorEnvironment> { stat
     case let .transitionFlexPointChanged(transitionID, flexPoint):
         guard var transition = state.transitionsDict[transitionID] else { return .none }
         updateDraggedTransition(transition, flexPoint: flexPoint)
-    case let .stateDragPointChanged(automatonStateID, dragPoint):
-        state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
+    case let .stateDragPointChanged(automatonStateID, currentDragPoint):
+        state.automatonStatesDict[automatonStateID]?.currentDragPoint = currentDragPoint
         updateTransitionsAfterStateDragged(automatonStateID)
-    case let .stateDragPointFinishedDragging(automatonStateID, dragPoint):
-        state.automatonStatesDict[automatonStateID]?.dragPoint = dragPoint
-        state.automatonStatesDict[automatonStateID]?.currentDragPoint = dragPoint
+    case let .stateDragPointFinishedDragging(automatonStateID, currentDragPoint):
+        state.automatonStatesDict[automatonStateID]?.currentDragPoint = currentDragPoint
+        state.automatonStatesDict[automatonStateID]?.dragPoint = currentDragPoint
         updateTransitionsAfterStateDragged(automatonStateID)
     case let .toggleEpsilonInclusion(transitionID):
         state.transitionsDict[transitionID]?.includesEpsilon.toggle()

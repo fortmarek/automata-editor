@@ -6,7 +6,7 @@ struct AutomatonState: Equatable, Identifiable, Codable {
     var isFinalState: Bool = false
     var center: CGPoint
     let radius: CGFloat
-    var currentDragPoint: CGPoint
+    var dragPoint: CGPoint
 
     init(
         id: String,
@@ -16,13 +16,13 @@ struct AutomatonState: Equatable, Identifiable, Codable {
         self.id = id
         self.center = center
         self.radius = radius
-        self.currentDragPoint = CGPoint(
+        self.dragPoint = CGPoint(
             x: center.x,
             y: center.y - radius
         )
     }
 
-    var dragPoint: CGPoint {
+    var currentDragPoint: CGPoint {
         get {
             CGPoint(
                 x: center.x,
