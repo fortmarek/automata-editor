@@ -37,25 +37,49 @@ struct OverviewView: View {
                             GridItem(.flexible(), spacing: 50),
                         ]
                     ) {
-                        Image(systemName: "plus.circle")
-                            .overviewItemStyle()
-                        ForEach(["Automaton One", "Automaton Two"], id: \.self) { automaton in
-                            NavigationLink(
-                                value: ""
-                            ) {
-                                Image(systemName: "arrow.uturn.down.circle")
+                        Button(
+                            action: { viewStore.send(.createNewAutomaton) }
+                        ) {
+                            VStack {
+                                Image(systemName: "plus.circle")
                                     .overviewItemStyle()
+                                Text("Create new automaton")
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        ForEach(viewStore.automatonFiles, id: \.url) { automaton in
+                            Button(
+                                action: { viewStore.send(.selectedAutomaton(automaton.url)) }
+                            ) {
+                                VStack {
+                                    Image(systemName: "arrow.uturn.down.circle")
+                                        .overviewItemStyle()
+                                    Text(automaton.name)
+                                        .foregroundColor(.white)
+                                }
                             }
                         }
                     }
                         .navigationDestination(
-                            for: String.self
-                        ) { _ in
-                            Text("Hello")
-//                            EditorView(store: self.store.scope(state: \.editor, action: OverviewFeature.Action.editor))
+                            isPresented: viewStore.binding(
+                                get: \.isEditorPresented,
+                                send: OverviewFeature.Action.isEditorPresentedChanged
+                            )
+                        ) {
+                            IfLetStore(
+                              self.store.scope(
+                                state: \.editor,
+                                action: OverviewFeature.Action.editor
+                              )
+                            ) {
+                                EditorView(store: $0)
+                            }
                         }
                 }
                 .padding()
+                .onAppear {
+                    viewStore.send(.loadAutomata)
+                }
                 .navigationTitle("My Automata")
                 .toolbar {
                     ToolbarItemGroup {
@@ -70,7 +94,7 @@ struct OverviewView: View {
                         ) {
                             // Things to do when the screen is dismissed
                         } content: {
-                            DocumentPicker(selectedDocument: { viewStore.send(.selectedDocument($0)) } )
+                            DocumentPicker(selectedDocument: { viewStore.send(.selectedAutomaton($0)) } )
                         }
                     }
                 }
