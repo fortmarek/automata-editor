@@ -4,13 +4,11 @@ import PencilKit
 import ComposableArchitecture
 
 struct EditorView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @State var counter = 0
 //    let set: (EditorState) -> Void
     let store: StoreOf<EditorFeature>
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store) { viewStore in
             VStack {
                 ZStack {
                     CanvasView(
@@ -47,62 +45,43 @@ struct EditorView: View {
                         .frame(width: 140)
                         .position(x: 70, y: 50)
                 }
-                HStack(alignment: .center, spacing: 10) {
+                ZStack {
+                    TextField(
+                        "Automaton input",
+                        text: viewStore.binding(
+                            get: \.input,
+                            send: { .inputChanged($0) }
+                        )
+                    )
                     Button(
                         action: {
-                            viewStore.send(.clear)
+                            viewStore.send(.removeLastInputSymbol)
                         }
                     ) {
-                        Text("Clear")
-                            .padding(5)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.blue, lineWidth: 2)
-                            )
+                        Image(systemName: "delete.left")
                     }
-                    VStack {
-                        Button(
-                            action: {
-                                viewStore.send(.simulateInput)
-                            }
-                        ) {
-                            Text("Simulate")
-                                .padding(5)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.blue, lineWidth: 2)
-                                )
+                    .position(x: 180, y: 15)
+                }
+                .border(.white)
+                .frame(width: 200, height: 30)
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .principal) {
+                    HStack {
+                        Button(action: { viewStore.send(.simulateInput) }) {
+                            Image(systemName: "play.fill")
                         }
-                        ZStack {
-                            TextView(
-                                text: viewStore.binding(
-                                    get: \.input,
-                                    send: { .inputChanged($0) }
-                                )
-                            )
-                            Button(
-                                action: {
-                                    viewStore.send(.removeLastInputSymbol)
-                                }
-                            ) {
-                                Image(systemName: "delete.left")
-                            }
-                            .position(x: 180, y: 15)
+                        Button(action: { viewStore.send(.selectedPen) }) {
+                            Image(systemName: viewStore.state.isPenSelected ? "pencil.circle.fill" : "pencil.circle")
                         }
-                        .border(colorScheme == .dark ? Color.white : Color.black)
-                        .frame(width: 200, height: 30)
+                        Button(action: { viewStore.send(.selectedEraser) }) {
+                            Image(systemName: viewStore.state.isEraserSelected ? "eraser.fill" : "eraser")
+                        }
                     }
-                    EditorButton(
-                        isSelected: viewStore.state.isPenSelected,
-                        image: Image(systemName: "pencil")
-                    ) {
-                        viewStore.send(.selectedPen)
-                    }
-                    EditorButton(
-                        isSelected: viewStore.state.isEraserSelected,
-                        image: Image(systemName: "pencil.slash")
-                    ) {
-                        viewStore.send(.selectedEraser)
+                }
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button(action: { viewStore.send(.clear) }) {
+                        Image(systemName: "trash.fill")
                     }
                 }
             }
