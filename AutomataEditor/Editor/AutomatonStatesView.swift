@@ -11,7 +11,8 @@ struct AutomatonStatesView: View {
     
     var body: some View {
         ForEach(automatonStates) { automatonState in
-            TextView(
+            TextField(
+                "",
                 text: Binding(
                     get: { automatonState.name },
                     set: { stateSymbolChanged(automatonState.id, $0) }

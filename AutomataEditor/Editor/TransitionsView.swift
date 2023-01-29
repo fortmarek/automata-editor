@@ -53,7 +53,8 @@ struct TransitionsView: View {
                                         .stroke(Color.blue, lineWidth: 2)
                                 )
                         }
-                        TextView(
+                        TextField(
+                            "",
                             text: Binding(
                                 get: { transition.currentSymbol },
                                 set: { transitionSymbolChanged(transition.id, $0) }

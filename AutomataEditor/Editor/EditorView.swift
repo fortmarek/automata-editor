@@ -45,25 +45,28 @@ struct EditorView: View {
                         .frame(width: 140)
                         .position(x: 70, y: 50)
                 }
-                ZStack {
-                    TextField(
-                        "Automaton input",
-                        text: viewStore.binding(
-                            get: \.input,
-                            send: { .inputChanged($0) }
+                    HStack {
+                        TextField(
+                            "Automaton input",
+                            text: viewStore.binding(
+                                get: \.input,
+                                send: { .inputChanged($0) }
+                            )
                         )
-                    )
-                    Button(
-                        action: {
-                            viewStore.send(.removeLastInputSymbol)
+                        .foregroundColor(.black)
+                        Button(
+                            action: {
+                                viewStore.send(.removeLastInputSymbol)
+                            }
+                        ) {
+                            Image(systemName: "delete.left")
+                                .foregroundColor(Color(UIColor.opaqueSeparator))
                         }
-                    ) {
-                        Image(systemName: "delete.left")
                     }
-                    .position(x: 180, y: 15)
-                }
-                .border(.white)
-                .frame(width: 200, height: 30)
+                .frame(width: 200)
+                .padding(15)
+                .background(.white)
+                .cornerRadius(15)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .principal) {
