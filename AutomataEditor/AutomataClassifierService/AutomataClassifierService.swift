@@ -13,29 +13,32 @@ enum AutomataClassifierError: Error, Equatable {
     case shapeNotRecognized
 }
 
+private enum AutomataClassifierServiceKey: DependencyKey {
+  static let liveValue = AutomataClassifierService.live
+}
+
+extension DependencyValues {
+  var automataClassifierService: AutomataClassifierService {
+    get { self[AutomataClassifierServiceKey.self] }
+    set { self[AutomataClassifierServiceKey.self] = newValue }
+  }
+}
+
 /// Service to classify strokes as `AutomatonShape`.
 struct AutomataClassifierService {
     /// Recognizes stroke and returns it as a case of `AutomatonShape`
-    let recognizeStroke: (Stroke) -> Effect<AutomatonShape, AutomataClassifierError>
+    let recognizeStroke: (Stroke) async throws -> AutomatonShape
 }
 
 extension AutomataClassifierService {
     static let successfulTransition = Self(
         recognizeStroke: { stroke in
-            Just(
-                .transition(stroke)
-            )
-            .setFailureType(to: AutomataClassifierError.self)
-            .eraseToEffect()
+            .transition(stroke)
         }
     )
     static let successfulState = Self(
         recognizeStroke: { stroke in
-            Just(
-                .state(stroke)
-            )
-            .setFailureType(to: AutomataClassifierError.self)
-            .eraseToEffect()
+            .state(stroke)
         }
     )
     
@@ -52,11 +55,7 @@ extension AutomataClassifierService {
                     automatonShape = .transitionCycle(stroke)
                 }
                 
-                return Just(
-                    automatonShape
-                )
-                .setFailureType(to: AutomataClassifierError.self)
-                .eraseToEffect()
+                return automatonShape
             }
         )
     }

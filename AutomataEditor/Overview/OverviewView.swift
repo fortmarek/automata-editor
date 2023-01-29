@@ -5,7 +5,7 @@ import ComposableArchitecture
 
 private final class DocumentStore {
     /// Cache of stores, so they are not reinitialized when the document changes - this would cancel any currently-running effects.
-    var stores: [UUID: EditorStore] = [:]
+//    var stores: [UUID: EditorStore] = [:]
 }
 
 extension Image {

@@ -36,7 +36,8 @@ extension AutomatonDocumentService {
                     .url(forUbiquityContainerIdentifier: nil)?
                     .appendingPathComponent("Documents")
             else {
-                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
+                return []
+//                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
             }
             return try FileManager.default.contentsOfDirectory(at: driveURL, includingPropertiesForKeys: nil)
         }

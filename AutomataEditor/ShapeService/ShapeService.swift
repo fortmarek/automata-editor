@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import ComposableArchitecture
 
 /// Service for working with shapes and their points.
 struct ShapeService {
@@ -16,6 +17,17 @@ struct ShapeService {
     let radius: (_ points: [CGPoint], _ center: CGPoint) -> CGFloat
     /// Returns a circle for a given center and a radius
     let circle: (_ center: CGPoint, _ radius: CGFloat) -> [CGPoint]
+}
+
+private enum ShapeServiceKey: DependencyKey {
+  static let liveValue = ShapeService.live
+}
+
+extension DependencyValues {
+  var shapeService: ShapeService {
+    get { self[ShapeServiceKey.self] }
+    set { self[ShapeServiceKey.self] = newValue }
+  }
 }
 
 extension ShapeService {

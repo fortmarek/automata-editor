@@ -7,20 +7,20 @@ struct EditorView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var counter = 0
 //    let set: (EditorState) -> Void
-    let store: EditorStore
+    let store: StoreOf<EditorFeature>
     
     var body: some View {
-        WithViewStore(store) { (viewStore: EditorViewStore) in
+        WithViewStore(store, observe: { $0 }) { viewStore in
             VStack {
                 ZStack {
                     CanvasView(
                         shouldDeleteLastStroke: viewStore.binding(
                             get: \.shouldDeleteLastStroke,
-                            send: EditorAction.shouldDeleteLastStrokeChanged
+                            send: EditorFeature.Action.shouldDeleteLastStrokeChanged
                         ),
                         strokes: viewStore.binding(
                             get: \.strokes,
-                            send: EditorAction.strokesChanged
+                            send: EditorFeature.Action.strokesChanged
                         ),
                         tool: viewStore.state.tool
                     )

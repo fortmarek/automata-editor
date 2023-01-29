@@ -13,6 +13,17 @@ enum AutomataLibraryError: Error, Equatable {
     case failed
 }
 
+private enum AutomataLibraryServiceKey: DependencyKey {
+  static let liveValue = AutomataLibraryService.live
+}
+
+extension DependencyValues {
+    var automataLibraryService: AutomataLibraryService {
+    get { self[AutomataLibraryServiceKey.self] }
+    set { self[AutomataLibraryServiceKey.self] = newValue }
+  }
+}
+
 /// Service to interact with ALT frameworks
 struct AutomataLibraryService {
     /// Simulates input for a given FA.
@@ -24,17 +35,11 @@ struct AutomataLibraryService {
         _ finalStates: [AutomatonState],
         _ alphabet: [String],
         _ transitions: [AutomatonTransition]
-    ) -> Effect<Void, AutomataLibraryError>
+    ) throws -> Void
 }
 
 extension AutomataLibraryService {
     static func successful() -> Self {
-        .init(
-            simulateInput: { _, _, _, _, _, _ in
-                Just(())
-                    .setFailureType(to: AutomataLibraryError.self)
-                    .eraseToEffect()
-            }
-        )
+        Self(simulateInput: { _, _, _, _, _, _ in })
     }
 }
