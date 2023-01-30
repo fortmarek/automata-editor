@@ -40,6 +40,11 @@ extension AutomatonDocumentService {
 //                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
             }
             return try FileManager.default.contentsOfDirectory(at: driveURL, includingPropertiesForKeys: nil)
+        },
+        saveAutomaton: { url, automatonDocument in
+            let jsonEncoder = JSONEncoder()
+            let data = try jsonEncoder.encode(automatonDocument)
+            try data.write(to: url)
         }
     )
 }

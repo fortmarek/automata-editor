@@ -22,5 +22,7 @@ struct AutomatonDocumentService {
     let readAutomaton: (URL) async throws -> AutomatonDocument
     /// Loads automata from the ubiquity container
     let loadAutomata: () async throws -> [URL]
+    /// Saves automaton to a given URL
+    let saveAutomaton: (URL, AutomatonDocument) throws -> Void
 }
 

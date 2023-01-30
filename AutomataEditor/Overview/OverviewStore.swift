@@ -12,6 +12,7 @@ struct OverviewFeature: ReducerProtocol {
         var isEditorPresented = false
         var editor: EditorFeature.State?
         var automatonFiles: [AutomatonFile] = []
+        var selectedAutomatonURL: URL?
     }
     enum Action: Equatable {
         case isDocumentSheetPresentedChanged(Bool)
@@ -22,6 +23,7 @@ struct OverviewFeature: ReducerProtocol {
         case loadedAutomaton(URL, AutomatonDocument)
         case loadAutomata
         case loadedAutomata([URL])
+        case automatonSaved
     }
     
     @Dependency(\.automatonDocumentService) var automatonDocumentService
@@ -39,6 +41,7 @@ struct OverviewFeature: ReducerProtocol {
                 }
             case let .loadedAutomaton(url, automaton):
                 state.editor = EditorFeature.State(
+                    automatonURL: url,
                     id: automaton.id,
                     automatonStatesDict: automaton.automatonStates,
                     transitionsDict: automaton.transitions
@@ -50,11 +53,24 @@ struct OverviewFeature: ReducerProtocol {
                 return .none
             case let .editor(action):
                 switch action {
-                case .stateUpdated:
-                    return .none
+                case let .stateUpdated(editorState):
+                    return .task {
+                        try automatonDocumentService.saveAutomaton(
+                            editorState.automatonURL,
+                            AutomatonDocument(
+                                id: editorState.id,
+                                transitions: editorState.transitionsDict,
+                                automatonStates: editorState.automatonStatesDict
+                            )
+                        )
+                        
+                        return .automatonSaved
+                    }
                 default:
                     return .none
                 }
+            case .automatonSaved:
+                return .none
             case .createNewAutomaton:
                 return .task {
                     let url = try await automatonDocumentService.createNewAutomaton()

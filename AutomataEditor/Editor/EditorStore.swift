@@ -85,6 +85,7 @@ extension EditorFeature.State {
 struct EditorFeature: ReducerProtocol {
     struct State: Equatable, Codable {
         init(
+            automatonURL: URL,
             id: UUID = UUID(),
             tool: Tool = .pen,
             isEraserSelected: Bool = false,
@@ -95,6 +96,7 @@ struct EditorFeature: ReducerProtocol {
             transitionsDict: [AutomatonTransition.ID : AutomatonTransition] = [:],
             shouldDeleteLastStroke: Bool = false
         ) {
+            self.automatonURL = automatonURL
             self.id = id
             self.tool = tool
             self.isEraserSelected = isEraserSelected
@@ -106,6 +108,7 @@ struct EditorFeature: ReducerProtocol {
             self.shouldDeleteLastStroke = shouldDeleteLastStroke
         }
         
+        let automatonURL: URL
         let id: UUID
         var tool: Tool = .pen
         var isEraserSelected: Bool = false
