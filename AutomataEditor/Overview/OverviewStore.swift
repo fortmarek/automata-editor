@@ -48,8 +48,13 @@ struct OverviewFeature: ReducerProtocol {
             case let .isEditorPresentedChanged(isEditorPresented):
                 state.isEditorPresented = isEditorPresented
                 return .none
-            case .editor:
-                return .none
+            case let .editor(action):
+                switch action {
+                case .stateUpdated:
+                    return .none
+                default:
+                    return .none
+                }
             case .createNewAutomaton:
                 return .task {
                     let url = try await automatonDocumentService.createNewAutomaton()

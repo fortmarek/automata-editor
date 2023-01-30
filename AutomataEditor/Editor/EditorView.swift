@@ -45,24 +45,24 @@ struct EditorView: View {
                         .frame(width: 140)
                         .position(x: 70, y: 50)
                 }
-                    HStack {
-                        TextField(
-                            "Automaton input",
-                            text: viewStore.binding(
-                                get: \.input,
-                                send: { .inputChanged($0) }
-                            )
+                HStack {
+                    TextField(
+                        "Automaton input",
+                        text: viewStore.binding(
+                            get: \.input,
+                            send: { .inputChanged($0) }
                         )
-                        .foregroundColor(.black)
-                        Button(
-                            action: {
-                                viewStore.send(.removeLastInputSymbol)
-                            }
-                        ) {
-                            Image(systemName: "delete.left")
-                                .foregroundColor(Color(UIColor.opaqueSeparator))
+                    )
+                    .foregroundColor(.black)
+                    Button(
+                        action: {
+                            viewStore.send(.removeLastInputSymbol)
                         }
+                    ) {
+                        Image(systemName: "delete.left")
+                            .foregroundColor(Color(UIColor.opaqueSeparator))
                     }
+                }
                 .frame(width: 200)
                 .padding(15)
                 .background(.white)
@@ -88,7 +88,7 @@ struct EditorView: View {
                     }
                 }
             }
-//            .onChange(of: viewStore.state, perform: set)
+            .onChange(of: viewStore.state, perform: { viewStore.send(.stateUpdated($0)) })
         }
     }
 }

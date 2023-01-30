@@ -138,6 +138,7 @@ struct EditorFeature: ReducerProtocol {
         case strokesChanged([Stroke])
         case shouldDeleteLastStrokeChanged(Bool)
         case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
+        case stateUpdated(State)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -321,7 +322,7 @@ struct EditorFeature: ReducerProtocol {
                             switch transition.type {
                             case let .cycle(point, center: _, radians: _):
                                 return point.distance(from: stroke.controlPoints[0]) <= 0.1
-                            case let .regular(startPoint, tipPoint, flexPoint):
+                            case let .regular(startPoint, _, _):
                                 return startPoint.distance(from: stroke.controlPoints[0]) <= 0.1
                             }
                         }
@@ -376,6 +377,8 @@ struct EditorFeature: ReducerProtocol {
         }
         
         switch action {
+        case .stateUpdated:
+            return .none
         case .selectedEraser:
             state.tool = .eraser
             state.isEraserSelected = true
@@ -564,10 +567,10 @@ struct EditorFeature: ReducerProtocol {
                 return .none
             }
             
-            let cycleControlPoints: [CGPoint] = .cycle(
-                closestStateResult.point,
-                center: closestStateResult.state.center
-            )
+//            let cycleControlPoints: [CGPoint] = .cycle(
+//                closestStateResult.point,
+//                center: closestStateResult.state.center
+//            )
 //            let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
             let center = closestStateResult.state.center
