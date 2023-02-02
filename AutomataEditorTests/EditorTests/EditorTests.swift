@@ -9,6 +9,7 @@ final class EditorTests: XCTestCase {
     var stubID: String!
     var stubCenter: CGPoint!
     var stubRadius: CGFloat!
+    var automatonURL = URL(string: "file://some-file")!
     
     override func setUp() {
         super.setUp()
@@ -31,7 +32,7 @@ final class EditorTests: XCTestCase {
     func testTransitionSymbolIsTrimmedAndUppercased() async {
         var currentStrokes: [Stroke] = []
         let store = TestStore(
-            initialState: EditorFeature.State(),
+            initialState: EditorFeature.State(automatonURL: automatonURL),
             reducer: EditorFeature()
         )
         store.dependencies.automataClassifierService = .successfulShape { .arrow }
@@ -57,7 +58,7 @@ final class EditorTests: XCTestCase {
     func testSimulateWithoutInitialState() async {
         var currentStrokes: [Stroke] = []
         let store = TestStore(
-            initialState: EditorFeature.State(),
+            initialState: EditorFeature.State(automatonURL: automatonURL),
             reducer: EditorFeature()
         )
         store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
@@ -98,7 +99,7 @@ final class EditorTests: XCTestCase {
     func testSimulateWithMultipleInitialStates() async {
         var currentStrokes: [Stroke] = []
         let store = TestStore(
-            initialState: EditorFeature.State(),
+            initialState: EditorFeature.State(automatonURL: automatonURL),
             reducer: EditorFeature()
         )
         store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
@@ -170,7 +171,7 @@ final class EditorTests: XCTestCase {
     func testSimpleAutomatonIsDrawnAndSimulated() async {
         var currentStrokes: [Stroke] = []
         let store = TestStore(
-            initialState: EditorFeature.State(),
+            initialState: EditorFeature.State(automatonURL: automatonURL),
             reducer: EditorFeature()
         )
         store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }

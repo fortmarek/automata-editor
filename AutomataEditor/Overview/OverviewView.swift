@@ -21,6 +21,60 @@ extension Image {
     }
 }
 
+struct OverviewGrid: View {
+    let store: StoreOf<OverviewFeature>
+    
+    var body: some View {
+        WithViewStore(store) { viewStore in
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 50),
+                    GridItem(.flexible(), spacing: 50),
+                    GridItem(.flexible(), spacing: 50),
+                    GridItem(.flexible(), spacing: 50),
+                ]
+            ) {
+                Button(
+                    action: { viewStore.send(.isAlertForNewAutomatonNamePresentedChanged(true)) }
+                ) {
+                    VStack {
+                        Image(systemName: "plus.circle")
+                            .overviewItemStyle()
+                        Text("Create new automaton")
+                            .foregroundColor(.white)
+                    }
+                }
+                ForEach(viewStore.automatonFiles, id: \.url) { automaton in
+                    Button(
+                        action: { viewStore.send(.selectedAutomaton(automaton.url)) }
+                    ) {
+                        VStack {
+                            Image(systemName: "arrow.uturn.down.circle")
+                                .overviewItemStyle()
+                            Text(automaton.name)
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            }
+            .navigationDestination(
+                isPresented: viewStore.binding(
+                    get: \.isEditorPresented,
+                    send: OverviewFeature.Action.isEditorPresentedChanged
+                )
+            ) {
+                IfLetStore(
+                    self.store.scope(
+                        state: \.editor,
+                        action: OverviewFeature.Action.editor
+                    )
+                ) {
+                    EditorView(store: $0)
+                }
+            }
+        }
+    }
+}
 
 struct OverviewView: View {
     let store: StoreOf<OverviewFeature>
@@ -29,58 +83,45 @@ struct OverviewView: View {
         WithViewStore(store) { viewStore in
             NavigationStack {
                 ScrollView {
-                    LazyVGrid(
-                        columns: [
-                            GridItem(.flexible(), spacing: 50),
-                            GridItem(.flexible(), spacing: 50),
-                            GridItem(.flexible(), spacing: 50),
-                            GridItem(.flexible(), spacing: 50),
-                        ]
-                    ) {
-                        Button(
-                            action: { viewStore.send(.createNewAutomaton) }
-                        ) {
-                            VStack {
-                                Image(systemName: "plus.circle")
-                                    .overviewItemStyle()
-                                Text("Create new automaton")
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        ForEach(viewStore.automatonFiles, id: \.url) { automaton in
-                            Button(
-                                action: { viewStore.send(.selectedAutomaton(automaton.url)) }
-                            ) {
-                                VStack {
-                                    Image(systemName: "arrow.uturn.down.circle")
-                                        .overviewItemStyle()
-                                    Text(automaton.name)
-                                        .foregroundColor(.white)
-                                }
-                            }
-                        }
-                    }
-                        .navigationDestination(
-                            isPresented: viewStore.binding(
-                                get: \.isEditorPresented,
-                                send: OverviewFeature.Action.isEditorPresentedChanged
-                            )
-                        ) {
-                            IfLetStore(
-                              self.store.scope(
-                                state: \.editor,
-                                action: OverviewFeature.Action.editor
-                              )
-                            ) {
-                                EditorView(store: $0)
-                            }
-                        }
+                    OverviewGrid(store: store)
                 }
                 .padding()
                 .onAppear {
                     viewStore.send(.loadAutomata)
                 }
                 .navigationTitle("My Automata")
+                .alert(
+                    "New automaton",
+                    isPresented: viewStore.binding(
+                        get: \.isAlertForNewAutomatonNamePresented,
+                        send: OverviewFeature.Action.isAlertForNewAutomatonNamePresentedChanged
+                    ),
+                    actions: {
+                        TextField(
+                            "Automaton name",
+                            text: viewStore.binding(
+                                get: \.automatonName,
+                                send: OverviewFeature.Action.automatonNameChanged
+                            )
+                        )
+                            Button(
+                                "OK",
+                                action: {
+                                    viewStore.send(.createNewAutomaton)
+                                }
+                            )
+                            Button(
+                                "Cancel",
+                                role: .cancel,
+                                action: {
+                                    viewStore.send(.isAlertForNewAutomatonNamePresentedChanged(false))
+                                }
+                            )
+                    },
+                    message: {
+                        Text("Name your new automaton.")
+                    }
+                )
                 .toolbar {
                     ToolbarItemGroup {
                         Button("Show Files") {

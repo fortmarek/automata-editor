@@ -17,7 +17,7 @@ extension DependencyValues {
 struct AutomatonDocumentService {
     /// Creates a new `AutomatonDocument` in the ubiquituous folder
     /// Throws `AutomatonDocumentServiceError` if the file could not be created
-    let createNewAutomaton: () async throws -> URL
+    let createNewAutomaton: (String) async throws -> URL
     /// Reads the automaton from a given URL
     let readAutomaton: (URL) async throws -> AutomatonDocument
     /// Loads automata from the ubiquity container
@@ -26,3 +26,11 @@ struct AutomatonDocumentService {
     let saveAutomaton: (URL, AutomatonDocument) throws -> Void
 }
 
+extension AutomatonDocumentService {
+    static let mock = Self(
+        createNewAutomaton: { _ in fatalError() },
+        readAutomaton: { _ in fatalError() },
+        loadAutomata: { [] },
+        saveAutomaton: { _, _ in }
+    )
+}

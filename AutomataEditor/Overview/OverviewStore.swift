@@ -13,6 +13,8 @@ struct OverviewFeature: ReducerProtocol {
         var editor: EditorFeature.State?
         var automatonFiles: [AutomatonFile] = []
         var selectedAutomatonURL: URL?
+        var isAlertForNewAutomatonNamePresented = false
+        var automatonName = ""
     }
     enum Action: Equatable {
         case isDocumentSheetPresentedChanged(Bool)
@@ -24,6 +26,8 @@ struct OverviewFeature: ReducerProtocol {
         case loadAutomata
         case loadedAutomata([URL])
         case automatonSaved
+        case automatonNameChanged(String)
+        case isAlertForNewAutomatonNamePresentedChanged(Bool)
     }
     
     @Dependency(\.automatonDocumentService) var automatonDocumentService
@@ -35,6 +39,7 @@ struct OverviewFeature: ReducerProtocol {
                 state.isDocumentSheetPresented = isDocumentSheetPresented
                 return .none
             case let .selectedAutomaton(url):
+                state.automatonName = ""
                 return .task {
                     let automatonDocument = try await automatonDocumentService.readAutomaton(url)
                     return .loadedAutomaton(url, automatonDocument)
@@ -71,11 +76,18 @@ struct OverviewFeature: ReducerProtocol {
                 }
             case .automatonSaved:
                 return .none
+            case let .isAlertForNewAutomatonNamePresentedChanged(value):
+                state.isAlertForNewAutomatonNamePresented = value
+                return .none
             case .createNewAutomaton:
+                let automatonName = state.automatonName
                 return .task {
-                    let url = try await automatonDocumentService.createNewAutomaton()
+                    let url = try await automatonDocumentService.createNewAutomaton(automatonName)
                     return .selectedAutomaton(url)
                 }
+            case let .automatonNameChanged(name):
+                state.automatonName = name
+                return .none
             case .loadAutomata:
                 return .task {
                     let urls = try await automatonDocumentService.loadAutomata()

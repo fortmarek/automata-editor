@@ -8,7 +8,7 @@ enum AutomatonDocumentServiceError: Error {
 
 extension AutomatonDocumentService {
     static let live: Self = Self(
-        createNewAutomaton: {
+        createNewAutomaton: { automatonName in
             guard
                 let driveURL = FileManager.default
                     .url(forUbiquityContainerIdentifier: nil)?
@@ -16,7 +16,7 @@ extension AutomatonDocumentService {
             else {
                 throw AutomatonDocumentServiceError.ubiquityContainerNotFound
             }
-            let fileURL = driveURL.appendingPathComponent("Automaton.automaton")
+            let fileURL = driveURL.appendingPathComponent("\(automatonName).automaton")
             let automaton = AutomatonDocument()
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(automaton)
@@ -40,6 +40,7 @@ extension AutomatonDocumentService {
 //                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
             }
             return try FileManager.default.contentsOfDirectory(at: driveURL, includingPropertiesForKeys: nil)
+                .filter { !$0.hasDirectoryPath }
         },
         saveAutomaton: { url, automatonDocument in
             let jsonEncoder = JSONEncoder()
