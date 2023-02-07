@@ -1,9 +1,13 @@
 import Foundation
 import ComposableArchitecture
 
-struct AutomatonFile: Equatable {
+struct AutomatonFile: Equatable, Identifiable {
     let url: URL
     let name: String
+    
+    var id: URL {
+        url
+    }
 }
 
 struct OverviewFeature: ReducerProtocol {
@@ -15,6 +19,8 @@ struct OverviewFeature: ReducerProtocol {
         var selectedAutomatonURL: URL?
         var isAlertForNewAutomatonNamePresented = false
         var automatonName = ""
+        var isSelectingFiles = false
+        var selectedAutomatonFileIDs: [AutomatonFile.ID] = []
     }
     enum Action: Equatable {
         case isDocumentSheetPresentedChanged(Bool)
@@ -28,6 +34,10 @@ struct OverviewFeature: ReducerProtocol {
         case automatonSaved
         case automatonNameChanged(String)
         case isAlertForNewAutomatonNamePresentedChanged(Bool)
+        case selectFiles
+        case doneSelectingFiles
+        case removeSelectedFiles
+        case removedSelectedFiles
     }
     
     @Dependency(\.automatonDocumentService) var automatonDocumentService
@@ -35,15 +45,43 @@ struct OverviewFeature: ReducerProtocol {
     var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
             switch action {
+            case .selectFiles:
+                state.isSelectingFiles = true
+                return .none
+            case .doneSelectingFiles:
+                state.isSelectingFiles = false
+                state.selectedAutomatonFileIDs = []
+                return .none
             case let .isDocumentSheetPresentedChanged(isDocumentSheetPresented):
                 state.isDocumentSheetPresented = isDocumentSheetPresented
                 return .none
             case let .selectedAutomaton(url):
+                if state.isSelectingFiles {
+                    if state.selectedAutomatonFileIDs.contains(url) {
+                        state.selectedAutomatonFileIDs.removeAll(where: { $0 == url })
+                    } else {
+                        state.selectedAutomatonFileIDs.append(url)
+                    }
+                    
+                    return .none
+                }
                 state.automatonName = ""
                 return .task {
                     let automatonDocument = try await automatonDocumentService.readAutomaton(url)
                     return .loadedAutomaton(url, automatonDocument)
                 }
+            case .removeSelectedFiles:
+                let selectedFileURLs = state.selectedAutomatonFileIDs
+                return .task {
+                    try automatonDocumentService.deleteAutomata(selectedFileURLs)
+                    return .removedSelectedFiles
+                }
+                
+            case .removedSelectedFiles:
+                state.isSelectingFiles = false
+                state.automatonFiles.removeAll(where: { state.selectedAutomatonFileIDs.contains($0.id) })
+                state.selectedAutomatonFileIDs = []
+                return .none
             case let .loadedAutomaton(url, automaton):
                 state.editor = EditorFeature.State(
                     automatonURL: url,

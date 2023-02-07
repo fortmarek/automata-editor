@@ -24,6 +24,8 @@ struct AutomatonDocumentService {
     let loadAutomata: () async throws -> [URL]
     /// Saves automaton to a given URL
     let saveAutomaton: (URL, AutomatonDocument) throws -> Void
+    /// Deletes automata at given URLs
+    let deleteAutomata: ([URL]) throws -> Void
 }
 
 extension AutomatonDocumentService {
@@ -31,6 +33,7 @@ extension AutomatonDocumentService {
         createNewAutomaton: { _ in fatalError() },
         readAutomaton: { _ in fatalError() },
         loadAutomata: { [] },
-        saveAutomaton: { _, _ in }
+        saveAutomaton: { _, _ in },
+        deleteAutomata: { _ in }
     )
 }

@@ -46,6 +46,9 @@ extension AutomatonDocumentService {
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(automatonDocument)
             try data.write(to: url)
+        },
+        deleteAutomata: { urls in
+            try urls.forEach(FileManager.default.removeItem)
         }
     )
 }
