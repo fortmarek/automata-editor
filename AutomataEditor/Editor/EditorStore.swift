@@ -64,22 +64,6 @@ extension EditorFeature.State {
     }
 }
 
-//extension EditorState: FileDocument {
-//    static var readableContentTypes: [UTType] { [.automatonDocument] }
-//
-//    init(configuration: ReadConfiguration) throws {
-//        guard let data = configuration.file.regularFileContents else {
-//          throw CocoaError(.fileReadCorruptFile)
-//        }
-//        self = try JSONDecoder().decode(Self.self, from: data)
-//    }
-//
-//    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-//        let data = try JSONEncoder().encode(self)
-//        return .init(regularFileWithContents: data)
-//    }
-//}
-
 // MARK: - Reducer
 
 struct EditorFeature: ReducerProtocol {
@@ -118,6 +102,7 @@ struct EditorFeature: ReducerProtocol {
         var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
         var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
         var shouldDeleteLastStroke = false
+        var viewSize: CGSize = .zero
     }
     
     
@@ -142,6 +127,8 @@ struct EditorFeature: ReducerProtocol {
         case shouldDeleteLastStrokeChanged(Bool)
         case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
         case stateUpdated(State)
+        case addNewState
+        case viewSizeChanged(CGSize)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -380,6 +367,15 @@ struct EditorFeature: ReducerProtocol {
         }
         
         switch action {
+        case .addNewState:
+            let automatonState = AutomatonState(
+                id: idFactory.generateID(),
+                center: CGPoint(x: state.viewSize.width / 2, y: state.viewSize.height * 0.4),
+                radius: 100
+            )
+            state.automatonStatesDict[automatonState.id] = automatonState
+        case let .viewSizeChanged(viewSize):
+            state.viewSize = viewSize
         case .stateUpdated:
             return .none
         case .selectedEraser:
@@ -495,8 +491,6 @@ struct EditorFeature: ReducerProtocol {
                     state.shouldDeleteLastStroke = true
                     return .none
                 }
-                let controlPoints = stroke(for: automatonState).controlPoints
-                let center = shapeService.center(controlPoints)
                 state.automatonStatesDict[automatonState.id]?.isFinalState = true
             // Connect to a transition without end state if one is close enough
             } else if var transition = closestTransitionWithoutEndState(for: controlPoints) {
