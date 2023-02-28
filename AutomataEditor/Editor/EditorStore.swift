@@ -67,7 +67,11 @@ extension EditorFeature.State {
 // MARK: - Reducer
 
 struct EditorFeature: ReducerProtocol {
-    struct State: Equatable, Codable {
+    enum Mode: Equatable {
+        case editing, addingTransition
+    }
+    
+    struct State: Equatable {
         init(
             automatonURL: URL,
             id: UUID = UUID(),
@@ -103,6 +107,8 @@ struct EditorFeature: ReducerProtocol {
         var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
         var shouldDeleteLastStroke = false
         var viewSize: CGSize = .zero
+        var mode: Mode = .editing
+        var currentlySelectedStateForTransition: AutomatonState.ID?
     }
     
     
@@ -129,6 +135,9 @@ struct EditorFeature: ReducerProtocol {
         case stateUpdated(State)
         case addNewState
         case viewSizeChanged(CGSize)
+        case startAddingTransition
+        case stopAddingTransition
+        case selectedStateForTransition(AutomatonState.ID)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -367,6 +376,63 @@ struct EditorFeature: ReducerProtocol {
         }
         
         switch action {
+        case .startAddingTransition:
+            state.mode = .addingTransition
+        case .stopAddingTransition:
+            state.mode = .editing
+            state.currentlySelectedStateForTransition = nil
+        case let .selectedStateForTransition(automatonStateID):
+            if automatonStateID == state.currentlySelectedStateForTransition {
+                state.currentlySelectedStateForTransition = nil
+            } else if let currentlySelectedStateForTransition = state.currentlySelectedStateForTransition {
+                guard
+                    let startState = state.automatonStatesDict[currentlySelectedStateForTransition],
+                    let endState = state.automatonStatesDict[automatonStateID]
+                else { return .none }
+                let startStateIntersection = Geometry.intersections(
+                    pointA: startState.center,
+                    pointB: endState.center,
+                    circle: Geometry.Circle(center: startState.center, radius: startState.radius)
+                )
+                let endStateIntersection = Geometry.intersections(
+                    pointA: startState.center,
+                    pointB: endState.center,
+                    circle: Geometry.Circle(center: endState.center, radius: endState.radius)
+                )
+                let shortestVector = [
+                    (startStateIntersection.0, endStateIntersection.0),
+                    (startStateIntersection.0, endStateIntersection.1),
+                    (startStateIntersection.1, endStateIntersection.0),
+                    (startStateIntersection.1, endStateIntersection.1),
+                ]
+                    .min(
+                        by: { pointsA, pointsB in
+                            return Vector(pointsA.0, pointsA.1).lengthSquared < Vector(pointsB.0, pointsB.1).lengthSquared
+                        }
+                    )
+                guard
+                    let shortestVector = shortestVector
+                else { return .none }
+                let (startPoint, tipPoint) = shortestVector
+                let transition = AutomatonTransition(
+                    id: idFactory.generateID(),
+                    startState: startState.id,
+                    endState: endState.id,
+                    type: .regular(
+                        startPoint: startPoint,
+                        tipPoint: tipPoint,
+                        flexPoint: CGPoint(
+                            x: (startState.center.x + endState.center.x) / 2,
+                            y: (startState.center.y + endState.center.y) / 2
+                        )
+                    )
+                )
+                state.transitionsDict[transition.id] = transition
+                state.currentlySelectedStateForTransition = nil
+                state.mode = .editing
+            } else {
+                state.currentlySelectedStateForTransition = automatonStateID
+            }
         case .addNewState:
             let automatonState = AutomatonState(
                 id: idFactory.generateID(),
@@ -563,12 +629,6 @@ struct EditorFeature: ReducerProtocol {
                 state.shouldDeleteLastStroke = true
                 return .none
             }
-            
-//            let cycleControlPoints: [CGPoint] = .cycle(
-//                closestStateResult.point,
-//                center: closestStateResult.state.center
-//            )
-//            let highestPoint = cycleControlPoints.min(by: { $0.y < $1.y }) ?? .zero
 
             let center = closestStateResult.state.center
             // Angle between vector of center to topmost state's point and vector from center to the cycle's intersection point with the state.

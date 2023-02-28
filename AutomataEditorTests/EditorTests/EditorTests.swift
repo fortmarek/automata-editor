@@ -29,6 +29,66 @@ final class EditorTests: XCTestCase {
         super.tearDown()
     }
     
+    func testManualTransitionCreation() async {
+        var currentStrokes: [Stroke] = []
+        let store = TestStore(
+            initialState: EditorFeature.State(automatonURL: automatonURL),
+            reducer: EditorFeature()
+        )
+        self.stubRadius = 5
+        store.dependencies.shapeService = .mock(
+            center: { $0.first ?? .zero },
+            radius: { _, _ in self.stubRadius }
+        )
+        store.dependencies.idFactory = .mock { self.stubID }
+        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
+        await store.send(.startAddingTransition) {
+            $0.mode = .addingTransition
+        }
+        self.stubID = "A"
+        await createState(
+            store: store,
+            id: "A",
+            center: CGPoint(x: 5, y: 5),
+            radius: 5,
+            currentStrokes: &currentStrokes
+        )
+        self.stubID = "B"
+        
+        await createState(
+            store: store,
+            id: "B",
+            center: CGPoint(x: 20, y: 5),
+            radius: 5,
+            currentStrokes: &currentStrokes
+        )
+        
+        await store.send(.selectedStateForTransition("A")) {
+            $0.currentlySelectedStateForTransition = "A"
+        }
+        await store.send(.selectedStateForTransition("A")) {
+            $0.currentlySelectedStateForTransition = nil
+        }
+        await store.send(.selectedStateForTransition("A")) {
+            $0.currentlySelectedStateForTransition = "A"
+        }
+        self.stubID = "T"
+        await store.send(.selectedStateForTransition("B")) {
+            $0.transitionsDict["T"] = AutomatonTransition(
+                id: "T",
+                startState: "A",
+                endState: "B",
+                type: .regular(
+                    startPoint: CGPoint(x: 10, y: 5),
+                    tipPoint: CGPoint(x: 15, y: 5),
+                    flexPoint: CGPoint(x: 12.5, y: 5)
+                )
+            )
+            $0.currentlySelectedStateForTransition = nil
+            $0.mode = .editing
+        }
+    }
+    
     func testTransitionSymbolIsTrimmedAndUppercased() async {
         var currentStrokes: [Stroke] = []
         let store = TestStore(
@@ -64,9 +124,9 @@ final class EditorTests: XCTestCase {
         store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
         store.dependencies.automataLibraryService = .successful()
         store.dependencies.shapeService = .mock(
-                center: { $0.first ?? .zero },
-                radius: { _, _ in self.stubRadius }
-            )
+            center: { $0.first ?? .zero },
+            radius: { _, _ in self.stubRadius }
+        )
         store.dependencies.idFactory = .mock { self.stubID }
         store.dependencies.mainQueue = scheduler.eraseToAnyScheduler()
         await createState(

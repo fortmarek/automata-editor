@@ -39,7 +39,10 @@ struct EditorView: View {
                             automatonStates: viewStore.automatonStates,
                             stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
                             automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
-                            automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) }
+                            automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
+                            selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
+                            currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
+                            mode: viewStore.mode
                         )
                         Text("Output: \(viewStore.outputString)")
                             .frame(width: 140)
@@ -84,7 +87,7 @@ struct EditorView: View {
                                 Button(action: { viewStore.send(.addNewState) }) {
                                     Label("State", systemImage: "circle")
                                 }
-                                Button(action: { viewStore.send(.selectedEraser) }) {
+                                Button(action: { viewStore.send(.startAddingTransition) }) {
                                     Label("Transition", systemImage: "arrow.right")
                                 }
                             } label: {
@@ -93,8 +96,13 @@ struct EditorView: View {
                         }
                     }
                     ToolbarItemGroup(placement: .primaryAction) {
-                        Button(action: { viewStore.send(.clear) }) {
-                            Image(systemName: "trash")
+                        switch viewStore.mode {
+                        case .editing:
+                            Button(action: { viewStore.send(.clear) }) {
+                                Image(systemName: "trash")
+                            }
+                        case .addingTransition:
+                            Button("Cancel", action: { viewStore.send(.stopAddingTransition) })
                         }
                     }
                 }

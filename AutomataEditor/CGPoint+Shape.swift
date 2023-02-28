@@ -77,6 +77,31 @@ extension Array where Element == CGPoint {
     }
 }
 
+enum Geometry {
+    struct Circle {
+        let center: CGPoint
+        let radius: CGFloat
+    }
+    
+    static func intersections(
+        pointA: CGPoint,
+        pointB: CGPoint,
+        circle: Geometry.Circle
+    ) -> (CGPoint, CGPoint) {
+        let vector = Vector(pointA, pointB)
+        let a: CGFloat = pow(vector.x, 2) + pow(vector.y, 2)
+        let b: CGFloat = 2 * vector.x * (pointA.x - circle.center.x) + 2 * vector.y * (pointA.y - circle.center.y)
+        let c: CGFloat = pow(pointA.x - circle.center.x, 2) + pow(pointA.y - circle.center.y, 2) - pow(circle.radius, 2)
+        let tOne: CGFloat = (-b + sqrt(pow(b, 2) - 4 * a * c)) / (2 * a)
+        let tTwo: CGFloat = (-b - sqrt(pow(b, 2) - 4 * a * c)) / (2 * a)
+        
+        return (
+            CGPoint(x: vector.x * tOne + pointA.x, y: vector.y * tOne + pointA.y),
+            CGPoint(x: vector.x * tTwo + pointA.x, y: vector.y * tTwo + pointA.y)
+        )
+    }
+}
+
 /// Inspired from: https://github.com/nicklockwood/VectorMath/blob/master/VectorMath/VectorMath.swift
 struct Vector: Hashable {
     var x: CGFloat
@@ -162,7 +187,6 @@ struct Vector: Hashable {
     static func - (lhs: Vector, rhs: Vector) -> Vector {
         return Vector(lhs.x - rhs.x, lhs.y - rhs.y)
     }
-    
 }
 
 extension CGPoint: Hashable {

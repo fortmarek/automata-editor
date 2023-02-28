@@ -6,7 +6,10 @@ struct AutomatonStatesView: View {
     let stateSymbolChanged: ((AutomatonState.ID, String) -> Void)
     let automatonStateDragged: ((AutomatonState.ID, CGPoint) -> Void)
     let automatonStateFinishedDragging: ((AutomatonState.ID, CGPoint) -> Void)
-    
+    let selectedStateForTransition: ((AutomatonState.ID) -> Void)
+    let currentlySelectedStateForTransition: AutomatonState.ID?
+    let mode: EditorFeature.Mode
+
     @State private var counter = 0
     
     var body: some View {
@@ -22,41 +25,50 @@ struct AutomatonStatesView: View {
             .frame(width: 50, height: 30)
             .position(automatonState.scribblePosition)
             
-            ZStack {
-                Circle()
-                    .fill(Color.blue)
-                    .frame(width: 30)
-                Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                    .frame(width: 25)
+            switch mode {
+            case .addingTransition:
+                AddTransitionView(
+                    point: automatonState.dragPoint,
+                    isSelected: automatonState.id == currentlySelectedStateForTransition,
+                    selected: { selectedStateForTransition(automatonState.id) }
+                )
+            case .editing:
+                ZStack {
+                    Circle()
+                        .fill(.blue)
+                        .frame(width: 30)
+                    Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                        .frame(width: 25)
+                }
+                .position(automatonState.dragPoint)
+                .offset(
+                    x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
+                    y: automatonState.currentDragPoint.y - automatonState.dragPoint.y
+                )
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            counter += 1
+                            guard counter % 4 == 1 else { return }
+                            automatonStateDragged(
+                                automatonState.id,
+                                CGPoint(
+                                    x: automatonState.dragPoint.x + value.translation.width,
+                                    y: automatonState.dragPoint.y + value.translation.height
+                                )
+                            )
+                        }
+                        .onEnded { value in
+                            automatonStateFinishedDragging(
+                                automatonState.id,
+                                CGPoint(
+                                    x: automatonState.dragPoint.x + value.translation.width,
+                                    y: automatonState.dragPoint.y + value.translation.height
+                                )
+                            )
+                        }
+                )
             }
-            .position(automatonState.dragPoint)
-            .offset(
-                x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
-                y: automatonState.currentDragPoint.y - automatonState.dragPoint.y
-            )
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        counter += 1
-                        guard counter % 4 == 1 else { return }
-                        automatonStateDragged(
-                            automatonState.id,
-                            CGPoint(
-                                x: automatonState.dragPoint.x + value.translation.width,
-                                y: automatonState.dragPoint.y + value.translation.height
-                            )
-                        )
-                    }
-                    .onEnded { value in
-                        automatonStateFinishedDragging(
-                            automatonState.id,
-                            CGPoint(
-                                x: automatonState.dragPoint.x + value.translation.width,
-                                y: automatonState.dragPoint.y + value.translation.height
-                            )
-                        )
-                    }
-            )
         }
     }
 }
