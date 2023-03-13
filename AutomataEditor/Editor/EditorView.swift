@@ -21,29 +21,32 @@ struct EditorView: View {
                                 send: EditorFeature.Action.strokesChanged
                             ),
                             tool: viewStore.state.tool
-                        )
-                        TransitionsView(
-                            transitions: viewStore.transitions,
-                            toggleEpsilonInclusion: { viewStore.send(.toggleEpsilonInclusion($0)) },
-                            transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
-                            transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
-                            transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
-                            transitionDragged: {
-                                viewStore.send(.transitionFlexPointChanged($0, $1))
-                            },
-                            transitionFinishedDragging: {
-                                viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
+                        ) {
+                            ZStack {
+                                TransitionsView(
+                                    transitions: viewStore.transitions,
+                                    toggleEpsilonInclusion: { viewStore.send(.toggleEpsilonInclusion($0)) },
+                                    transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
+                                    transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
+                                    transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
+                                    transitionDragged: {
+                                        viewStore.send(.transitionFlexPointChanged($0, $1))
+                                    },
+                                    transitionFinishedDragging: {
+                                        viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
+                                    }
+                                )
+                                AutomatonStatesView(
+                                    automatonStates: viewStore.automatonStates,
+                                    stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
+                                    automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
+                                    automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
+                                    selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
+                                    currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
+                                    mode: viewStore.mode
+                                )
                             }
-                        )
-                        AutomatonStatesView(
-                            automatonStates: viewStore.automatonStates,
-                            stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
-                            automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
-                            automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
-                            selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
-                            currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
-                            mode: viewStore.mode
-                        )
+                        }
                         Text("Output: \(viewStore.outputString)")
                             .frame(width: 140)
                             .position(x: 70, y: 50)

@@ -86,7 +86,7 @@ struct TransitionsView: View {
                     DragGesture()
                         .onChanged { value in
                             counter += 1
-                            guard counter % 4 == 1 else { return }
+                            guard counter % 8 == 1 else { return }
                             transitionDragged(
                                 transition.id,
                                 CGPoint(

@@ -49,7 +49,7 @@ struct AutomatonStatesView: View {
                     DragGesture()
                         .onChanged { value in
                             counter += 1
-                            guard counter % 4 == 1 else { return }
+                            guard counter % 8 == 1 else { return }
                             automatonStateDragged(
                                 automatonState.id,
                                 CGPoint(
