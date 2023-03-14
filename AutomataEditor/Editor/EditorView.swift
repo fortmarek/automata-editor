@@ -12,7 +12,8 @@ struct EditorView: View {
                 VStack {
                     ZStack {
                         CanvasView(
-                            tool: viewStore.state.tool
+                            tool: viewStore.state.tool,
+                            strokesChanged: { viewStore.send(.strokesChanged($0)) }
                         ) {
                             ZStack {
                                 TransitionsView(

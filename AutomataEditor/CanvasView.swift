@@ -15,8 +15,20 @@ enum Tool: String, Codable {
     }
 }
 
+/// Forwards touches to PKCanvasView if the hit test returns the overlay view (and not e.g. one of the drag buttons)
+final class ContentView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard let view = super.hitTest(point, with: event) else { return nil }
+        if subviews.contains(view) {
+            return subviews.first(where: { $0 is PKCanvasView })?.hitTest(point, with: event)
+        }
+        return view
+    }
+}
+
 struct CanvasView<Content: View>: UIViewRepresentable {
     var tool: Tool
+    let strokesChanged: ([Stroke]) -> Void
     @ViewBuilder var view: Content
 
     func makeUIView(context: Context) -> UIScrollView {
@@ -25,7 +37,7 @@ struct CanvasView<Content: View>: UIViewRepresentable {
         scrollView.minimumZoomScale = max(UIScreen.main.bounds.width / 4000, UIScreen.main.bounds.height / 4000)
         scrollView.maximumZoomScale = 2.5
 
-        let contentView = UIView()
+        let contentView = ContentView()
         contentView.frame.size = CGSize(width: 4000, height: 4000)
         scrollView.addSubview(contentView)
 
@@ -46,6 +58,7 @@ struct CanvasView<Content: View>: UIViewRepresentable {
         overlayView.backgroundColor = .clear
         overlayView.frame = canvasView.frame
         contentView.addSubview(overlayView)
+//        overlayView.isUserInteractionEnabled = false
 
         return scrollView
     }
@@ -66,6 +79,7 @@ struct CanvasView<Content: View>: UIViewRepresentable {
 
 final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestureRecognizerDelegate where Content: View {
     private let parent: CanvasView<Content>
+    private var shouldUpdateStrokes = false
     var viewForZooming: UIView?
     var canvasView: PKCanvasView!
     var hostingController: UIHostingController<Content>!
@@ -77,4 +91,16 @@ final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestur
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         viewForZooming
     }
+    
+    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+        guard shouldUpdateStrokes else { return }
+        shouldUpdateStrokes = false
+        parent.strokesChanged(canvasView.drawing.strokes.map(Stroke.init))
+        canvasView.drawing.strokes = []
+    }
+    
+    func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) {
+        shouldUpdateStrokes = true
+    }
 }
+
