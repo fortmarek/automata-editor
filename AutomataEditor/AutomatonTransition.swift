@@ -72,11 +72,12 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
         if endState != nil, startState == nil { return nil }
         switch type {
         case .cycle:
-            let highestPoint = stroke.controlPoints.min(by: { $0.y < $1.y }) ?? .zero
-            return CGPoint(
-                x: highestPoint.x + 20,
-                y: highestPoint.y - 20
-            )
+            return .zero
+//            let highestPoint = stroke.controlPoints.min(by: { $0.y < $1.y }) ?? .zero
+//            return CGPoint(
+//                x: highestPoint.x + 20,
+//                y: highestPoint.y - 20
+//            )
         case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
             return CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
         }
@@ -86,22 +87,22 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
         startState == nil && endState != nil
     }
     
-    var stroke: Stroke {
-        switch type {
-        case let .cycle(point, center: center, radians: _):
-            return Stroke(
-                controlPoints: .cycle(point, center: center)
-            )
-        case let .regular(
-            startPoint: startPoint,
-            tipPoint: tipPoint,
-            flexPoint: flexPoint
-        ):
-            return Stroke(
-                controlPoints: .arrow(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint)
-            )
-        }
-    }
+//    var stroke: Stroke {
+//        switch type {
+//        case let .cycle(point, center: center, radians: _):
+//            return Stroke(
+//                controlPoints: .cycle(point, center: center)
+//            )
+//        case let .regular(
+//            startPoint: startPoint,
+//            tipPoint: tipPoint,
+//            flexPoint: flexPoint
+//        ):
+//            return Stroke(
+//                controlPoints: .arrow(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint)
+//            )
+//        }
+//    }
     
     var startPoint: CGPoint? {
         get {

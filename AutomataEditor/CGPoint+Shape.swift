@@ -1,5 +1,88 @@
 import CoreGraphics
-import SwiftSplines
+import SwiftUI
+
+extension Path {
+    mutating func arrow(
+        startPoint: CGPoint,
+        tipPoint: CGPoint,
+        flexPoint: CGPoint? = nil,
+        arrowSpan: CGFloat = 60
+    ) {
+        let vector = Vector(flexPoint ?? startPoint, tipPoint)
+        let anchorPoint = vector.point(distance: -arrowSpan / 3, other: tipPoint)
+        let perpendicularVector = vector.rotated(by: .pi / 2)
+        let topPoint = perpendicularVector.point(distance: -arrowSpan / 2, other: anchorPoint)
+        let bottomPoint = perpendicularVector.point(distance: arrowSpan / 2, other: anchorPoint)
+        let startToFlexVector = Vector(startPoint, flexPoint!)
+        
+        let catmullRomPoints = [startPoint, flexPoint!, tipPoint]
+        let alpha = 1
+        let closed = true
+
+        move(to: startPoint)
+        if let flexPoint = flexPoint {
+            hermiteSpline(for: [startPoint, flexPoint, tipPoint], closed: false)
+        } else {
+            addLine(to: tipPoint)
+        }
+        move(to: tipPoint)
+        addLine(to: topPoint)
+        move(to: tipPoint)
+        addLine(to: bottomPoint)
+        move(to: bottomPoint)
+    }
+    
+    // Partly taken from: https://stackoverflow.com/a/34583708/4975152
+    mutating func hermiteSpline(for points: [CGPoint], closed: Bool) {
+        guard points.count > 1 else { return }
+        let numberOfCurves = closed ? points.count : points.count - 1
+
+        var previousPoint: CGPoint? = closed ? points.last : nil
+        var currentPoint:  CGPoint  = points[0]
+        var nextPoint:     CGPoint? = points[1]
+
+        move(to: currentPoint)
+
+        for index in 0 ..< numberOfCurves {
+            let endPt = nextPoint!
+
+            var mx: CGFloat
+            var my: CGFloat
+
+            if previousPoint != nil {
+                mx = (nextPoint!.x - currentPoint.x) * 0.5 + (currentPoint.x - previousPoint!.x)*0.5
+                my = (nextPoint!.y - currentPoint.y) * 0.5 + (currentPoint.y - previousPoint!.y)*0.5
+            } else {
+                mx = (nextPoint!.x - currentPoint.x) * 0.5
+                my = (nextPoint!.y - currentPoint.y) * 0.5
+            }
+
+            let ctrlPt1 = CGPoint(x: currentPoint.x + mx / 3.0, y: currentPoint.y + my / 3.0)
+
+            previousPoint = currentPoint
+            currentPoint = nextPoint!
+            let nextIndex = index + 2
+            if closed {
+                nextPoint = points[nextIndex % points.count]
+            } else {
+                nextPoint = nextIndex < points.count ? points[nextIndex % points.count] : nil
+            }
+
+            if nextPoint != nil {
+                mx = (nextPoint!.x - currentPoint.x) * 0.5 + (currentPoint.x - previousPoint!.x) * 0.5
+                my = (nextPoint!.y - currentPoint.y) * 0.5 + (currentPoint.y - previousPoint!.y) * 0.5
+            }
+            else {
+                mx = (currentPoint.x - previousPoint!.x) * 0.5
+                my = (currentPoint.y - previousPoint!.y) * 0.5
+            }
+
+            let ctrlPt2 = CGPoint(x: currentPoint.x - mx / 3.0, y: currentPoint.y - my / 3.0)
+
+            addCurve(to: endPt, control1: ctrlPt1, control2: ctrlPt2)
+        }
+    }
+}
 
 extension Array where Element == CGPoint {
     static func circle(
@@ -31,49 +114,12 @@ extension Array where Element == CGPoint {
             topPoint,
             startToTopVector.rotated(by: .pi / 4).point(distance: 40, other: point),
             startToTopVector.rotated(by: .pi / 3).point(distance: 10, other: point),
-        ] + .arrow(
-            startPoint: finalPoint,
-            tipPoint: point,
-            arrowSpan: 30
-        )
-    }
-    
-    static func arrow(
-        startPoint: CGPoint,
-        tipPoint: CGPoint,
-        flexPoint: CGPoint? = nil,
-        arrowSpan: CGFloat = 60
-    ) -> Self {
-        let vector = Vector(flexPoint ?? startPoint, tipPoint)
-        let anchorPoint = vector.point(distance: -arrowSpan / 3, other: tipPoint)
-        let perpendicularVector = vector.rotated(by: .pi / 2)
-        let topPoint = perpendicularVector.point(distance: -arrowSpan / 2, other: anchorPoint)
-        let bottomPoint = perpendicularVector.point(distance: arrowSpan / 2, other: anchorPoint)
-        let topVector = Vector(tipPoint, topPoint)
-        let bottomVector = Vector(tipPoint, bottomPoint)
-        let points = [startPoint, flexPoint, tipPoint].compactMap { $0 }
-        let spline = Spline(
-            values: points
-        )
-        
-        let resolution = 100
-        let splinePoints: [CGPoint] = (0...(points.count - 1) * resolution).map { offset in
-            let argument = CGFloat(offset)/CGFloat(resolution)
-            return spline.f(t: argument)
-        }
-        
-        return splinePoints
-        + [
-            tipPoint,
-            topVector.point(distance: 0.1, other: tipPoint),
-            topVector.point(distance: 1, other: tipPoint),
-            topPoint,
-            topPoint,
-            tipPoint,
-            bottomVector.point(distance: 0.1, other: tipPoint),
-            bottomVector.point(distance: 1, other: tipPoint),
-            bottomPoint,
         ]
+//        + .arrow(
+//            startPoint: finalPoint,
+//            tipPoint: point,
+//            arrowSpan: 30
+//        )
     }
 }
 

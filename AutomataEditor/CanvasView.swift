@@ -17,7 +17,7 @@ enum Tool: String, Codable {
 
 struct CanvasView<Content: View>: UIViewRepresentable {
     @Binding var shouldDeleteLastStroke: Bool
-    @Binding var strokes: [Stroke]
+//    @Binding var strokes: [Stroke]
     var tool: Tool
     @ViewBuilder var view: Content
 
@@ -59,13 +59,6 @@ struct CanvasView<Content: View>: UIViewRepresentable {
     func updateUIView(_ scrollView: UIScrollView, context: Context) {
         let canvasView = context.coordinator.canvasView!
         canvasView.tool = tool.pkTool
-        canvasView.drawing.strokes = strokes.map { $0.pkStroke() }
-        if shouldDeleteLastStroke {
-            if !canvasView.drawing.strokes.isEmpty {
-                canvasView.drawing.strokes.removeLast()
-            }
-            shouldDeleteLastStroke = false
-        }
         
         context.coordinator.hostingController?.rootView = view
     }
@@ -84,17 +77,7 @@ final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestur
         self.parent = parent
     }
 
-    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        guard shouldUpdateStrokes else { return }
-        shouldUpdateStrokes = false
-        parent.strokes = canvasView.drawing.strokes.map(Stroke.init)
-    }
-
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         viewForZooming
-    }
-
-    func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) {
-        shouldUpdateStrokes = true
     }
 }

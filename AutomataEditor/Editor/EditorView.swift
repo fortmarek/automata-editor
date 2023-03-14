@@ -16,10 +16,10 @@ struct EditorView: View {
                                 get: \.shouldDeleteLastStroke,
                                 send: EditorFeature.Action.shouldDeleteLastStrokeChanged
                             ),
-                            strokes: viewStore.binding(
-                                get: \.strokes,
-                                send: EditorFeature.Action.strokesChanged
-                            ),
+//                            strokes: viewStore.binding(
+//                                get: \.strokes,
+//                                send: EditorFeature.Action.strokesChanged
+//                            ),
                             tool: viewStore.state.tool
                         ) {
                             ZStack {

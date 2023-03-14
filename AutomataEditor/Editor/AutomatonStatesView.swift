@@ -1,5 +1,49 @@
 import SwiftUI
 
+struct AutomatonStateEditingView: View {
+    let automatonState: AutomatonState
+    let automatonStateDragged: ((AutomatonState.ID, CGPoint) -> Void)
+    let automatonStateFinishedDragging: ((AutomatonState.ID, CGPoint) -> Void)
+    
+    @State private var counter = 0
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(.blue)
+                .frame(width: 30)
+            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                .frame(width: 25)
+        }
+        .position(automatonState.dragPoint)
+        .offset(
+            x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
+            y: automatonState.currentDragPoint.y - automatonState.dragPoint.y
+        )
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    automatonStateDragged(
+                        automatonState.id,
+                        CGPoint(
+                            x: automatonState.dragPoint.x + value.translation.width,
+                            y: automatonState.dragPoint.y + value.translation.height
+                        )
+                    )
+                }
+                .onEnded { value in
+                    automatonStateFinishedDragging(
+                        automatonState.id,
+                        CGPoint(
+                            x: automatonState.dragPoint.x + value.translation.width,
+                            y: automatonState.dragPoint.y + value.translation.height
+                        )
+                    )
+                }
+        )
+    }
+}
+
 /// View that holds all automaton states.
 struct AutomatonStatesView: View {
     var automatonStates: [AutomatonState]
@@ -9,8 +53,6 @@ struct AutomatonStatesView: View {
     let selectedStateForTransition: ((AutomatonState.ID) -> Void)
     let currentlySelectedStateForTransition: AutomatonState.ID?
     let mode: EditorFeature.Mode
-
-    @State private var counter = 0
     
     var body: some View {
         ForEach(automatonStates) { automatonState in
@@ -25,6 +67,11 @@ struct AutomatonStatesView: View {
             .frame(width: 50, height: 30)
             .position(automatonState.scribblePosition)
             
+            Circle()
+                .strokeBorder(.white, lineWidth: 4)
+                .frame(width: automatonState.radius * 2, height: automatonState.radius * 2)
+                .position(automatonState.center)
+            
             switch mode {
             case .addingTransition:
                 AddTransitionView(
@@ -33,40 +80,10 @@ struct AutomatonStatesView: View {
                     selected: { selectedStateForTransition(automatonState.id) }
                 )
             case .editing:
-                ZStack {
-                    Circle()
-                        .fill(.blue)
-                        .frame(width: 30)
-                    Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                        .frame(width: 25)
-                }
-                .position(automatonState.dragPoint)
-                .offset(
-                    x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
-                    y: automatonState.currentDragPoint.y - automatonState.dragPoint.y
-                )
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            counter += 1
-                            guard counter % 8 == 1 else { return }
-                            automatonStateDragged(
-                                automatonState.id,
-                                CGPoint(
-                                    x: automatonState.dragPoint.x + value.translation.width,
-                                    y: automatonState.dragPoint.y + value.translation.height
-                                )
-                            )
-                        }
-                        .onEnded { value in
-                            automatonStateFinishedDragging(
-                                automatonState.id,
-                                CGPoint(
-                                    x: automatonState.dragPoint.x + value.translation.width,
-                                    y: automatonState.dragPoint.y + value.translation.height
-                                )
-                            )
-                        }
+                AutomatonStateEditingView(
+                    automatonState: automatonState,
+                    automatonStateDragged: automatonStateDragged,
+                    automatonStateFinishedDragging: automatonStateFinishedDragging
                 )
             }
         }

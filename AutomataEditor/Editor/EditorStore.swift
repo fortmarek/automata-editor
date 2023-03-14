@@ -27,21 +27,21 @@ extension EditorFeature.State {
     var transitions: [AutomatonTransition] {
         transitionsDict.map(\.value)
     }
-    var strokes: [Stroke] {
-        automatonStates.map {
-            Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
-        }
-        + automatonStates.compactMap {
-            guard $0.isFinalState else { return nil }
-            return Stroke(
-                controlPoints: .circle(
-                    center: $0.center,
-                    radius: $0.radius * 0.9
-                )
-            )
-        }
-        + transitions.map(\.stroke)
-    }
+//    var strokes: [Stroke] {
+//        automatonStates.map {
+//            Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
+//        }
+//        + automatonStates.compactMap {
+//            guard $0.isFinalState else { return nil }
+//            return Stroke(
+//                controlPoints: .circle(
+//                    center: $0.center,
+//                    radius: $0.radius * 0.9
+//                )
+//            )
+//        }
+//        + transitions.map(\.stroke)
+//    }
     
     fileprivate var transitionsWithoutEndState: [AutomatonTransition] {
         transitions.filter { $0.endState == nil }
@@ -414,6 +414,10 @@ struct EditorFeature: ReducerProtocol {
                     let shortestVector = shortestVector
                 else { return .none }
                 let (startPoint, tipPoint) = shortestVector
+                let flexPoint = CGPoint(
+                    x: (startState.center.x + endState.center.x) / 2,
+                    y: (startState.center.y + endState.center.y) / 2
+                )
                 let transition = AutomatonTransition(
                     id: idFactory.generateID(),
                     startState: startState.id,
@@ -421,11 +425,9 @@ struct EditorFeature: ReducerProtocol {
                     type: .regular(
                         startPoint: startPoint,
                         tipPoint: tipPoint,
-                        flexPoint: CGPoint(
-                            x: (startState.center.x + endState.center.x) / 2,
-                            y: (startState.center.y + endState.center.y) / 2
-                        )
-                    )
+                        flexPoint: flexPoint
+                    ),
+                    currentFlexPoint: flexPoint
                 )
                 state.transitionsDict[transition.id] = transition
                 state.currentlySelectedStateForTransition = nil
@@ -712,9 +714,9 @@ struct EditorFeature: ReducerProtocol {
             state.shouldDeleteLastStroke = true
         case let .strokesChanged(strokes):
             // A stroke was deleted
-            if strokes.count < state.strokes.count {
-                deleteStroke(from: strokes)
-            } else {
+//            if strokes.count < state.strokes.count {
+//                deleteStroke(from: strokes)
+//            } else {
                 guard let stroke = strokes.last else { return .none }
                 return .task {
                     do {
@@ -724,7 +726,7 @@ struct EditorFeature: ReducerProtocol {
                         return Action.automataShapeClassified(.failure(.shapeNotRecognized))
                     }
                 }
-            }
+//            }
         case let .shouldDeleteLastStrokeChanged(shouldDeleteLastStroke):
             state.shouldDeleteLastStroke = shouldDeleteLastStroke
         }
