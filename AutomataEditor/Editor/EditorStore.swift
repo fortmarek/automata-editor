@@ -27,21 +27,6 @@ extension EditorFeature.State {
     var transitions: [AutomatonTransition] {
         transitionsDict.map(\.value)
     }
-//    var strokes: [Stroke] {
-//        automatonStates.map {
-//            Stroke(controlPoints: .circle(center: $0.center, radius: $0.radius))
-//        }
-//        + automatonStates.compactMap {
-//            guard $0.isFinalState else { return nil }
-//            return Stroke(
-//                controlPoints: .circle(
-//                    center: $0.center,
-//                    radius: $0.radius * 0.9
-//                )
-//            )
-//        }
-//        + transitions.map(\.stroke)
-//    }
     
     fileprivate var transitionsWithoutEndState: [AutomatonTransition] {
         transitions.filter { $0.endState == nil }
@@ -68,7 +53,7 @@ extension EditorFeature.State {
 
 struct EditorFeature: ReducerProtocol {
     enum Mode: Equatable {
-        case editing, addingTransition
+        case editing, addingTransition, erasing
     }
     
     struct State: Equatable {
@@ -130,7 +115,8 @@ struct EditorFeature: ReducerProtocol {
         case transitionSymbolAdded(AutomatonTransition.ID)
         case transitionSymbolRemoved(AutomatonTransition.ID, String)
         case strokesChanged([Stroke])
-        case shouldDeleteLastStrokeChanged(Bool)
+        case automatonStateRemoved(AutomatonState.ID)
+        case transitionRemoved(AutomatonTransition.ID)
         case automataShapeClassified(Result<AutomatonShape, AutomataClassifierError>)
         case stateUpdated(State)
         case addNewState
@@ -376,10 +362,32 @@ struct EditorFeature: ReducerProtocol {
         }
         
         switch action {
+        case let .automatonStateRemoved(automatonStateID):
+            state.automatonStatesDict.removeValue(forKey: automatonStateID)
+            state.transitions.forEach { transition in
+                var transition = transition
+                switch transition.type {
+                case .cycle:
+                    if let transitionStartState = transition.startState,
+                       transitionStartState == automatonStateID {
+                        state.transitionsDict.removeValue(forKey: transition.id)
+                    }
+                case .regular:
+                    if transition.startState == automatonStateID {
+                        transition.startState = nil
+                    }
+                    if transition.endState == automatonStateID {
+                        transition.endState = nil
+                    }
+                    state.transitionsDict[transition.id] = transition
+                }
+            }
+        case let .transitionRemoved(transitionID):
+            state.transitionsDict.removeValue(forKey: transitionID)
         case .startAddingTransition:
             state.mode = .addingTransition
         case .stopAddingTransition:
-            state.mode = .editing
+            state.mode = state.isPenSelected ? .editing : .erasing
             state.currentlySelectedStateForTransition = nil
         case let .selectedStateForTransition(automatonStateID):
             if automatonStateID == state.currentlySelectedStateForTransition {
@@ -448,10 +456,12 @@ struct EditorFeature: ReducerProtocol {
             return .none
         case .selectedEraser:
             state.tool = .eraser
+            state.mode = .erasing
             state.isEraserSelected = true
             state.isPenSelected = false
         case .selectedPen:
             state.tool = .pen
+            state.mode = .editing
             state.isEraserSelected = false
             state.isPenSelected = true
         case .clear:
@@ -713,22 +723,15 @@ struct EditorFeature: ReducerProtocol {
         case .automataShapeClassified(.failure):
             state.shouldDeleteLastStroke = true
         case let .strokesChanged(strokes):
-            // A stroke was deleted
-//            if strokes.count < state.strokes.count {
-//                deleteStroke(from: strokes)
-//            } else {
-                guard let stroke = strokes.last else { return .none }
-                return .task {
-                    do {
-                        let shape = try await automataClassifierService.recognizeStroke(stroke)
-                        return Action.automataShapeClassified(.success(shape))
-                    } catch {
-                        return Action.automataShapeClassified(.failure(.shapeNotRecognized))
-                    }
+            guard let stroke = strokes.last else { return .none }
+            return .task {
+                do {
+                    let shape = try await automataClassifierService.recognizeStroke(stroke)
+                    return Action.automataShapeClassified(.success(shape))
+                } catch {
+                    return Action.automataShapeClassified(.failure(.shapeNotRecognized))
                 }
-//            }
-        case let .shouldDeleteLastStrokeChanged(shouldDeleteLastStroke):
-            state.shouldDeleteLastStroke = shouldDeleteLastStroke
+            }
         }
         
         return .none

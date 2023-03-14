@@ -12,14 +12,6 @@ struct EditorView: View {
                 VStack {
                     ZStack {
                         CanvasView(
-                            shouldDeleteLastStroke: viewStore.binding(
-                                get: \.shouldDeleteLastStroke,
-                                send: EditorFeature.Action.shouldDeleteLastStrokeChanged
-                            ),
-//                            strokes: viewStore.binding(
-//                                get: \.strokes,
-//                                send: EditorFeature.Action.strokesChanged
-//                            ),
                             tool: viewStore.state.tool
                         ) {
                             ZStack {
@@ -29,18 +21,21 @@ struct EditorView: View {
                                     transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
                                     transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
                                     transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
+                                    transitionRemoved: { viewStore.send(.transitionRemoved($0)) },
                                     transitionDragged: {
                                         viewStore.send(.transitionFlexPointChanged($0, $1))
                                     },
                                     transitionFinishedDragging: {
                                         viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
-                                    }
+                                    },
+                                    mode: viewStore.mode
                                 )
                                 AutomatonStatesView(
                                     automatonStates: viewStore.automatonStates,
                                     stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
                                     automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
                                     automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
+                                    automatonStateRemoved: { viewStore.send(.automatonStateRemoved($0)) },
                                     selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
                                     currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
                                     mode: viewStore.mode
@@ -100,7 +95,7 @@ struct EditorView: View {
                     }
                     ToolbarItemGroup(placement: .primaryAction) {
                         switch viewStore.mode {
-                        case .editing:
+                        case .editing, .erasing:
                             Button(action: { viewStore.send(.clear) }) {
                                 Image(systemName: "trash")
                             }

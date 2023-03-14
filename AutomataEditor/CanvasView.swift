@@ -16,8 +16,6 @@ enum Tool: String, Codable {
 }
 
 struct CanvasView<Content: View>: UIViewRepresentable {
-    @Binding var shouldDeleteLastStroke: Bool
-//    @Binding var strokes: [Stroke]
     var tool: Tool
     @ViewBuilder var view: Content
 
@@ -71,7 +69,6 @@ final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestur
     var viewForZooming: UIView?
     var canvasView: PKCanvasView!
     var hostingController: UIHostingController<Content>!
-    var shouldUpdateStrokes = false
 
     init(_ parent: CanvasView<Content>) {
         self.parent = parent

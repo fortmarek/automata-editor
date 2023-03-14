@@ -84,6 +84,47 @@ struct TransitionModifierView: View {
     }
 }
 
+struct TransitionDragControl: View {
+    let transition: AutomatonTransition
+    let flexPoint: CGPoint
+    let currentFlexPoint: CGPoint
+    let transitionDragged: ((AutomatonTransition.ID, CGPoint) -> Void)
+    let transitionFinishedDragging: ((AutomatonTransition.ID, CGPoint) -> Void)
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.blue)
+                .frame(width: 30)
+            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                .frame(width: 25)
+        }
+        .position(currentFlexPoint)
+        .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    transitionDragged(
+                        transition.id,
+                        CGPoint(
+                            x: currentFlexPoint.x + value.translation.width,
+                            y: currentFlexPoint.y + value.translation.height
+                        )
+                    )
+                }
+                .onEnded { value in
+                    transitionFinishedDragging(
+                        transition.id,
+                        CGPoint(
+                            x: currentFlexPoint.x + value.translation.width,
+                            y: currentFlexPoint.y + value.translation.height
+                        )
+                    )
+                }
+        )
+    }
+}
+
 /// View that holds all the transitions.
 struct TransitionsView: View {
     let transitions: [AutomatonTransition]
@@ -91,8 +132,10 @@ struct TransitionsView: View {
     let transitionSymbolRemoved: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolChanged: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolAdded: ((AutomatonTransition.ID) -> Void)
+    let transitionRemoved: ((AutomatonTransition.ID) -> Void)
     let transitionDragged: ((AutomatonTransition.ID, CGPoint) -> Void)
     let transitionFinishedDragging: ((AutomatonTransition.ID, CGPoint) -> Void)
+    let mode: EditorFeature.Mode
     
     var body: some View {
         ForEach(transitions) { transition in
@@ -111,36 +154,28 @@ struct TransitionsView: View {
                 }
                 if let currentFlexPoint = transition.currentFlexPoint,
                    let flexPoint = transition.flexPoint {
-                    ZStack {
-                        Circle()
-                            .fill(Color.blue)
-                            .frame(width: 30)
-                        Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                            .frame(width: 25)
+                    switch mode {
+                    case .editing, .addingTransition:
+                        TransitionDragControl(
+                            transition: transition,
+                            flexPoint: flexPoint,
+                            currentFlexPoint: currentFlexPoint,
+                            transitionDragged: transitionDragged,
+                            transitionFinishedDragging: transitionFinishedDragging
+                        )
+                    case .erasing:
+                        Button(action: { transitionRemoved(transition.id) }) {
+                            ZStack {
+                                Circle()
+                                    .fill(.red)
+                                    .frame(width: 30)
+                                Image(systemName: "minus")
+                                    .foregroundColor(.white)
+                                    .frame(width: 25)
+                            }
+                        }
+                        .position(flexPoint)
                     }
-                    .position(currentFlexPoint)
-                    .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                transitionDragged(
-                                    transition.id,
-                                    CGPoint(
-                                        x: currentFlexPoint.x + value.translation.width,
-                                        y: currentFlexPoint.y + value.translation.height
-                                    )
-                                )
-                            }
-                            .onEnded { value in
-                                transitionFinishedDragging(
-                                    transition.id,
-                                    CGPoint(
-                                        x: currentFlexPoint.x + value.translation.width,
-                                        y: currentFlexPoint.y + value.translation.height
-                                    )
-                                )
-                            }
-                    )
                 }
             }
         }

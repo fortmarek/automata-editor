@@ -5,8 +5,6 @@ struct AutomatonStateEditingView: View {
     let automatonStateDragged: ((AutomatonState.ID, CGPoint) -> Void)
     let automatonStateFinishedDragging: ((AutomatonState.ID, CGPoint) -> Void)
     
-    @State private var counter = 0
-    
     var body: some View {
         ZStack {
             Circle()
@@ -50,6 +48,7 @@ struct AutomatonStatesView: View {
     let stateSymbolChanged: ((AutomatonState.ID, String) -> Void)
     let automatonStateDragged: ((AutomatonState.ID, CGPoint) -> Void)
     let automatonStateFinishedDragging: ((AutomatonState.ID, CGPoint) -> Void)
+    let automatonStateRemoved: ((AutomatonState.ID) -> Void)
     let selectedStateForTransition: ((AutomatonState.ID) -> Void)
     let currentlySelectedStateForTransition: AutomatonState.ID?
     let mode: EditorFeature.Mode
@@ -79,6 +78,18 @@ struct AutomatonStatesView: View {
                     isSelected: automatonState.id == currentlySelectedStateForTransition,
                     selected: { selectedStateForTransition(automatonState.id) }
                 )
+            case .erasing:
+                Button(action: { automatonStateRemoved(automatonState.id) }) {
+                    ZStack {
+                        Circle()
+                            .fill(.red)
+                            .frame(width: 30)
+                        Image(systemName: "minus")
+                            .foregroundColor(.white)
+                            .frame(width: 25)
+                    }
+                }
+                .position(automatonState.dragPoint)
             case .editing:
                 AutomatonStateEditingView(
                     automatonState: automatonState,
