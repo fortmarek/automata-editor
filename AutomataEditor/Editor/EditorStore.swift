@@ -53,7 +53,7 @@ extension EditorFeature.State {
 
 struct EditorFeature: ReducerProtocol {
     enum Mode: Equatable {
-        case editing, addingTransition, erasing
+        case editing, addingTransition, erasing, addingCycle
     }
     
     struct State: Equatable {
@@ -122,8 +122,11 @@ struct EditorFeature: ReducerProtocol {
         case addNewState
         case viewSizeChanged(CGSize)
         case startAddingTransition
+        case startAddingCycle
+        case stopAddingCycle
         case stopAddingTransition
         case selectedStateForTransition(AutomatonState.ID)
+        case selectedStateForCycle(AutomatonState.ID)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -386,9 +389,27 @@ struct EditorFeature: ReducerProtocol {
             state.transitionsDict.removeValue(forKey: transitionID)
         case .startAddingTransition:
             state.mode = .addingTransition
-        case .stopAddingTransition:
+        case .startAddingCycle:
+            state.mode = .addingCycle
+        case .stopAddingCycle, .stopAddingTransition:
             state.mode = state.isPenSelected ? .editing : .erasing
             state.currentlySelectedStateForTransition = nil
+        case let .selectedStateForCycle(automatonStateID):
+            guard let selectedState = state.automatonStatesDict[automatonStateID] else { return .none }
+
+            let transition = AutomatonTransition(
+                id: idFactory.generateID(),
+                startState: automatonStateID,
+                endState: automatonStateID,
+                type: .cycle(
+                    CGPoint(x: selectedState.center.x, y: selectedState.center.y - selectedState.radius),
+                    center: selectedState.center,
+                    radians: .pi
+                )
+            )
+            state.transitionsDict[transition.id] = transition
+            state.currentlySelectedStateForTransition = nil
+            state.mode = .editing
         case let .selectedStateForTransition(automatonStateID):
             if automatonStateID == state.currentlySelectedStateForTransition {
                 state.currentlySelectedStateForTransition = nil

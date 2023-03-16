@@ -11,7 +11,12 @@ struct TransitionArrowView: View {
             }
             .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
             .foregroundColor(.white)
-        case .cycle:
+        case let .cycle(point, center: center, radians: _):
+            Path { path in
+                path.cycle(point: point, center: center)
+            }
+            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .foregroundColor(.white)
             EmptyView()
         }
     }
@@ -99,6 +104,8 @@ struct TransitionDragControl: View {
             Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
                 .frame(width: 25)
         }
+        .padding(15)
+        .background(Color.black.opacity(0.00001))
         .position(currentFlexPoint)
         .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
         .gesture(
@@ -155,7 +162,7 @@ struct TransitionsView: View {
                 if let currentFlexPoint = transition.currentFlexPoint,
                    let flexPoint = transition.flexPoint {
                     switch mode {
-                    case .editing, .addingTransition:
+                    case .editing, .addingTransition, .addingCycle:
                         TransitionDragControl(
                             transition: transition,
                             flexPoint: flexPoint,
@@ -174,6 +181,8 @@ struct TransitionsView: View {
                                     .frame(width: 25)
                             }
                         }
+                        .padding(15)
+                        .background(Color.black.opacity(0.00001))
                         .position(flexPoint)
                     }
                 }

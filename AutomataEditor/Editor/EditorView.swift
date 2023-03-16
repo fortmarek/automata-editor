@@ -38,6 +38,7 @@ struct EditorView: View {
                                     automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
                                     automatonStateRemoved: { viewStore.send(.automatonStateRemoved($0)) },
                                     selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
+                                    selectedStateForCycle: { viewStore.send(.selectedStateForCycle($0)) },
                                     currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
                                     mode: viewStore.mode
                                 )
@@ -89,6 +90,9 @@ struct EditorView: View {
                                 Button(action: { viewStore.send(.startAddingTransition) }) {
                                     Label("Transition", systemImage: "arrow.right")
                                 }
+                                Button(action: { viewStore.send(.startAddingCycle) }) {
+                                    Label("Cycle", systemImage: "arrow.counterclockwise")
+                                }
                             } label: {
                                 Label("Add new element", systemImage: "plus.circle")
                             }
@@ -102,6 +106,8 @@ struct EditorView: View {
                             }
                         case .addingTransition:
                             Button("Cancel", action: { viewStore.send(.stopAddingTransition) })
+                        case .addingCycle:
+                            Button("Cancel", action: { viewStore.send(.stopAddingCycle) })
                         }
                     }
                 }

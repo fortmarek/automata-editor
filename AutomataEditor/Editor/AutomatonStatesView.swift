@@ -13,6 +13,10 @@ struct AutomatonStateEditingView: View {
             Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
                 .frame(width: 25)
         }
+        .padding(15)
+        // Hack to force the view to render
+        // Otherwise, the PKCanvasView is returned in the hitTest method in CanvasView
+        .background(Color.black.opacity(0.00001))
         .position(automatonState.dragPoint)
         .offset(
             x: automatonState.currentDragPoint.x - automatonState.dragPoint.x,
@@ -50,6 +54,7 @@ struct AutomatonStatesView: View {
     let automatonStateFinishedDragging: ((AutomatonState.ID, CGPoint) -> Void)
     let automatonStateRemoved: ((AutomatonState.ID) -> Void)
     let selectedStateForTransition: ((AutomatonState.ID) -> Void)
+    let selectedStateForCycle: ((AutomatonState.ID) -> Void)
     let currentlySelectedStateForTransition: AutomatonState.ID?
     let mode: EditorFeature.Mode
     
@@ -78,6 +83,16 @@ struct AutomatonStatesView: View {
                     isSelected: automatonState.id == currentlySelectedStateForTransition,
                     selected: { selectedStateForTransition(automatonState.id) }
                 )
+            case .addingCycle:
+                Button(action: { selectedStateForCycle(automatonState.id) }) {
+                    ZStack {
+                        Circle()
+                            .strokeBorder(.blue, lineWidth: 2)
+                    }
+                }
+                .background(Color.black.opacity(0.00001))
+                .frame(width: 30)
+                .position(automatonState.dragPoint)
             case .erasing:
                 Button(action: { automatonStateRemoved(automatonState.id) }) {
                     ZStack {
@@ -89,6 +104,8 @@ struct AutomatonStatesView: View {
                             .frame(width: 25)
                     }
                 }
+                .padding(15)
+                .background(Color.black.opacity(0.00001))
                 .position(automatonState.dragPoint)
             case .editing:
                 AutomatonStateEditingView(

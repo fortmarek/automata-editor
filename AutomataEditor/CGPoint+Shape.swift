@@ -2,6 +2,23 @@ import CoreGraphics
 import SwiftUI
 
 extension Path {
+    mutating func cycle(
+        point: CGPoint,
+        center: CGPoint
+    ) {
+        let vector = Vector(point, center)
+        let topPoint = vector.rotated(by: .pi / 11).point(distance: -100, other: point)
+        let radius = sqrt(pow(center.x - point.x, 2) + pow(center.y - point.y, 2))
+        let finalPoint = Vector(center, point).rotated(by: .pi / 8).point(distance: radius, other: center)
+        move(to: point)
+        addQuadCurve(
+            to: finalPoint,
+            control: topPoint
+        )
+
+        arrow(startPoint: Vector(topPoint, finalPoint).point(distance: 95, other: topPoint), tipPoint: finalPoint, arrowSpan: 30)
+    }
+    
     mutating func arrow(
         startPoint: CGPoint,
         tipPoint: CGPoint,
@@ -13,11 +30,6 @@ extension Path {
         let perpendicularVector = vector.rotated(by: .pi / 2)
         let topPoint = perpendicularVector.point(distance: -arrowSpan / 2, other: anchorPoint)
         let bottomPoint = perpendicularVector.point(distance: arrowSpan / 2, other: anchorPoint)
-        let startToFlexVector = Vector(startPoint, flexPoint!)
-        
-        let catmullRomPoints = [startPoint, flexPoint!, tipPoint]
-        let alpha = 1
-        let closed = true
 
         move(to: startPoint)
         if let flexPoint = flexPoint {
