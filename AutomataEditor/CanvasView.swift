@@ -58,7 +58,6 @@ struct CanvasView<Content: View>: UIViewRepresentable {
         overlayView.backgroundColor = .clear
         overlayView.frame = canvasView.frame
         contentView.addSubview(overlayView)
-//        overlayView.isUserInteractionEnabled = false
 
         return scrollView
     }

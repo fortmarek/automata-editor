@@ -75,6 +75,13 @@ struct AutomatonStatesView: View {
                 .strokeBorder(.white, lineWidth: 4)
                 .frame(width: automatonState.radius * 2, height: automatonState.radius * 2)
                 .position(automatonState.center)
+
+            if (automatonState.isFinalState) {
+                Circle()
+                    .strokeBorder(.white, lineWidth: 4)
+                    .frame(width: automatonState.radius * 2 - 20, height: automatonState.radius * 2 - 20)
+                    .position(automatonState.center)
+            }
             
             switch mode {
             case .addingTransition:

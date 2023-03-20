@@ -9,7 +9,7 @@ struct EditorView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             GeometryReader { geometry in
-                VStack {
+                ZStack {
                     ZStack {
                         CanvasView(
                             tool: viewStore.state.tool,
@@ -48,28 +48,35 @@ struct EditorView: View {
                             .frame(width: 140)
                             .position(x: 70, y: 50)
                     }
-                    HStack {
-                        TextField(
-                            "Automaton input",
-                            text: viewStore.binding(
-                                get: \.input,
-                                send: { .inputChanged($0) }
-                            )
-                        )
-                        .foregroundColor(.black)
-                        Button(
-                            action: {
-                                viewStore.send(.removeLastInputSymbol)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            HStack {
+                                TextField(
+                                    "Automaton input",
+                                    text: viewStore.binding(
+                                        get: \.input,
+                                        send: { .inputChanged($0) }
+                                    )
+                                )
+                                .foregroundColor(.black)
+                                Button(
+                                    action: {
+                                        viewStore.send(.removeLastInputSymbol)
+                                    }
+                                ) {
+                                    Image(systemName: "delete.left")
+                                        .foregroundColor(Color(UIColor.opaqueSeparator))
+                                }
                             }
-                        ) {
-                            Image(systemName: "delete.left")
-                                .foregroundColor(Color(UIColor.opaqueSeparator))
+                            .frame(width: 200)
+                            .padding(15)
+                            .background(.white)
+                            .cornerRadius(15)
+                            Spacer()
                         }
                     }
-                    .frame(width: 200)
-                    .padding(15)
-                    .background(.white)
-                    .cornerRadius(15)
                 }
                 .toolbar {
                     ToolbarItemGroup(placement: .principal) {

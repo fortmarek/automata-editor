@@ -366,6 +366,10 @@ struct EditorFeature: ReducerProtocol {
         
         switch action {
         case let .automatonStateRemoved(automatonStateID):
+            if state.automatonStatesDict[automatonStateID]?.isFinalState == true {
+                state.automatonStatesDict[automatonStateID]?.isFinalState = false
+                return .none
+            }
             state.automatonStatesDict.removeValue(forKey: automatonStateID)
             state.transitions.forEach { transition in
                 var transition = transition

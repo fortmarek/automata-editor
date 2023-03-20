@@ -132,6 +132,25 @@ struct TransitionDragControl: View {
     }
 }
 
+struct TransitionEraseButton: View {
+    let transitionRemoved: () -> Void
+    
+    var body: some View {
+        Button(action: { transitionRemoved() }) {
+            ZStack {
+                Circle()
+                    .fill(.red)
+                    .frame(width: 30)
+                Image(systemName: "minus")
+                    .foregroundColor(.white)
+                    .frame(width: 25)
+            }
+        }
+        .padding(15)
+        .background(Color.black.opacity(0.00001))
+    }
+}
+
 /// View that holds all the transitions.
 struct TransitionsView: View {
     let transitions: [AutomatonTransition]
@@ -149,7 +168,7 @@ struct TransitionsView: View {
             ZStack {
                 TransitionArrowView(transition: transition)
                 
-                if let scribblePosition = transition.scribblePosition {
+                if let scribblePosition = transition.scribblePosition, mode != .erasing {
                     TransitionModifierView(
                         transition: transition,
                         scribblePosition: scribblePosition,
@@ -159,31 +178,29 @@ struct TransitionsView: View {
                         transitionSymbolAdded: transitionSymbolAdded
                     )
                 }
-                if let currentFlexPoint = transition.currentFlexPoint,
-                   let flexPoint = transition.flexPoint {
+                
+                switch transition.type {
+                case let .cycle(point, center: center, radians: _):
+                    if mode == .erasing {
+                        TransitionEraseButton { transitionRemoved(transition.id) }
+                        .position(
+                            Vector(point, center)
+                                .rotated(by: .pi / 11)
+                                .point(distance: -55, other: point))
+                    }
+                case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
                     switch mode {
                     case .editing, .addingTransition, .addingCycle:
                         TransitionDragControl(
                             transition: transition,
                             flexPoint: flexPoint,
-                            currentFlexPoint: currentFlexPoint,
+                            currentFlexPoint: transition.currentFlexPoint ?? flexPoint,
                             transitionDragged: transitionDragged,
                             transitionFinishedDragging: transitionFinishedDragging
                         )
                     case .erasing:
-                        Button(action: { transitionRemoved(transition.id) }) {
-                            ZStack {
-                                Circle()
-                                    .fill(.red)
-                                    .frame(width: 30)
-                                Image(systemName: "minus")
-                                    .foregroundColor(.white)
-                                    .frame(width: 25)
-                            }
-                        }
-                        .padding(15)
-                        .background(Color.black.opacity(0.00001))
-                        .position(flexPoint)
+                        TransitionEraseButton { transitionRemoved(transition.id) }
+                            .position(flexPoint)
                     }
                 }
             }
