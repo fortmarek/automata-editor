@@ -8,9 +8,7 @@
 import Foundation
 
 extension IDFactory {
-    static func live() -> IDFactory {
-        .init(
-            generateID: { UUID().uuidString }
-        )
-    }
+    static let live = Self(
+        generateID: { UUID().uuidString }
+    )
 }

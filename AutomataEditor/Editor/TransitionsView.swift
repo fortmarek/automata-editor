@@ -1,5 +1,156 @@
 import SwiftUI
 
+struct TransitionArrowView: View {
+    let transition: AutomatonTransition
+    
+    var body: some View {
+        switch transition.type {
+        case let .regular(startPoint, tipPoint, flexPoint):
+            Path { path in
+                path.arrow(startPoint: startPoint, tipPoint: tipPoint, flexPoint: flexPoint)
+            }
+            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .foregroundColor(.white)
+        case let .cycle(point, center: center, radians: _):
+            Path { path in
+                path.cycle(point: point, center: center)
+            }
+            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .foregroundColor(.white)
+            EmptyView()
+        }
+    }
+}
+
+struct TransitionModifierView: View {
+    let transition: AutomatonTransition
+    let scribblePosition: CGPoint
+    let toggleEpsilonInclusion: ((AutomatonState.ID) -> Void)
+    let transitionSymbolRemoved: ((AutomatonTransition.ID, String) -> Void)
+    let transitionSymbolChanged: ((AutomatonTransition.ID, String) -> Void)
+    let transitionSymbolAdded: ((AutomatonTransition.ID) -> Void)
+    
+    var body: some View {
+        VStack(alignment: .center) {
+            FlexibleView(
+                data: transition.symbols,
+                spacing: 3,
+                alignment: .leading,
+                content: { symbol in
+                    Button(
+                        action: { transitionSymbolRemoved(transition.id, symbol) }
+                    ) {
+                        HStack {
+                            Text(symbol)
+                                .foregroundColor(Color.black)
+                            Image(systemName: "xmark")
+                                .foregroundColor(Color.black)
+                        }
+                        .padding(.all, 5)
+                        .background(Color.white)
+                        .cornerRadius(10)
+                    }
+                }
+            )
+            .frame(width: 200)
+            HStack {
+                Button(
+                    action: {
+                        toggleEpsilonInclusion(transition.id)
+                    }
+                ) {
+                    Text("ε")
+                        .foregroundColor(transition.includesEpsilon ? Color.white : Color.blue)
+                        .padding(7)
+                        .background(transition.includesEpsilon ? Color.blue : Color.clear)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.blue, lineWidth: 2)
+                        )
+                }
+                TextField(
+                    "",
+                    text: Binding(
+                        get: { transition.currentSymbol },
+                        set: { transitionSymbolChanged(transition.id, $0) }
+                    )
+                )
+                .border(Color.white, width: 2)
+                .frame(width: 50, height: 30)
+                Button(
+                    action: { transitionSymbolAdded(transition.id) }
+                ) {
+                    Image(systemName: "plus.circle.fill")
+                }
+            }
+        }
+        .position(scribblePosition)
+    }
+}
+
+struct TransitionDragControl: View {
+    let transition: AutomatonTransition
+    let flexPoint: CGPoint
+    let currentFlexPoint: CGPoint
+    let transitionDragged: ((AutomatonTransition.ID, CGPoint) -> Void)
+    let transitionFinishedDragging: ((AutomatonTransition.ID, CGPoint) -> Void)
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.blue)
+                .frame(width: 30)
+            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                .frame(width: 25)
+        }
+        .padding(15)
+        .background(Color.black.opacity(0.00001))
+        .position(currentFlexPoint)
+        .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    transitionDragged(
+                        transition.id,
+                        CGPoint(
+                            x: currentFlexPoint.x + value.translation.width,
+                            y: currentFlexPoint.y + value.translation.height
+                        )
+                    )
+                }
+                .onEnded { value in
+                    transitionFinishedDragging(
+                        transition.id,
+                        CGPoint(
+                            x: currentFlexPoint.x + value.translation.width,
+                            y: currentFlexPoint.y + value.translation.height
+                        )
+                    )
+                }
+        )
+    }
+}
+
+struct TransitionEraseButton: View {
+    let transitionRemoved: () -> Void
+    
+    var body: some View {
+        Button(action: { transitionRemoved() }) {
+            ZStack {
+                Circle()
+                    .fill(.red)
+                    .frame(width: 30)
+                Image(systemName: "minus")
+                    .foregroundColor(.white)
+                    .frame(width: 25)
+            }
+        }
+        .padding(15)
+        .background(Color.black.opacity(0.00001))
+    }
+}
+
 /// View that holds all the transitions.
 struct TransitionsView: View {
     let transitions: [AutomatonTransition]
@@ -7,103 +158,51 @@ struct TransitionsView: View {
     let transitionSymbolRemoved: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolChanged: ((AutomatonTransition.ID, String) -> Void)
     let transitionSymbolAdded: ((AutomatonTransition.ID) -> Void)
+    let transitionRemoved: ((AutomatonTransition.ID) -> Void)
     let transitionDragged: ((AutomatonTransition.ID, CGPoint) -> Void)
     let transitionFinishedDragging: ((AutomatonTransition.ID, CGPoint) -> Void)
-    
-    @State private var counter = 0
+    let mode: EditorFeature.Mode
     
     var body: some View {
         ForEach(transitions) { transition in
-            if let scribblePosition = transition.scribblePosition {
-                VStack(alignment: .center) {
-                    FlexibleView(
-                        data: transition.symbols,
-                        spacing: 3,
-                        alignment: .leading,
-                        content: { symbol in
-                            Button(
-                                action: { transitionSymbolRemoved(transition.id, symbol) }
-                            ) {
-                                HStack {
-                                    Text(symbol)
-                                        .foregroundColor(Color.black)
-                                    Image(systemName: "xmark")
-                                        .foregroundColor(Color.black)
-                                }
-                                .padding(.all, 5)
-                                .background(Color.white)
-                                .cornerRadius(10)
-                            }
-                        }
+            ZStack {
+                TransitionArrowView(transition: transition)
+                
+                if let scribblePosition = transition.scribblePosition, mode != .erasing {
+                    TransitionModifierView(
+                        transition: transition,
+                        scribblePosition: scribblePosition,
+                        toggleEpsilonInclusion: toggleEpsilonInclusion,
+                        transitionSymbolRemoved: transitionSymbolRemoved,
+                        transitionSymbolChanged: transitionSymbolChanged,
+                        transitionSymbolAdded: transitionSymbolAdded
                     )
-                    .frame(width: 200)
-                    HStack {
-                        Button(
-                            action: {
-                                toggleEpsilonInclusion(transition.id)
-                            }
-                        ) {
-                            Text("ε")
-                                .foregroundColor(transition.includesEpsilon ? Color.white : Color.blue)
-                                .padding(7)
-                                .background(transition.includesEpsilon ? Color.blue : Color.clear)
-                                .clipShape(Circle())
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.blue, lineWidth: 2)
-                                )
-                        }
-                        TextView(
-                            text: Binding(
-                                get: { transition.currentSymbol },
-                                set: { transitionSymbolChanged(transition.id, $0) }
-                            )
+                }
+                
+                switch transition.type {
+                case let .cycle(point, center: center, radians: _):
+                    if mode == .erasing {
+                        TransitionEraseButton { transitionRemoved(transition.id) }
+                        .position(
+                            Vector(point, center)
+                                .rotated(by: .pi / 11)
+                                .point(distance: -55, other: point))
+                    }
+                case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
+                    switch mode {
+                    case .editing, .addingTransition, .addingCycle:
+                        TransitionDragControl(
+                            transition: transition,
+                            flexPoint: flexPoint,
+                            currentFlexPoint: transition.currentFlexPoint ?? flexPoint,
+                            transitionDragged: transitionDragged,
+                            transitionFinishedDragging: transitionFinishedDragging
                         )
-                        .border(Color.white, width: 2)
-                        .frame(width: 50, height: 30)
-                        Button(
-                            action: { transitionSymbolAdded(transition.id) }
-                        ) {
-                            Image(systemName: "plus.circle.fill")
-                        }
+                    case .erasing:
+                        TransitionEraseButton { transitionRemoved(transition.id) }
+                            .position(flexPoint)
                     }
                 }
-                .position(scribblePosition)
-            }
-            if let currentFlexPoint = transition.currentFlexPoint,
-               let flexPoint = transition.flexPoint {
-                ZStack {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 30)
-                    Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                        .frame(width: 25)
-                }
-                .position(currentFlexPoint)
-                .offset(x: flexPoint.x - currentFlexPoint.x, y: flexPoint.y - currentFlexPoint.y)
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            counter += 1
-                            guard counter % 3 == 1 else { return }
-                            transitionDragged(
-                                transition.id,
-                                CGPoint(
-                                    x: currentFlexPoint.x + value.translation.width,
-                                    y: currentFlexPoint.y + value.translation.height
-                                )
-                            )
-                        }
-                        .onEnded { value in
-                            transitionFinishedDragging(
-                                transition.id,
-                                CGPoint(
-                                    x: currentFlexPoint.x + value.translation.width,
-                                    y: currentFlexPoint.y + value.translation.height
-                                )
-                            )
-                        }
-                )
             }
         }
     }

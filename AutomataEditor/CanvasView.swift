@@ -15,57 +15,91 @@ enum Tool: String, Codable {
     }
 }
 
-struct CanvasView: UIViewRepresentable {
-    @Binding var shouldDeleteLastStroke: Bool
-    @Binding var strokes: [Stroke]
+/// Forwards touches to PKCanvasView if the hit test returns the overlay view (and not e.g. one of the drag buttons)
+final class ContentView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard let view = super.hitTest(point, with: event) else { return nil }
+        if subviews.contains(view) {
+            return subviews.first(where: { $0 is PKCanvasView })?.hitTest(point, with: event)
+        }
+        return view
+    }
+}
+
+struct CanvasView<Content: View>: UIViewRepresentable {
     var tool: Tool
-    
-    func makeUIView(context: Context) -> PKCanvasView {
+    let strokesChanged: ([Stroke]) -> Void
+    @ViewBuilder var view: Content
+
+    func makeUIView(context: Context) -> UIScrollView {
+        let scrollView = UIScrollView()
+        scrollView.delegate = context.coordinator
+        scrollView.minimumZoomScale = max(UIScreen.main.bounds.width / 4000, UIScreen.main.bounds.height / 4000)
+        scrollView.maximumZoomScale = 2.5
+
+        let contentView = ContentView()
+        contentView.frame.size = CGSize(width: 4000, height: 4000)
+        scrollView.addSubview(contentView)
+
         let canvasView = PKCanvasView()
+        canvasView.frame.size = CGSize(width: 4000, height: 4000)
         canvasView.delegate = context.coordinator
         canvasView.drawingGestureRecognizer.delegate = context.coordinator
         canvasView.drawingPolicy = .default
         canvasView.tool = tool.pkTool
-        return canvasView
+        contentView.addSubview(canvasView)
+        context.coordinator.canvasView = canvasView
+
+        context.coordinator.viewForZooming = contentView
+        
+        context.coordinator.hostingController = UIHostingController(rootView: view)
+        
+        guard let overlayView = context.coordinator.hostingController?.view else { return scrollView }
+        overlayView.backgroundColor = .clear
+        overlayView.frame = canvasView.frame
+        contentView.addSubview(overlayView)
+
+        return scrollView
     }
-    
-    func makeCoordinator() -> CanvasCoordinator {
+
+    func makeCoordinator() -> CanvasCoordinator<Content> {
         CanvasCoordinator(self)
     }
 
-    func updateUIView(_ canvasView: PKCanvasView, context: Context) {
+    func updateUIView(_ scrollView: UIScrollView, context: Context) {
+        let canvasView = context.coordinator.canvasView!
         canvasView.tool = tool.pkTool
-        canvasView.drawing.strokes = strokes.map { $0.pkStroke() }
-        if shouldDeleteLastStroke {
-            if !canvasView.drawing.strokes.isEmpty {
-                canvasView.drawing.strokes.removeLast()
-            }
-            shouldDeleteLastStroke = false
-        }
+        
+        context.coordinator.hostingController?.rootView = view
     }
 }
 
 // MARK: - Coordinator
 
-final class CanvasCoordinator: NSObject {
-    private let parent: CanvasView
-    fileprivate var shouldUpdateStrokes = false
-    
-    init(_ parent: CanvasView) {
+final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestureRecognizerDelegate where Content: View {
+    private let parent: CanvasView<Content>
+    private var shouldUpdateStrokes = false
+    var viewForZooming: UIView?
+    var canvasView: PKCanvasView!
+    var hostingController: UIHostingController<Content>!
+
+    init(_ parent: CanvasView<Content>) {
         self.parent = parent
     }
-}
 
-extension CanvasCoordinator: PKCanvasViewDelegate {    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        viewForZooming
+    }
+    
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
         guard shouldUpdateStrokes else { return }
         shouldUpdateStrokes = false
-        parent.strokes = canvasView.drawing.strokes.map(Stroke.init)
+        parent.strokesChanged(canvasView.drawing.strokes.map(Stroke.init))
+        canvasView.drawing.strokes = []
     }
-}
-
-extension CanvasCoordinator: UIGestureRecognizerDelegate {
+    
     func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) {
         shouldUpdateStrokes = true
     }
 }
+

@@ -4,109 +4,123 @@ import PencilKit
 import ComposableArchitecture
 
 struct EditorView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @State var counter = 0
-    let set: (EditorState) -> Void
-    let store: EditorStore
+    let store: StoreOf<EditorFeature>
     
     var body: some View {
-        WithViewStore(store) { (viewStore: EditorViewStore) in
-            VStack {
+        WithViewStore(store) { viewStore in
+            GeometryReader { geometry in
                 ZStack {
-                    CanvasView(
-                        shouldDeleteLastStroke: viewStore.binding(
-                            get: \.shouldDeleteLastStroke,
-                            send: EditorAction.shouldDeleteLastStrokeChanged
-                        ),
-                        strokes: viewStore.binding(
-                            get: \.strokes,
-                            send: EditorAction.strokesChanged
-                        ),
-                        tool: viewStore.state.tool
-                    )
-                    TransitionsView(
-                        transitions: viewStore.transitions,
-                        toggleEpsilonInclusion: { viewStore.send(.toggleEpsilonInclusion($0)) },
-                        transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
-                        transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
-                        transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
-                        transitionDragged: {
-                            viewStore.send(.transitionFlexPointChanged($0, $1))
-                        },
-                        transitionFinishedDragging: {
-                            viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
+                    ZStack {
+                        CanvasView(
+                            tool: viewStore.state.tool,
+                            strokesChanged: { viewStore.send(.strokesChanged($0)) }
+                        ) {
+                            ZStack {
+                                TransitionsView(
+                                    transitions: viewStore.transitions,
+                                    toggleEpsilonInclusion: { viewStore.send(.toggleEpsilonInclusion($0)) },
+                                    transitionSymbolRemoved: { viewStore.send(.transitionSymbolRemoved($0, $1)) },
+                                    transitionSymbolChanged: { viewStore.send(.transitionSymbolChanged($0, $1)) },
+                                    transitionSymbolAdded: { viewStore.send(.transitionSymbolAdded($0)) },
+                                    transitionRemoved: { viewStore.send(.transitionRemoved($0)) },
+                                    transitionDragged: {
+                                        viewStore.send(.transitionFlexPointChanged($0, $1))
+                                    },
+                                    transitionFinishedDragging: {
+                                        viewStore.send(.transitionFlexPointFinishedDragging($0, $1))
+                                    },
+                                    mode: viewStore.mode
+                                )
+                                AutomatonStatesView(
+                                    automatonStates: viewStore.automatonStates,
+                                    stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
+                                    automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
+                                    automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) },
+                                    automatonStateRemoved: { viewStore.send(.automatonStateRemoved($0)) },
+                                    selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
+                                    selectedStateForCycle: { viewStore.send(.selectedStateForCycle($0)) },
+                                    currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
+                                    mode: viewStore.mode
+                                )
+                            }
                         }
-                    )
-                    AutomatonStatesView(
-                        automatonStates: viewStore.automatonStates,
-                        stateSymbolChanged: { viewStore.send(.stateSymbolChanged($0, $1)) },
-                        automatonStateDragged: { viewStore.send(.stateDragPointChanged($0, $1)) },
-                        automatonStateFinishedDragging: { viewStore.send(.stateDragPointFinishedDragging($0, $1)) }
-                    )
-                    Text("Output: \(viewStore.outputString)")
-                        .frame(width: 140)
-                        .position(x: 70, y: 50)
-                }
-                HStack(alignment: .center, spacing: 10) {
-                    Button(
-                        action: {
-                            viewStore.send(.clear)
-                        }
-                    ) {
-                        Text("Clear")
-                            .padding(5)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.blue, lineWidth: 2)
-                            )
+                        Text("Output: \(viewStore.outputString)")
+                            .frame(width: 140)
+                            .position(x: 70, y: 50)
                     }
                     VStack {
-                        Button(
-                            action: {
-                                viewStore.send(.simulateInput)
-                            }
-                        ) {
-                            Text("Simulate")
-                                .padding(5)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.blue, lineWidth: 2)
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            HStack {
+                                TextField(
+                                    "Automaton input",
+                                    text: viewStore.binding(
+                                        get: \.input,
+                                        send: { .inputChanged($0) }
+                                    )
                                 )
-                        }
-                        ZStack {
-                            TextView(
-                                text: viewStore.binding(
-                                    get: \.input,
-                                    send: { .inputChanged($0) }
-                                )
-                            )
-                            Button(
-                                action: {
-                                    viewStore.send(.removeLastInputSymbol)
+                                .foregroundColor(.black)
+                                Button(
+                                    action: {
+                                        viewStore.send(.removeLastInputSymbol)
+                                    }
+                                ) {
+                                    Image(systemName: "delete.left")
+                                        .foregroundColor(Color(UIColor.opaqueSeparator))
                                 }
-                            ) {
-                                Image(systemName: "delete.left")
                             }
-                            .position(x: 180, y: 15)
+                            .frame(width: 200)
+                            .padding(15)
+                            .background(.white)
+                            .cornerRadius(15)
+                            Spacer()
                         }
-                        .border(colorScheme == .dark ? Color.white : Color.black)
-                        .frame(width: 200, height: 30)
-                    }
-                    EditorButton(
-                        isSelected: viewStore.state.isPenSelected,
-                        image: Image(systemName: "pencil")
-                    ) {
-                        viewStore.send(.selectedPen)
-                    }
-                    EditorButton(
-                        isSelected: viewStore.state.isEraserSelected,
-                        image: Image(systemName: "pencil.slash")
-                    ) {
-                        viewStore.send(.selectedEraser)
                     }
                 }
+                .toolbar {
+                    ToolbarItemGroup(placement: .principal) {
+                        HStack {
+                            Button(action: { viewStore.send(.simulateInput) }) {
+                                Image(systemName: "play.fill")
+                            }
+                            Button(action: { viewStore.send(.selectedPen) }) {
+                                Image(systemName: viewStore.state.isPenSelected ? "pencil.circle.fill" : "pencil.circle")
+                            }
+                            Button(action: { viewStore.send(.selectedEraser) }) {
+                                Image(systemName: viewStore.state.isEraserSelected ? "eraser.fill" : "eraser")
+                            }
+                            Menu {
+                                Button(action: { viewStore.send(.addNewState) }) {
+                                    Label("State", systemImage: "circle")
+                                }
+                                Button(action: { viewStore.send(.startAddingTransition) }) {
+                                    Label("Transition", systemImage: "arrow.right")
+                                }
+                                Button(action: { viewStore.send(.startAddingCycle) }) {
+                                    Label("Cycle", systemImage: "arrow.counterclockwise")
+                                }
+                            } label: {
+                                Label("Add new element", systemImage: "plus.circle")
+                            }
+                        }
+                    }
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        switch viewStore.mode {
+                        case .editing, .erasing:
+                            Button(action: { viewStore.send(.clear) }) {
+                                Image(systemName: "trash")
+                            }
+                        case .addingTransition:
+                            Button("Cancel", action: { viewStore.send(.stopAddingTransition) })
+                        case .addingCycle:
+                            Button("Cancel", action: { viewStore.send(.stopAddingCycle) })
+                        }
+                    }
+                }
+                .onChange(of: viewStore.state, perform: { viewStore.send(.stateUpdated($0)) })
+                .onAppear { viewStore.send(.viewSizeChanged(geometry.size)) }
             }
-            .onChange(of: viewStore.state, perform: set)
         }
     }
 }

@@ -21,7 +21,7 @@ let project = Project(
             platform: .iOS,
             product: .app,
             bundleId: "marekfort.AutomataEditor",
-            deploymentTarget: .iOS(targetVersion: "14.0", devices: .ipad),
+            deploymentTarget: .iOS(targetVersion: "16.0", devices: .ipad),
             infoPlist: .file(path: "AutomataEditor/Info.plist"),
             sources: [
                 "AutomataEditor/**",
