@@ -94,6 +94,7 @@ struct EditorFeature: ReducerProtocol {
         var viewSize: CGSize = .zero
         var mode: Mode = .editing
         var currentlySelectedStateForTransition: AutomatonState.ID?
+        var currentVisibleScrollViewRect: CGRect?
     }
     
     
@@ -127,6 +128,7 @@ struct EditorFeature: ReducerProtocol {
         case stopAddingTransition
         case selectedStateForTransition(AutomatonState.ID)
         case selectedStateForCycle(AutomatonState.ID)
+        case currentVisibleScrollViewRectChanged(CGRect)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -365,6 +367,8 @@ struct EditorFeature: ReducerProtocol {
         }
         
         switch action {
+        case let .currentVisibleScrollViewRectChanged(currentVisibleScrollViewRect):
+            state.currentVisibleScrollViewRect = currentVisibleScrollViewRect
         case let .automatonStateRemoved(automatonStateID):
             if state.automatonStatesDict[automatonStateID]?.isFinalState == true {
                 state.automatonStatesDict[automatonStateID]?.isFinalState = false
@@ -469,9 +473,20 @@ struct EditorFeature: ReducerProtocol {
                 state.currentlySelectedStateForTransition = automatonStateID
             }
         case .addNewState:
+            let center: CGPoint
+            
+            if let currentVisibleScrollViewRect = state.currentVisibleScrollViewRect {
+                center = CGPoint(
+                    x: currentVisibleScrollViewRect.origin.x + currentVisibleScrollViewRect.width / 2,
+                    y: currentVisibleScrollViewRect.origin.y +  currentVisibleScrollViewRect.height * 0.5
+                )
+            } else {
+                center = CGPoint(x: state.viewSize.width / 2, y: state.viewSize.height * 0.4)
+            }
+            
             let automatonState = AutomatonState(
                 id: idFactory.generateID(),
-                center: CGPoint(x: state.viewSize.width / 2, y: state.viewSize.height * 0.4),
+                center: center,
                 radius: 100
             )
             state.automatonStatesDict[automatonState.id] = automatonState

@@ -29,6 +29,7 @@ final class ContentView: UIView {
 struct CanvasView<Content: View>: UIViewRepresentable {
     var tool: Tool
     let strokesChanged: ([Stroke]) -> Void
+    let currentVisibleScrollViewRectChanged: (CGRect) -> Void
     @ViewBuilder var view: Content
 
     func makeUIView(context: Context) -> UIScrollView {
@@ -89,6 +90,11 @@ final class CanvasCoordinator<Content>: NSObject, PKCanvasViewDelegate, UIGestur
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         viewForZooming
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let visibleRect = scrollView.convert(scrollView.bounds, to: viewForZooming)
+        parent.currentVisibleScrollViewRectChanged(visibleRect)
     }
     
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
