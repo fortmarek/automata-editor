@@ -76,7 +76,12 @@ struct TransitionModifierView: View {
                         set: { transitionSymbolChanged(transition.id, $0) }
                     )
                 )
-                .border(Color.white, width: 2)
+                .multilineTextAlignment(.center)
+                .padding(2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 5)
+                        .stroke(Color.white, lineWidth: 2)
+                )
                 .frame(width: 50, height: 30)
                 Button(
                     action: { transitionSymbolAdded(transition.id) }
