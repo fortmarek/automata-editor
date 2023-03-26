@@ -55,6 +55,7 @@ struct AutomatonStatesView: View {
     let automatonStateRemoved: ((AutomatonState.ID) -> Void)
     let selectedStateForTransition: ((AutomatonState.ID) -> Void)
     let selectedStateForCycle: ((AutomatonState.ID) -> Void)
+    let selectedFinalState: ((AutomatonState.ID) -> Void)
     let currentlySelectedStateForTransition: AutomatonState.ID?
     let mode: EditorFeature.Mode
     
@@ -105,6 +106,17 @@ struct AutomatonStatesView: View {
                 .background(Color.black.opacity(0.00001))
                 .frame(width: 30)
                 .position(automatonState.dragPoint)
+            case .addingFinalState:
+                if !automatonState.isFinalState {
+                    Button(action: { selectedFinalState(automatonState.id) }) {
+                        Circle()
+                            .strokeBorder(.blue, lineWidth: 2)
+                    }
+                    .frame(width: 30)
+                    .padding(15)
+                    .background(Color.black.opacity(0.00001))
+                    .position(automatonState.dragPoint)
+                }
             case .erasing:
                 Button(action: { automatonStateRemoved(automatonState.id) }) {
                     ZStack {

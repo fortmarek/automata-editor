@@ -53,7 +53,7 @@ extension EditorFeature.State {
 
 struct EditorFeature: ReducerProtocol {
     enum Mode: Equatable {
-        case editing, addingTransition, erasing, addingCycle
+        case editing, addingTransition, erasing, addingCycle, addingFinalState
     }
     
     struct State: Equatable {
@@ -126,8 +126,11 @@ struct EditorFeature: ReducerProtocol {
         case startAddingCycle
         case stopAddingCycle
         case stopAddingTransition
+        case startAddingFinalState
+        case stopAddingFinalState
         case selectedStateForTransition(AutomatonState.ID)
         case selectedStateForCycle(AutomatonState.ID)
+        case selectedFinalState(AutomatonState.ID)
         case currentVisibleScrollViewRectChanged(CGRect)
     }
     
@@ -399,9 +402,14 @@ struct EditorFeature: ReducerProtocol {
             state.mode = .addingTransition
         case .startAddingCycle:
             state.mode = .addingCycle
-        case .stopAddingCycle, .stopAddingTransition:
+        case .stopAddingCycle, .stopAddingTransition, .stopAddingFinalState:
             state.mode = state.isPenSelected ? .editing : .erasing
             state.currentlySelectedStateForTransition = nil
+        case .startAddingFinalState:
+            state.mode = .addingFinalState
+        case let .selectedFinalState(automatonStateID):
+            state.automatonStatesDict[automatonStateID]?.isFinalState = true
+            state.mode = .editing
         case let .selectedStateForCycle(automatonStateID):
             guard let selectedState = state.automatonStatesDict[automatonStateID] else { return .none }
 

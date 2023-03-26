@@ -40,6 +40,7 @@ struct EditorView: View {
                                     automatonStateRemoved: { viewStore.send(.automatonStateRemoved($0)) },
                                     selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
                                     selectedStateForCycle: { viewStore.send(.selectedStateForCycle($0)) },
+                                    selectedFinalState: { viewStore.send(.selectedFinalState($0)) },
                                     currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
                                     mode: viewStore.mode
                                 )
@@ -95,11 +96,15 @@ struct EditorView: View {
                                 Button(action: { viewStore.send(.addNewState) }) {
                                     Label("State", systemImage: "circle")
                                 }
+                                
                                 Button(action: { viewStore.send(.startAddingTransition) }) {
                                     Label("Transition", systemImage: "arrow.right")
                                 }
                                 Button(action: { viewStore.send(.startAddingCycle) }) {
                                     Label("Cycle", systemImage: "arrow.counterclockwise")
+                                }
+                                Button(action: { viewStore.send(.startAddingFinalState) }) {
+                                    Label("Final state", systemImage: "circle.circle")
                                 }
                             } label: {
                                 Label("Add new element", systemImage: "plus.circle")
@@ -116,6 +121,8 @@ struct EditorView: View {
                             Button("Cancel", action: { viewStore.send(.stopAddingTransition) })
                         case .addingCycle:
                             Button("Cancel", action: { viewStore.send(.stopAddingCycle) })
+                        case .addingFinalState:
+                            Button("Cancel", action: { viewStore.send(.stopAddingFinalState) })
                         }
                     }
                 }
