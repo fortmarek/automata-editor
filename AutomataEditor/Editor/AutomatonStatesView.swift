@@ -56,8 +56,10 @@ struct AutomatonStatesView: View {
     let selectedStateForTransition: ((AutomatonState.ID) -> Void)
     let selectedStateForCycle: ((AutomatonState.ID) -> Void)
     let selectedFinalState: ((AutomatonState.ID) -> Void)
+    let selectedInitialState: ((AutomatonState.ID) -> Void)
     let currentlySelectedStateForTransition: AutomatonState.ID?
     let mode: EditorFeature.Mode
+    let initialStates: [AutomatonState]
     
     var body: some View {
         ForEach(automatonStates) { automatonState in
@@ -109,6 +111,17 @@ struct AutomatonStatesView: View {
             case .addingFinalState:
                 if !automatonState.isFinalState {
                     Button(action: { selectedFinalState(automatonState.id) }) {
+                        Circle()
+                            .strokeBorder(.blue, lineWidth: 2)
+                    }
+                    .frame(width: 30)
+                    .padding(15)
+                    .background(Color.black.opacity(0.00001))
+                    .position(automatonState.dragPoint)
+                }
+            case .addingInitialState:
+                if !initialStates.map(\.id).contains(automatonState.id) {
+                    Button(action: { selectedInitialState(automatonState.id) }) {
                         Circle()
                             .strokeBorder(.blue, lineWidth: 2)
                     }

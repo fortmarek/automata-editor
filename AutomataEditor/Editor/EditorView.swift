@@ -41,8 +41,10 @@ struct EditorView: View {
                                     selectedStateForTransition: { viewStore.send(.selectedStateForTransition($0)) },
                                     selectedStateForCycle: { viewStore.send(.selectedStateForCycle($0)) },
                                     selectedFinalState: { viewStore.send(.selectedFinalState($0)) },
+                                    selectedInitialState: { viewStore.send(.selectedInitialState($0)) },
                                     currentlySelectedStateForTransition: viewStore.currentlySelectedStateForTransition,
-                                    mode: viewStore.mode
+                                    mode: viewStore.mode,
+                                    initialStates: viewStore.initialStates
                                 )
                             }
                         }
@@ -106,6 +108,9 @@ struct EditorView: View {
                                 Button(action: { viewStore.send(.startAddingFinalState) }) {
                                     Label("Final state", systemImage: "circle.circle")
                                 }
+                                Button(action: { viewStore.send(.startAddingInitialState) }) {
+                                    Label("Initial state", systemImage: "arrow.right.to.line")
+                                }
                             } label: {
                                 Label("Add new element", systemImage: "plus.circle")
                             }
@@ -123,6 +128,8 @@ struct EditorView: View {
                             Button("Cancel", action: { viewStore.send(.stopAddingCycle) })
                         case .addingFinalState:
                             Button("Cancel", action: { viewStore.send(.stopAddingFinalState) })
+                        case .addingInitialState:
+                            Button("Cancel", action: { viewStore.send(.stopAddingInitialState) })
                         }
                     }
                 }

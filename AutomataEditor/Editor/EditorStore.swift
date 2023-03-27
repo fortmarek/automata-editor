@@ -36,7 +36,7 @@ extension EditorFeature.State {
         transitions.filter { $0.startState == nil }
     }
     
-    fileprivate var initialStates: [AutomatonState] {
+    var initialStates: [AutomatonState] {
         transitionsWithoutStartState
             .compactMap(\.endState)
             .compactMap { stateID in
@@ -53,7 +53,7 @@ extension EditorFeature.State {
 
 struct EditorFeature: ReducerProtocol {
     enum Mode: Equatable {
-        case editing, addingTransition, erasing, addingCycle, addingFinalState
+        case editing, addingTransition, erasing, addingCycle, addingFinalState, addingInitialState
     }
     
     struct State: Equatable {
@@ -128,6 +128,9 @@ struct EditorFeature: ReducerProtocol {
         case stopAddingTransition
         case startAddingFinalState
         case stopAddingFinalState
+        case startAddingInitialState
+        case stopAddingInitialState
+        case selectedInitialState(AutomatonState.ID)
         case selectedStateForTransition(AutomatonState.ID)
         case selectedStateForCycle(AutomatonState.ID)
         case selectedFinalState(AutomatonState.ID)
@@ -400,9 +403,11 @@ struct EditorFeature: ReducerProtocol {
             state.transitionsDict.removeValue(forKey: transitionID)
         case .startAddingTransition:
             state.mode = .addingTransition
+        case .startAddingInitialState:
+            state.mode = .addingInitialState
         case .startAddingCycle:
             state.mode = .addingCycle
-        case .stopAddingCycle, .stopAddingTransition, .stopAddingFinalState:
+        case .stopAddingCycle, .stopAddingTransition, .stopAddingFinalState, .stopAddingInitialState:
             state.mode = state.isPenSelected ? .editing : .erasing
             state.currentlySelectedStateForTransition = nil
         case .startAddingFinalState:
@@ -425,6 +430,34 @@ struct EditorFeature: ReducerProtocol {
             )
             state.transitionsDict[transition.id] = transition
             state.currentlySelectedStateForTransition = nil
+            state.mode = .editing
+        case let .selectedInitialState(automatonStateID):
+            guard let initialState = state.automatonStatesDict[automatonStateID] else { return .none }
+            let tipPoint = CGPoint(
+                x: initialState.center.x - initialState.radius,
+                y: initialState.center.y
+            )
+            let flexPoint = CGPoint(
+                x: tipPoint.x - 50,
+                y: tipPoint.y
+            )
+            let startPoint = CGPoint(
+                x: tipPoint.x - 100,
+                y: tipPoint.y
+            )
+                
+            let transition = AutomatonTransition(
+                id: idFactory.generateID(),
+                startState: nil,
+                endState: automatonStateID,
+                type: .regular(
+                    startPoint: startPoint,
+                    tipPoint: tipPoint,
+                    flexPoint: flexPoint
+                ),
+                currentFlexPoint: flexPoint
+            )
+            state.transitionsDict[transition.id] = transition
             state.mode = .editing
         case let .selectedStateForTransition(automatonStateID):
             if automatonStateID == state.currentlySelectedStateForTransition {

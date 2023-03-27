@@ -195,7 +195,7 @@ struct TransitionsView: View {
                     }
                 case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
                     switch mode {
-                    case .editing, .addingTransition, .addingCycle, .addingFinalState:
+                    case .editing, .addingTransition, .addingCycle, .addingFinalState, .addingInitialState:
                         TransitionDragControl(
                             transition: transition,
                             flexPoint: flexPoint,
