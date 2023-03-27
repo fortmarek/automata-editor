@@ -52,89 +52,23 @@ struct EditorView: View {
                             .frame(width: 140)
                             .position(x: 70, y: 50)
                     }
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            HStack {
-                                TextField(
-                                    "Automaton input",
-                                    text: viewStore.binding(
-                                        get: \.input,
-                                        send: { .inputChanged($0) }
-                                    )
-                                )
-                                .foregroundColor(.black)
-                                Button(
-                                    action: {
-                                        viewStore.send(.removeLastInputSymbol)
-                                    }
-                                ) {
-                                    Image(systemName: "delete.left")
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                            .frame(width: 200)
-                            .padding(15)
-                            .background(Color(UIColor.darkGray))
-                            .cornerRadius(15)
-                            Spacer()
-                        }
-                    }
+                    AutomatonInput(viewStore: viewStore)
                 }
                 .toolbar {
-                    ToolbarItemGroup(placement: .principal) {
-                        HStack {
-                            Button(action: { viewStore.send(.simulateInput) }) {
-                                Image(systemName: "play.fill")
-                            }
-                            Button(action: { viewStore.send(.selectedPen) }) {
-                                Image(systemName: viewStore.state.isPenSelected ? "pencil.circle.fill" : "pencil.circle")
-                            }
-                            Button(action: { viewStore.send(.selectedEraser) }) {
-                                Image(systemName: viewStore.state.isEraserSelected ? "eraser.fill" : "eraser")
-                            }
-                            Menu {
-                                Button(action: { viewStore.send(.addNewState) }) {
-                                    Label("State", systemImage: "circle")
-                                }
-                                
-                                Button(action: { viewStore.send(.startAddingTransition) }) {
-                                    Label("Transition", systemImage: "arrow.right")
-                                }
-                                Button(action: { viewStore.send(.startAddingCycle) }) {
-                                    Label("Cycle", systemImage: "arrow.counterclockwise")
-                                }
-                                Button(action: { viewStore.send(.startAddingFinalState) }) {
-                                    Label("Final state", systemImage: "circle.circle")
-                                }
-                                Button(action: { viewStore.send(.startAddingInitialState) }) {
-                                    Label("Initial state", systemImage: "arrow.right.to.line")
-                                }
-                            } label: {
-                                Label("Add new element", systemImage: "plus.circle")
-                            }
-                        }
-                    }
-                    ToolbarItemGroup(placement: .primaryAction) {
-                        switch viewStore.mode {
-                        case .editing, .erasing:
-                            Button(action: { viewStore.send(.clear) }) {
-                                Image(systemName: "trash")
-                            }
-                        case .addingTransition:
-                            Button("Cancel", action: { viewStore.send(.stopAddingTransition) })
-                        case .addingCycle:
-                            Button("Cancel", action: { viewStore.send(.stopAddingCycle) })
-                        case .addingFinalState:
-                            Button("Cancel", action: { viewStore.send(.stopAddingFinalState) })
-                        case .addingInitialState:
-                            Button("Cancel", action: { viewStore.send(.stopAddingInitialState) })
-                        }
-                    }
+                   EditorToolbar(viewStore: viewStore)
                 }
                 .onChange(of: viewStore.state, perform: { viewStore.send(.stateUpdated($0)) })
                 .onAppear { viewStore.send(.viewSizeChanged(geometry.size)) }
+                .alert(
+                    "Clear automaton",
+                    isPresented: viewStore.binding(get: \.isClearAlertPresented, send: { _ in .clearAlertDismissed })
+                ) {
+                    Button("Delete", role: .destructive) {
+                        viewStore.send(.clear)
+                    }
+                } message: {
+                    Text("Do you really want to clear this automaton? This can't be undone.")
+                }
             }
         }
     }

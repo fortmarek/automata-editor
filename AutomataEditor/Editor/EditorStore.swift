@@ -95,6 +95,7 @@ struct EditorFeature: ReducerProtocol {
         var mode: Mode = .editing
         var currentlySelectedStateForTransition: AutomatonState.ID?
         var currentVisibleScrollViewRect: CGRect?
+        var isClearAlertPresented = false
     }
     
     
@@ -135,6 +136,8 @@ struct EditorFeature: ReducerProtocol {
         case selectedStateForCycle(AutomatonState.ID)
         case selectedFinalState(AutomatonState.ID)
         case currentVisibleScrollViewRectChanged(CGRect)
+        case clearButtonPressed
+        case clearAlertDismissed
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -550,6 +553,10 @@ struct EditorFeature: ReducerProtocol {
             state.outputString = ""
             state.automatonStatesDict = [:]
             state.transitionsDict = [:]
+        case .clearButtonPressed:
+            state.isClearAlertPresented = true
+        case .clearAlertDismissed:
+            state.isClearAlertPresented = false
         case let .inputChanged(input):
             state.input = input
                 .replacingOccurrences(of: " ", with: "")
