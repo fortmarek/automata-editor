@@ -42,12 +42,12 @@ struct TransitionModifierView: View {
                     ) {
                         HStack {
                             Text(symbol)
-                                .foregroundColor(Color.black)
+                                .foregroundColor(.white)
                             Image(systemName: "xmark")
-                                .foregroundColor(Color.black)
+                                .foregroundColor(.white)
                         }
                         .padding(.all, 5)
-                        .background(Color.white)
+                        .background(Color(UIColor.darkGray))
                         .cornerRadius(10)
                     }
                 }

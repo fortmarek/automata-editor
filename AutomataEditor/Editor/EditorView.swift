@@ -69,12 +69,12 @@ struct EditorView: View {
                                     }
                                 ) {
                                     Image(systemName: "delete.left")
-                                        .foregroundColor(Color(UIColor.opaqueSeparator))
+                                        .foregroundColor(.gray)
                                 }
                             }
                             .frame(width: 200)
                             .padding(15)
-                            .background(.white)
+                            .background(Color(UIColor.darkGray))
                             .cornerRadius(15)
                             Spacer()
                         }

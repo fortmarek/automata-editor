@@ -594,7 +594,9 @@ struct EditorFeature: ReducerProtocol {
                 .uppercased()
         case let .transitionSymbolAdded(transitionID):
             guard
-                let transition = state.transitionsDict[transitionID]
+                let transition = state.transitionsDict[transitionID],
+                !transition.currentSymbol.isEmpty,
+                !transition.symbols.contains(transition.currentSymbol)
             else { return .none }
             state.transitionsDict[transitionID]?.symbols.append(
                 transition.currentSymbol
