@@ -6,7 +6,6 @@ struct AutomatonInput: View {
     
     var body: some View {
         VStack {
-            Spacer()
             HStack {
                 Spacer()
                 HStack {
@@ -17,22 +16,23 @@ struct AutomatonInput: View {
                             send: { .inputChanged($0) }
                         )
                     )
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
                     Button(
                         action: {
                             viewStore.send(.removeLastInputSymbol)
                         }
                     ) {
                         Image(systemName: "delete.left")
-                            .foregroundColor(.gray)
                     }
                 }
                 .frame(width: 200)
                 .padding(15)
-                .background(Color(UIColor.darkGray))
-                .cornerRadius(15)
-                Spacer()
+                .background(Color(UIColor.secondarySystemBackground))
+                .cornerRadius(28)
+                .shadow(color: Color(UIColor.black.withAlphaComponent(0.08)), radius: 8, x: 0, y: 4)
+                .padding([.top, .trailing], 10)
             }
+            Spacer()
         }
     }
 }

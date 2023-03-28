@@ -20,7 +20,6 @@ struct EditorToolbar: ToolbarContent {
                     Button(action: { viewStore.send(.addNewState) }) {
                         Label("State", systemImage: "circle")
                     }
-                    
                     Button(action: { viewStore.send(.startAddingTransition) }) {
                         Label("Transition", systemImage: "arrow.right")
                     }
