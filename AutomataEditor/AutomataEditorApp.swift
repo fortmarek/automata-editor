@@ -3,7 +3,18 @@ import ComposableArchitecture
 import Foundation
 
 @main
-struct AutomataEditorApp: App {    
+struct AutomataEditorApp: App {
+    init() {
+        let coloredAppearance = UINavigationBarAppearance()
+
+        coloredAppearance.configureWithOpaqueBackground()
+        coloredAppearance.backgroundColor = .black
+
+        UINavigationBar.appearance().standardAppearance = coloredAppearance
+        UINavigationBar.appearance().compactAppearance = coloredAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = coloredAppearance
+    }
+    
     var body: some Scene {
         WindowGroup {
             OverviewView(
@@ -13,27 +24,5 @@ struct AutomataEditorApp: App {
                 )
             )
         }
-        
-//        DocumentGroup(newDocument: EditorState()) { file -> EditorView in
-//            let store = documentStore.stores[file.document.id] ?? EditorStore(
-//                initialState: file.document,
-//                reducer: editorReducer,
-//                environment: EditorEnvironment(
-//                    automataClassifierService: .live(),
-//                    automataLibraryService: .live(),
-//                    shapeService: .live(),
-//                    idFactory: .live(),
-//                    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
-//                )
-//            )
-//            documentStore.stores[file.document.id] = store
-//
-//            return EditorView(
-//                set: {
-//                    file.document = $0
-//                },
-//                store: store
-//            )
-//        }
     }
 }

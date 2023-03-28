@@ -63,7 +63,7 @@ struct EditorFeature: ReducerProtocol {
             tool: Tool = .pen,
             isEraserSelected: Bool = false,
             isPenSelected: Bool = true,
-            outputString: String = "",
+            automatonOutput: AutomatonOutput = .success,
             input: String = "",
             automatonStatesDict: [AutomatonState.ID : AutomatonState] = [:],
             transitionsDict: [AutomatonTransition.ID : AutomatonTransition] = [:],
@@ -74,7 +74,7 @@ struct EditorFeature: ReducerProtocol {
             self.tool = tool
             self.isEraserSelected = isEraserSelected
             self.isPenSelected = isPenSelected
-            self.outputString = outputString
+            self.automatonOutput = automatonOutput
             self.input = input
             self.automatonStatesDict = automatonStatesDict
             self.transitionsDict = transitionsDict
@@ -86,7 +86,6 @@ struct EditorFeature: ReducerProtocol {
         var tool: Tool = .pen
         var isEraserSelected: Bool = false
         var isPenSelected: Bool = true
-        var outputString: String = ""
         var input: String = ""
         var automatonStatesDict: [AutomatonState.ID: AutomatonState] = [:]
         var transitionsDict: [AutomatonTransition.ID: AutomatonTransition] = [:]
@@ -96,6 +95,13 @@ struct EditorFeature: ReducerProtocol {
         var currentlySelectedStateForTransition: AutomatonState.ID?
         var currentVisibleScrollViewRect: CGRect?
         var isClearAlertPresented = false
+        var automatonOutput: AutomatonOutput = .success
+        var isAutomatonOutputVisible = false
+    }
+    
+    enum AutomatonOutput: Equatable {
+        case success
+        case failure(String?)
     }
     
     
@@ -138,12 +144,15 @@ struct EditorFeature: ReducerProtocol {
         case currentVisibleScrollViewRectChanged(CGRect)
         case clearButtonPressed
         case clearAlertDismissed
+        case dismissToast
     }
     
     @Dependency(\.idFactory) var idFactory
     @Dependency(\.automataLibraryService) var automataLibraryService
     @Dependency(\.automataClassifierService) var automataClassifierService
     @Dependency(\.shapeService) var shapeService
+    @Dependency(\.continuousClock) var clock
+    private enum TimerID {}
 
     struct ClosestStateResult {
         let state: AutomatonState
@@ -375,6 +384,16 @@ struct EditorFeature: ReducerProtocol {
             state.transitionsDict[transition.id] = transition
         }
         
+        func showAutomatonOutput(_ automatonOutput: AutomatonOutput) -> EffectTask<Action> {
+            state.automatonOutput = automatonOutput
+            state.isAutomatonOutputVisible = true
+            return .run { send in
+                try await clock.sleep(for: .seconds(5))
+                return await send(.dismissToast, animation: .spring())
+            }
+            .cancellable(id: TimerID.self, cancelInFlight: true)
+        }
+        
         switch action {
         case let .currentVisibleScrollViewRectChanged(currentVisibleScrollViewRect):
             state.currentVisibleScrollViewRect = currentVisibleScrollViewRect
@@ -550,7 +569,7 @@ struct EditorFeature: ReducerProtocol {
             state.isPenSelected = true
         case .clear:
             state.input = ""
-            state.outputString = ""
+            state.isAutomatonOutputVisible = false
             state.automatonStatesDict = [:]
             state.transitionsDict = [:]
         case .clearButtonPressed:
@@ -569,20 +588,17 @@ struct EditorFeature: ReducerProtocol {
             guard
                 let initialState = state.initialStates.first
             else {
-                state.outputString = "❌ No initial state"
-                return .none
+                return showAutomatonOutput(.failure("No initial state"))
             }
             guard state.initialStates.count == 1 else {
-                state.outputString = "❌ Multiple initial states"
-                return .none
+                return showAutomatonOutput(.failure("Multiple initial states"))
             }
             guard
                 state.automatonStates
                     .map(\.name)
                     .allSatisfy ({ !$0.isEmpty })
             else {
-                state.outputString = "❌ Unnamed states"
-                return .none
+                return showAutomatonOutput(.failure("Unnamed states"))
             }
             let input = Array(state.input).map(String.init)
             // Create FA's alphabet based on symbols present in transitions
@@ -597,8 +613,7 @@ struct EditorFeature: ReducerProtocol {
             guard
                 input.allSatisfy(alphabetSymbols.contains)
             else {
-                state.outputString = "❌ Input symbols are not accepted by the automaton"
-                return .none
+                return showAutomatonOutput(.failure("Input symbols are not accepted by the automaton"))
             }
             let automatonStates = state.automatonStates
             let finalStates = state.finalStates
@@ -618,10 +633,13 @@ struct EditorFeature: ReducerProtocol {
                     return Action.simulateInputResult(.failure(.failed))
                 }
             }
+            .animation(.spring())
+        case .dismissToast:
+            state.isAutomatonOutputVisible = false
         case .simulateInputResult(.success):
-            state.outputString = "✅"
+            return showAutomatonOutput(.success)
         case .simulateInputResult(.failure):
-            state.outputString = "❌"
+            return showAutomatonOutput(.failure(nil))
         case let .stateSymbolChanged(automatonStateID, symbol):
             state.automatonStatesDict[automatonStateID]?.name = symbol
                 .replacingOccurrences(of: " ", with: "")
