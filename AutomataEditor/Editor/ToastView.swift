@@ -36,5 +36,6 @@ struct ToastView: View {
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(28)
         .shadow(color: Color(UIColor.black.withAlphaComponent(0.08)), radius: 8, x: 0, y: 4)
+        .padding(.top, 20)
     }
 }

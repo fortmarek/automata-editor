@@ -387,6 +387,7 @@ struct EditorFeature: ReducerProtocol {
         func showAutomatonOutput(_ automatonOutput: AutomatonOutput) -> EffectTask<Action> {
             state.automatonOutput = automatonOutput
             state.isAutomatonOutputVisible = true
+
             return .run { send in
                 try await clock.sleep(for: .seconds(5))
                 return await send(.dismissToast, animation: .spring())
@@ -633,7 +634,6 @@ struct EditorFeature: ReducerProtocol {
                     return Action.simulateInputResult(.failure(.failed))
                 }
             }
-            .animation(.spring())
         case .dismissToast:
             state.isAutomatonOutputVisible = false
         case .simulateInputResult(.success):

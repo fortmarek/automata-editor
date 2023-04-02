@@ -51,25 +51,18 @@ struct EditorView: View {
                         Button() {
                             viewStore.send(.dismissToast)
                         } label: {
-                            switch viewStore.automatonOutput {
-                            case .success:
+                            if viewStore.isAutomatonOutputVisible {
                                 ToastView(
-                                    image: "checkmark.circle",
-                                    imageColor: .green,
-                                    title: "Input accepted",
-                                    subtitle: nil
+                                    image: viewStore.automatonOutput.image,
+                                    imageColor: viewStore.automatonOutput.imageColor,
+                                    title: viewStore.automatonOutput.title,
+                                    subtitle: viewStore.automatonOutput.subtitle
                                 )
-                                .offset(y: viewStore.isAutomatonOutputVisible ? 20 : -90)
-                            case let .failure(reason):
-                                ToastView(
-                                    image: "xmark.circle",
-                                    imageColor: .red,
-                                    title: "Input rejected",
-                                    subtitle: reason
-                                )
-                                .offset(y: viewStore.isAutomatonOutputVisible ? 20 : -90)
+                                .transition(AnyTransition.move(edge: .top))
+                                .animation(.spring(), value: viewStore.automatonOutput.title)
                             }
                         }
+                        .animation(.spring(), value: viewStore.isAutomatonOutputVisible)
                         Spacer()
                     }
                     AutomatonInput(viewStore: viewStore)
@@ -90,6 +83,44 @@ struct EditorView: View {
                     Text("Do you really want to clear this automaton? This can't be undone.")
                 }
             }
+        }
+    }
+}
+
+private extension EditorFeature.AutomatonOutput {
+    var image: String {
+        switch self {
+        case .success:
+            return "checkmark.circle"
+        case .failure:
+            return "xmark.circle"
+        }
+    }
+    
+    var imageColor: Color {
+        switch self {
+        case .success:
+            return .green
+        case .failure:
+            return .red
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .success:
+            return "Input accepted"
+        case .failure:
+            return "Input rejected"
+        }
+    }
+    
+    var subtitle: String? {
+        switch self {
+        case .success:
+            return nil
+        case let .failure(reason):
+            return reason
         }
     }
 }

@@ -7,7 +7,7 @@ struct EditorToolbar: ToolbarContent {
     var body: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
             HStack {
-                Button(action: { withAnimation(.spring()) { _ = viewStore.send(.simulateInput) } }) {
+                Button(action: { viewStore.send(.simulateInput) }) {
                     Image(systemName: "play.fill")
                 }
                 Button(action: { viewStore.send(.selectedPen) }) {
