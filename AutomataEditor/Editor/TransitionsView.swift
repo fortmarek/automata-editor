@@ -32,27 +32,38 @@ struct TransitionModifierView: View {
     
     var body: some View {
         VStack(alignment: .center) {
-            FlexibleView(
-                data: transition.symbols,
-                spacing: 3,
-                alignment: .leading,
-                content: { symbol in
-                    Button(
-                        action: { transitionSymbolRemoved(transition.id, symbol) }
-                    ) {
-                        HStack {
-                            Text(symbol)
-                                .foregroundColor(.white)
-                            Image(systemName: "xmark")
-                                .foregroundColor(.white)
-                        }
-                        .padding(.all, 5)
-                        .background(Color(UIColor.darkGray))
-                        .cornerRadius(10)
-                    }
+            if transition.symbols.isEmpty {
+                HStack {
+                    Text("a")
+                        .foregroundColor(.white)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.white)
                 }
-            )
-            .frame(width: 200)
+                .padding(.all, 5)
+                .opacity(0)
+            } else {
+                FlexibleView(
+                    data: transition.symbols,
+                    spacing: 3,
+                    alignment: .leading,
+                    content: { symbol in
+                        Button(
+                            action: { transitionSymbolRemoved(transition.id, symbol) }
+                        ) {
+                            HStack {
+                                Text(symbol)
+                                    .foregroundColor(.white)
+                                Image(systemName: "xmark")
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.all, 5)
+                            .background(Color(UIColor.darkGray))
+                            .cornerRadius(10)
+                        }
+                    }
+                )
+                .frame(width: 200)
+            }
             HStack {
                 Button(
                     action: {

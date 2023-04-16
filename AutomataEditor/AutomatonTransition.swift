@@ -73,9 +73,9 @@ struct AutomatonTransition: Equatable, Identifiable, Codable {
         switch type {
         case let .cycle(point, center: center, radians: _):
             let vector = Vector(center, point)
-            return vector.rotated(by: .pi / 11).point(distance: 80, other: point)
+            return vector.rotated(by: .pi / 13).point(distance: 95, other: point)
         case let .regular(startPoint: _, tipPoint: _, flexPoint: flexPoint):
-            return CGPoint(x: flexPoint.x, y: flexPoint.y - 50)
+            return CGPoint(x: flexPoint.x, y: flexPoint.y - 70)
         }
     }
     
