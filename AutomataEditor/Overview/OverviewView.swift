@@ -62,10 +62,7 @@ struct OverviewView: View {
                             .bold()
                         }
                     } else {
-                        ToolbarItemGroup {
-                            Button("Select") {
-                                viewStore.send(.selectFiles)
-                            }
+                        ToolbarItemGroup(placement: .navigationBarLeading) {
                             Button("Show Files") {
                                 viewStore.send(.isDocumentSheetPresentedChanged(true))
                             }
@@ -78,6 +75,22 @@ struct OverviewView: View {
                                 // Things to do when the screen is dismissed
                             } content: {
                                 DocumentPicker(selectedDocument: { viewStore.send(.selectedAutomaton($0)) } )
+                            }
+                        }
+                        ToolbarItemGroup {
+                            Button("Help") {
+                                viewStore.send(.isHelpPresentedChanged(true))
+                            }
+                            .sheet(
+                                isPresented: viewStore.binding(
+                                    get: \.isHelpPresented,
+                                    send: { .isHelpPresentedChanged($0) }
+                                )
+                            ) {
+                                HelpView()
+                            }
+                            Button("Select") {
+                                viewStore.send(.selectFiles)
                             }
                         }
                     }

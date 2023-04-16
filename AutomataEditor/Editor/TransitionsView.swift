@@ -76,6 +76,8 @@ struct TransitionModifierView: View {
                         set: { transitionSymbolChanged(transition.id, $0) }
                     )
                 )
+                .textInputAutocapitalization(TextInputAutocapitalization.never)
+                .autocorrectionDisabled(true)
                 .multilineTextAlignment(.center)
                 .padding(2)
                 .overlay(

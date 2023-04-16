@@ -581,7 +581,6 @@ struct EditorFeature: ReducerProtocol {
             state.input = input
                 .replacingOccurrences(of: " ", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-                .uppercased()
         case .removeLastInputSymbol:
             guard !state.input.isEmpty else { return .none }
             state.input.removeLast()
@@ -593,13 +592,6 @@ struct EditorFeature: ReducerProtocol {
             }
             guard state.initialStates.count == 1 else {
                 return showAutomatonOutput(.failure("Multiple initial states"))
-            }
-            guard
-                state.automatonStates
-                    .map(\.name)
-                    .allSatisfy ({ !$0.isEmpty })
-            else {
-                return showAutomatonOutput(.failure("Unnamed states"))
             }
             let input = Array(state.input).map(String.init)
             // Create FA's alphabet based on symbols present in transitions
@@ -644,12 +636,10 @@ struct EditorFeature: ReducerProtocol {
             state.automatonStatesDict[automatonStateID]?.name = symbol
                 .replacingOccurrences(of: " ", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-                .uppercased()
         case let .transitionSymbolChanged(transitionID, symbol):
             state.transitionsDict[transitionID]?.currentSymbol = symbol
                 .replacingOccurrences(of: " ", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-                .uppercased()
         case let .transitionSymbolAdded(transitionID):
             guard
                 let transition = state.transitionsDict[transitionID],

@@ -18,6 +18,7 @@ struct OverviewFeature: ReducerProtocol {
         var automatonFiles: [AutomatonFile] = []
         var selectedAutomatonURL: URL?
         var isAlertForNewAutomatonNamePresented = false
+        var isHelpPresented = false
         var automatonName = ""
         var isSelectingFiles = false
         var selectedAutomatonFileIDs: [AutomatonFile.ID] = []
@@ -38,6 +39,7 @@ struct OverviewFeature: ReducerProtocol {
         case doneSelectingFiles
         case removeSelectedFiles
         case removedSelectedFiles
+        case isHelpPresentedChanged(Bool)
     }
     
     @Dependency(\.automatonDocumentService) var automatonDocumentService
@@ -136,10 +138,15 @@ struct OverviewFeature: ReducerProtocol {
                     AutomatonFile(url: url, name: String(url.lastPathComponent.split(separator: ".").first ?? ""))
                 }
                 return .none
+            case let .isHelpPresentedChanged(value):
+                state.isHelpPresented = value
+                return .none
             }
         }
-        .ifLet(\.editor, action: /Action.editor) {
+        .ifLet(\.editor, action: CasePath<Action, EditorFeature.Action>({ action in
+            Action.editor(action)
+        }), then: {
             EditorFeature()
-        }
+        } as () -> EditorFeature)
     }
 }

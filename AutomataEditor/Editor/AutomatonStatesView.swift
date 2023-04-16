@@ -70,6 +70,8 @@ struct AutomatonStatesView: View {
                     set: { stateSymbolChanged(automatonState.id, $0) }
                 )
             )
+            .textInputAutocapitalization(TextInputAutocapitalization.never)
+            .autocorrectionDisabled(true)
             .multilineTextAlignment(.center)
             .padding(2)
             .overlay(

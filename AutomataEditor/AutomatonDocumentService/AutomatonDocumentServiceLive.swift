@@ -3,20 +3,25 @@ import Combine
 import ComposableArchitecture
 
 enum AutomatonDocumentServiceError: Error {
-    case ubiquityContainerNotFound
+    case urlNotFound
 }
 
 extension AutomatonDocumentService {
+    private static var url: URL? {
+        FileManager.default
+            .url(forUbiquityContainerIdentifier: nil)?
+            .appendingPathComponent("Documents") ??
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    }
+    
     static let live: Self = Self(
         createNewAutomaton: { automatonName in
             guard
-                let driveURL = FileManager.default
-                    .url(forUbiquityContainerIdentifier: nil)?
-                    .appendingPathComponent("Documents")
+                let url = url
             else {
-                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
+                throw AutomatonDocumentServiceError.urlNotFound
             }
-            let fileURL = driveURL.appendingPathComponent("\(automatonName).automaton")
+            let fileURL = url.appendingPathComponent("\(automatonName).automaton")
             let automaton = AutomatonDocument()
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(automaton)
@@ -32,14 +37,11 @@ extension AutomatonDocumentService {
         },
         loadAutomata: {
             guard
-                let driveURL = FileManager.default
-                    .url(forUbiquityContainerIdentifier: nil)?
-                    .appendingPathComponent("Documents")
+                let url = url
             else {
-                return []
-//                throw AutomatonDocumentServiceError.ubiquityContainerNotFound
+                throw AutomatonDocumentServiceError.urlNotFound
             }
-            return try FileManager.default.contentsOfDirectory(at: driveURL, includingPropertiesForKeys: nil)
+            return try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
                 .filter { !$0.hasDirectoryPath }
         },
         saveAutomaton: { url, automatonDocument in

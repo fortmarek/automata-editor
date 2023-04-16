@@ -16,6 +16,8 @@ struct AutomatonInput: View {
                             send: { .inputChanged($0) }
                         )
                     )
+                    .textInputAutocapitalization(TextInputAutocapitalization.never)
+                    .autocorrectionDisabled(true)
                     .foregroundColor(.white)
                     Button(
                         action: {
