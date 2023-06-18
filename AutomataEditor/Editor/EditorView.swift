@@ -5,6 +5,7 @@ import ComposableArchitecture
 
 struct EditorView: View {
     let store: StoreOf<EditorFeature>
+    @State private var hasAppeared = false
     
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -71,7 +72,12 @@ struct EditorView: View {
                    EditorToolbar(viewStore: viewStore)
                 }
                 .onChange(of: viewStore.state, perform: { viewStore.send(.stateUpdated($0)) })
-                .onAppear { viewStore.send(.viewSizeChanged(geometry.size)) }
+                .onAppear {
+                    viewStore.send(.viewSizeChanged(geometry.size))
+                    if !hasAppeared {
+                        viewStore.send(.onAppear)
+                    }
+                }
                 .alert(
                     "Clear automaton",
                     isPresented: viewStore.binding(get: \.isClearAlertPresented, send: { _ in .clearAlertDismissed })

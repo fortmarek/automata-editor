@@ -35,6 +35,14 @@ struct EditorToolbar: ToolbarContent {
                 } label: {
                     Label("Add new element", systemImage: "plus.circle")
                 }
+                Button(action: { viewStore.send(.undo) }) {
+                    Image(systemName: "arrow.uturn.backward.circle")
+                }
+                .disabled(!viewStore.canUndo)
+                Button(action: { viewStore.send(.redo) }) {
+                    Image(systemName: "arrow.uturn.forward.circle")
+                }
+                .disabled(!viewStore.canRedo)
             }
         }
         ToolbarItemGroup(placement: .primaryAction) {

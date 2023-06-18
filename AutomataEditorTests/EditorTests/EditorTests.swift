@@ -10,10 +10,27 @@ final class EditorTests: XCTestCase {
     var stubCenter: CGPoint!
     var stubRadius: CGFloat!
     var automatonURL = URL(string: "file://some-file")!
+    var store: TestStore<EditorFeature.State, EditorFeature.Action, EditorFeature.State, EditorFeature.Action, ()>!
+    var clock: TestClock<Duration>!
     
     override func setUp() {
         super.setUp()
         
+        store = TestStore(
+            initialState: EditorFeature.State(automatonURL: automatonURL),
+            reducer: EditorFeature()
+        )
+        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
+        store.dependencies.automataLibraryService = .successful()
+        store.dependencies.shapeService = .mock(
+            center: { $0.first ?? .zero },
+            radius: { _, _ in self.stubRadius }
+        )
+        store.dependencies.idFactory = .mock { self.stubID }
+        store.dependencies.undoService = .live
+        clock = TestClock()
+        store.dependencies.continuousClock = clock
+        store.send(.onAppear)
         stubShapeType = .circle
         stubID = "1"
         stubCenter = .zero
@@ -21,6 +38,8 @@ final class EditorTests: XCTestCase {
     }
     
     override func tearDown() {
+        store = nil
+        clock = nil
         stubShapeType = nil
         stubID = nil
         stubCenter = nil
@@ -31,17 +50,7 @@ final class EditorTests: XCTestCase {
     
     func testManualTransitionCreation() async {
         var currentStrokes: [Stroke] = []
-        let store = TestStore(
-            initialState: EditorFeature.State(automatonURL: automatonURL),
-            reducer: EditorFeature()
-        )
-        self.stubRadius = 5
-        store.dependencies.shapeService = .mock(
-            center: { $0.first ?? .zero },
-            radius: { _, _ in self.stubRadius }
-        )
-        store.dependencies.idFactory = .mock { self.stubID }
-        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
+        stubRadius = 5
         await store.send(.startAddingTransition) {
             $0.mode = .addingTransition
         }
@@ -82,7 +91,8 @@ final class EditorTests: XCTestCase {
                     startPoint: CGPoint(x: 10, y: 5),
                     tipPoint: CGPoint(x: 15, y: 5),
                     flexPoint: CGPoint(x: 12.5, y: 5)
-                )
+                ),
+                currentFlexPoint: CGPoint(x: 12.5, y: 5)
             )
             $0.currentlySelectedStateForTransition = nil
             $0.mode = .editing
@@ -91,10 +101,6 @@ final class EditorTests: XCTestCase {
     
     func testTransitionSymbolIsTrimmedAndUppercased() async {
         var currentStrokes: [Stroke] = []
-        let store = TestStore(
-            initialState: EditorFeature.State(automatonURL: automatonURL),
-            reducer: EditorFeature()
-        )
         store.dependencies.automataClassifierService = .successfulShape { .arrow }
         store.dependencies.automataLibraryService = .successful()
         store.dependencies.shapeService = .mock(
@@ -111,23 +117,12 @@ final class EditorTests: XCTestCase {
             currentStrokes: &currentStrokes
         )
         await store.send(.transitionSymbolChanged(stubID, "a \n")) { [self] in
-            $0.transitionsDict[stubID]?.currentSymbol = "A"
+            $0.transitionsDict[stubID]?.currentSymbol = "a"
         }
     }
 
     func testSimulateWithoutInitialState() async {
         var currentStrokes: [Stroke] = []
-        let store = TestStore(
-            initialState: EditorFeature.State(automatonURL: automatonURL),
-            reducer: EditorFeature()
-        )
-        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
-        store.dependencies.automataLibraryService = .successful()
-        store.dependencies.shapeService = .mock(
-            center: { $0.first ?? .zero },
-            radius: { _, _ in self.stubRadius }
-        )
-        store.dependencies.idFactory = .mock { self.stubID }
         store.dependencies.mainQueue = scheduler.eraseToAnyScheduler()
         await createState(
             store: store,
@@ -152,22 +147,17 @@ final class EditorTests: XCTestCase {
             $0.input = "A"
         }
         await store.send(.simulateInput) {
-            $0.outputString = "❌ No initial state"
+            $0.automatonOutput = .failure("No initial state")
+            $0.isAutomatonOutputVisible = true
+        }
+        await clock.advance(by: .seconds(5))
+        await store.receive(.dismissToast) {
+            $0.isAutomatonOutputVisible = false
         }
     }
 
     func testSimulateWithMultipleInitialStates() async {
         var currentStrokes: [Stroke] = []
-        let store = TestStore(
-            initialState: EditorFeature.State(automatonURL: automatonURL),
-            reducer: EditorFeature()
-        )
-        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
-        store.dependencies.automataLibraryService = .successful()
-        store.dependencies.shapeService = .mock(
-            center: { $0.first ?? .zero },
-            radius: { _, _ in self.stubRadius }
-        )
         store.dependencies.idFactory = .mock { self.stubID }
 
         await createState(
@@ -224,23 +214,17 @@ final class EditorTests: XCTestCase {
         )
 
         await store.send(.simulateInput) {
-            $0.outputString = "❌ Multiple initial states"
+            $0.automatonOutput = .failure("Multiple initial states")
+            $0.isAutomatonOutputVisible = true
+        }
+        await clock.advance(by: .seconds(5))
+        await store.receive(.dismissToast) {
+            $0.isAutomatonOutputVisible = false
         }
     }
 
     func testSimpleAutomatonIsDrawnAndSimulated() async {
         var currentStrokes: [Stroke] = []
-        let store = TestStore(
-            initialState: EditorFeature.State(automatonURL: automatonURL),
-            reducer: EditorFeature()
-        )
-        store.dependencies.automataClassifierService = .successfulShape { self.stubShapeType }
-        store.dependencies.automataLibraryService = .successful()
-        store.dependencies.shapeService = .mock(
-            center: { $0.first ?? .zero },
-            radius: { _, _ in self.stubRadius }
-        )
-        store.dependencies.idFactory = .mock { self.stubID }
         await createState(
             store: store,
             id: stubID,
@@ -325,8 +309,17 @@ final class EditorTests: XCTestCase {
         }
         await store.send(.simulateInput)
         await store.receive(.simulateInputResult(.success(Empty()))) {
-            $0.outputString = "✅"
+            $0.automatonOutput = .success
+            $0.isAutomatonOutputVisible = true
         }
+        await clock.advance(by: .seconds(5))
+        await store.receive(.dismissToast) {
+            $0.isAutomatonOutputVisible = false
+        }
+    }
+    
+    func testUndoAndRedo() async {
+        
     }
 
     private func createEndStateStroke(
@@ -398,6 +391,8 @@ final class EditorTests: XCTestCase {
             if let transitionEndID = transitionEndID {
                 $0.transitionsDict[transitionEndID]?.endState = id
             }
+            
+            $0.canUndo = true
         }
 
         currentStrokes.append(

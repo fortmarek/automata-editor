@@ -16,6 +16,7 @@ struct EditorEnvironment {
     let automataClassifierService: AutomataClassifierService
     let automataLibraryService: AutomataLibraryService
     let shapeService: ShapeService
+    let undoService: UndoService
     let idFactory: IDFactory
     let mainQueue: AnySchedulerOf<DispatchQueue>
 }
@@ -97,6 +98,8 @@ struct EditorFeature: ReducerProtocol {
         var isClearAlertPresented = false
         var automatonOutput: AutomatonOutput = .success
         var isAutomatonOutputVisible = false
+        var canUndo = false
+        var canRedo = false
     }
     
     enum AutomatonOutput: Equatable {
@@ -145,6 +148,10 @@ struct EditorFeature: ReducerProtocol {
         case clearButtonPressed
         case clearAlertDismissed
         case dismissToast
+        case undo
+        case redo
+        case onAppear
+        case addState(AutomatonState)
     }
     
     @Dependency(\.idFactory) var idFactory
@@ -152,6 +159,7 @@ struct EditorFeature: ReducerProtocol {
     @Dependency(\.automataClassifierService) var automataClassifierService
     @Dependency(\.shapeService) var shapeService
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.undoService) var undoService
     private enum TimerID {}
 
     struct ClosestStateResult {
@@ -395,15 +403,28 @@ struct EditorFeature: ReducerProtocol {
             .cancellable(id: TimerID.self, cancelInFlight: true)
         }
         
+        func registerUndo(_ undoAction: Action) {
+            undoService.registerUndo(undoAction)
+            state.canUndo = undoService.canUndo()
+            state.canRedo = undoService.canRedo()
+        }
+        
         switch action {
         case let .currentVisibleScrollViewRectChanged(currentVisibleScrollViewRect):
             state.currentVisibleScrollViewRect = currentVisibleScrollViewRect
+        case let .addState(automatonState):
+            state.automatonStatesDict[automatonState.id] = automatonState
+            state.transitions.forEach { transition in
+                state.transitionsDict[transition.id] = transition
+            }
         case let .automatonStateRemoved(automatonStateID):
+            guard let automatonState = state.automatonStatesDict[automatonStateID] else { return .none }
             if state.automatonStatesDict[automatonStateID]?.isFinalState == true {
                 state.automatonStatesDict[automatonStateID]?.isFinalState = false
                 return .none
             }
             state.automatonStatesDict.removeValue(forKey: automatonStateID)
+            registerUndo(.addState(automatonState))
             state.transitions.forEach { transition in
                 var transition = transition
                 switch transition.type {
@@ -554,6 +575,7 @@ struct EditorFeature: ReducerProtocol {
                 radius: 100
             )
             state.automatonStatesDict[automatonState.id] = automatonState
+            registerUndo(.automatonStateRemoved(automatonState.id))
         case let .viewSizeChanged(viewSize):
             state.viewSize = viewSize
         case .stateUpdated:
@@ -687,6 +709,7 @@ struct EditorFeature: ReducerProtocol {
                 state.transitionsDict[transition.id] = transition
                 
                 state.automatonStatesDict[automatonState.id] = automatonState
+                registerUndo(.automatonStateRemoved(automatonState.id))
             // Connect to a transition without start state if one is close enough
             } else if var transition = closestTransitionWithoutStartState(for: controlPoints) {
                 guard
@@ -706,6 +729,7 @@ struct EditorFeature: ReducerProtocol {
                 state.transitionsDict[transition.id] = transition
                 
                 state.automatonStatesDict[automatonState.id] = automatonState
+                registerUndo(.automatonStateRemoved(automatonState.id))
             } else {
                 let automatonState = AutomatonState(
                     id: idFactory.generateID(),
@@ -713,6 +737,7 @@ struct EditorFeature: ReducerProtocol {
                     radius: radius
                 )
                 state.automatonStatesDict[automatonState.id] = automatonState
+                registerUndo(.automatonStateRemoved(automatonState.id))
             }
         case let .transitionFlexPointFinishedDragging(transitionID, finalFlexPoint):
             guard var transition = state.transitionsDict[transitionID] else { return .none }
@@ -830,6 +855,12 @@ struct EditorFeature: ReducerProtocol {
                     return Action.automataShapeClassified(.failure(.shapeNotRecognized))
                 }
             }
+        case .onAppear:
+            return undoService.registerUndoManager()
+        case .undo:
+            undoService.undo()
+        case .redo:
+            undoService.redo()
         }
         
         return .none
